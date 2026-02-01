@@ -250,7 +250,7 @@ Master algorithmic patterns, not individual problems:
 
 
 <p align="center">
-  <img src="https://komarev.com/ghpvc/?username=Samarpitgupta&repo=SystemDesign&label=Visitors&color=0e75b6&style=flat" alt="Visitors" />
+  <img src="https://komarev.com/ghpvc/?username=Samarpitgupta&repo=software-engineering&label=Visitors&color=0e75b6&style=flat" alt="Visitors" />
   <img src="https://img.shields.io/github/stars/Samarpitgupta/SystemDesign?style=flat&color=yellow" alt="Stars" />
   <img src="https://img.shields.io/github/forks/Samarpitgupta/SystemDesign?style=flat&color=blue" alt="Forks" />
   <img src="https://img.shields.io/github/last-commit/Samarpitgupta/SystemDesign?style=flat&color=green" alt="Last Commit" />
