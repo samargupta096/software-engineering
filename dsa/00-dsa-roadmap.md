@@ -1,0 +1,171 @@
+[🏠 Home](../README.md) | [➡️ Time Complexity](./01-time-space-complexity.md)
+
+# 🎯 DSA & LeetCode Patterns Roadmap
+
+> Master algorithmic patterns, not individual problems
+
+---
+
+## 📚 Learning Philosophy
+
+```
+❌ Wrong: Solve 500 random problems
+✅ Right: Master 15 patterns, solve 100 curated problems
+```
+
+The key to cracking coding interviews is **pattern recognition**. Once you understand a pattern, you can solve dozens of problems that use it.
+
+---
+
+## 🗺️ Pattern Categories
+
+```mermaid
+flowchart TB
+    subgraph Tier1["⭐ Tier 1: Must Master"]
+        A[Arrays & Hashing]
+        B[Two Pointers]
+        C[Sliding Window]
+        D[Binary Search]
+        E[Linked Lists]
+        F[Trees]
+        G[Dynamic Programming]
+    end
+    
+    subgraph Tier2["🔥 Tier 2: Important"]
+        H[Stacks & Queues]
+        I[Heaps]
+        J[Graphs]
+        K[Backtracking]
+    end
+    
+    subgraph Tier3["💡 Tier 3: Good to Know"]
+        L[Greedy]
+        M[Intervals]
+        N[Bit Manipulation]
+    end
+    
+    A --> B --> C --> D
+    D --> E --> F --> G
+    G --> H --> I --> J --> K
+    K --> L --> M --> N
+```
+
+---
+
+## 📖 Study Plan
+
+### Week 1-2: Foundation
+| Day | Pattern | Problems | Time |
+|-----|---------|----------|------|
+| 1-2 | [Arrays & Hashing](./02-arrays-hashing/00-overview.md) | 8 | 3h |
+| 3-4 | [Two Pointers](./03-two-pointers/00-overview.md) | 6 | 2h |
+| 5-6 | [Sliding Window](./04-sliding-window/00-overview.md) | 6 | 2h |
+| 7 | Review & Practice | - | 2h |
+
+### Week 3-4: Core Data Structures
+| Day | Pattern | Problems | Time |
+|-----|---------|----------|------|
+| 8-9 | [Binary Search](./05-binary-search/00-overview.md) | 6 | 2h |
+| 10-11 | [Linked Lists](./06-linked-lists/00-overview.md) | 8 | 3h |
+| 12-13 | [Stacks & Queues](./07-stacks-queues/00-overview.md) | 6 | 2h |
+| 14 | Review & Practice | - | 2h |
+
+### Week 5-6: Trees & Graphs
+| Day | Pattern | Problems | Time |
+|-----|---------|----------|------|
+| 15-17 | [Trees](./08-trees/00-overview.md) | 12 | 4h |
+| 18-19 | [Heaps](./09-heaps-priority-queues/00-overview.md) | 5 | 2h |
+| 20-22 | [Graphs](./10-graphs/00-overview.md) | 10 | 4h |
+
+### Week 7-8: Advanced Patterns
+| Day | Pattern | Problems | Time |
+|-----|---------|----------|------|
+| 23-24 | [Backtracking](./11-backtracking/00-overview.md) | 8 | 3h |
+| 25-28 | [Dynamic Programming](./12-dynamic-programming/00-overview.md) | 12 | 5h |
+| 29-30 | [Greedy](./13-greedy/00-overview.md) + [Intervals](./14-intervals/00-overview.md) | 10 | 3h |
+
+---
+
+## 🧠 Problem-Solving Framework
+
+### UMPIRE Method
+
+```
+U - Understand the problem
+M - Match to known patterns
+P - Plan your approach
+I - Implement the solution
+R - Review and test
+E - Evaluate complexity
+```
+
+### Pattern Recognition Checklist
+
+| If you see... | Think about... |
+|---------------|----------------|
+| "Sorted array" | Binary Search, Two Pointers |
+| "Subarray/Substring" | Sliding Window |
+| "Pairs that sum to X" | Two Pointers, HashMap |
+| "All combinations/permutations" | Backtracking |
+| "Shortest path (unweighted)" | BFS |
+| "Connected components" | DFS, Union-Find |
+| "Optimal substructure" | Dynamic Programming |
+| "K largest/smallest" | Heap |
+| "Next greater element" | Monotonic Stack |
+
+---
+
+## 📊 Complexity Cheat Sheet
+
+| Operation | Array | HashMap | Heap | BST |
+|-----------|-------|---------|------|-----|
+| Access | O(1) | O(1) | O(1)* | O(log n) |
+| Search | O(n) | O(1) | O(n) | O(log n) |
+| Insert | O(n) | O(1) | O(log n) | O(log n) |
+| Delete | O(n) | O(1) | O(log n) | O(log n) |
+
+*Heap: O(1) for min/max only
+
+---
+
+## 🎯 Priority Problems (Blind 75 Core)
+
+### Must Complete First
+- [ ] Two Sum
+- [ ] Valid Parentheses
+- [ ] Merge Two Sorted Lists
+- [ ] Best Time to Buy and Sell Stock
+- [ ] Valid Palindrome
+- [ ] Invert Binary Tree
+- [ ] Maximum Subarray
+- [ ] Contains Duplicate
+- [ ] Climbing Stairs
+- [ ] Binary Search
+
+### Then Focus On
+- [ ] 3Sum
+- [ ] Container With Most Water
+- [ ] Longest Substring Without Repeating Characters
+- [ ] Search in Rotated Sorted Array
+- [ ] Linked List Cycle
+- [ ] Maximum Depth of Binary Tree
+- [ ] Number of Islands
+- [ ] Course Schedule
+
+---
+
+## 📁 Quick Navigation
+
+| Category | Overview | Problems |
+|----------|----------|----------|
+| Arrays & Hashing | [Overview](./02-arrays-hashing/00-overview.md) | [Problems](./02-arrays-hashing/problems.md) |
+| Two Pointers | [Overview](./03-two-pointers/00-overview.md) | [Problems](./03-two-pointers/problems.md) |
+| Sliding Window | [Overview](./04-sliding-window/00-overview.md) | [Problems](./04-sliding-window/problems.md) |
+| Binary Search | [Overview](./05-binary-search/00-overview.md) | [Problems](./05-binary-search/problems.md) |
+| Linked Lists | [Overview](./06-linked-lists/00-overview.md) | [Problems](./06-linked-lists/problems.md) |
+| Trees | [Overview](./08-trees/00-overview.md) | [Problems](./08-trees/problems.md) |
+| Dynamic Programming | [Overview](./12-dynamic-programming/00-overview.md) | [Problems](./12-dynamic-programming/problems.md) |
+
+---
+
+*Start your journey: [Time & Space Complexity →](./01-time-space-complexity.md)*

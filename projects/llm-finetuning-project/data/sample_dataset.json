@@ -1,0 +1,52 @@
+[
+    {
+        "instruction": "Summarize the following text in one sentence.",
+        "input": "Machine learning is a subset of artificial intelligence that enables systems to learn and improve from experience without being explicitly programmed. It focuses on developing computer programs that can access data and use it to learn for themselves.",
+        "output": "Machine learning is an AI subset that allows systems to automatically learn and improve from data without explicit programming."
+    },
+    {
+        "instruction": "Explain the concept in simple terms.",
+        "input": "What is a neural network?",
+        "output": "A neural network is a computer system inspired by the human brain. It consists of layers of connected nodes (like neurons) that process information and learn patterns from data to make predictions."
+    },
+    {
+        "instruction": "Convert the following to a bullet point list.",
+        "input": "Python is popular because it has simple syntax, large community, extensive libraries, and is versatile for web, data science, and AI.",
+        "output": "• Simple and readable syntax\n• Large and active community\n• Extensive library ecosystem\n• Versatile applications (web, data science, AI)"
+    },
+    {
+        "instruction": "Write a professional email response.",
+        "input": "Someone asked if we can extend the project deadline by one week.",
+        "output": "Thank you for reaching out regarding the project deadline. I understand that additional time may be needed to ensure high-quality deliverables. I'd be happy to discuss a one-week extension. Could you please provide details on the current blockers so we can adjust the timeline accordingly?\n\nBest regards"
+    },
+    {
+        "instruction": "Identify the programming language and explain what the code does.",
+        "input": "def fibonacci(n):\n    if n <= 1:\n        return n\n    return fibonacci(n-1) + fibonacci(n-2)",
+        "output": "This is Python code. It defines a recursive function called 'fibonacci' that calculates the nth Fibonacci number. The function returns n if n is 0 or 1, otherwise it returns the sum of the two preceding Fibonacci numbers."
+    },
+    {
+        "instruction": "Generate a SQL query based on the request.",
+        "input": "Find all customers from the 'customers' table who made purchases over $1000 in the last 30 days.",
+        "output": "SELECT DISTINCT c.*\nFROM customers c\nJOIN orders o ON c.customer_id = o.customer_id\nWHERE o.total_amount > 1000\nAND o.order_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY);"
+    },
+    {
+        "instruction": "Classify the sentiment of this text.",
+        "input": "I absolutely loved the new restaurant! The food was incredible and the service was top-notch. Can't wait to go back!",
+        "output": "Positive sentiment. The text expresses strong enthusiasm and satisfaction with the restaurant experience, using superlatives like 'absolutely loved', 'incredible', and 'top-notch'."
+    },
+    {
+        "instruction": "Extract the key entities from this text.",
+        "input": "Apple Inc. announced today that CEO Tim Cook will present the new iPhone 16 at their headquarters in Cupertino, California on September 10, 2024.",
+        "output": "Organizations: Apple Inc.\nPeople: Tim Cook (CEO)\nProducts: iPhone 16\nLocations: Cupertino, California\nDates: September 10, 2024"
+    },
+    {
+        "instruction": "Rewrite the following text to be more concise.",
+        "input": "In my personal opinion, I believe that the utilization of artificial intelligence technology has the potential to significantly and substantially transform and revolutionize the way in which we conduct and perform our daily activities and tasks.",
+        "output": "AI has the potential to revolutionize how we perform daily tasks."
+    },
+    {
+        "instruction": "Generate test cases for this function.",
+        "input": "A function called 'is_palindrome' that checks if a string is a palindrome (reads same forwards and backwards).",
+        "output": "Test cases:\n1. is_palindrome('radar') → True (simple palindrome)\n2. is_palindrome('hello') → False (not a palindrome)\n3. is_palindrome('') → True (empty string)\n4. is_palindrome('a') → True (single character)\n5. is_palindrome('A man a plan a canal Panama') → True (with spaces, case-insensitive)\n6. is_palindrome('12321') → True (numeric palindrome)"
+    }
+]
