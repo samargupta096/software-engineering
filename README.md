@@ -255,7 +255,6 @@ Master algorithmic patterns, not individual problems:
   <img src="https://img.shields.io/github/forks/Samarpitgupta/SystemDesign?style=flat&color=blue" alt="Forks" />
   <img src="https://img.shields.io/github/last-commit/Samarpitgupta/SystemDesign?style=flat&color=green" alt="Last Commit" />
   <img src="https://img.shields.io/github/repo-size/Samarpitgupta/SystemDesign?style=flat&color=orange" alt="Repo Size" />
-  <img src="https://img.shields.io/github/license/Samarpitgupta/SystemDesign?style=flat" alt="License" />
 </p>
 
 <p align="center">
