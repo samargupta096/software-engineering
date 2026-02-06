@@ -20,6 +20,118 @@
 
 ---
 
+## 🧠 WHY Greedy Works (When It Works): Developer's Guide
+
+> **🎯 For Beginners:** Greedy = Pick the BEST choice at each step. But be careful - it doesn't always give optimal!
+
+### The Core Insight: Local Optimum → Global Optimum
+
+```
+WORKS: Activity Selection
+  Problem: Schedule max non-overlapping activities
+  
+  Activities: [(1,3), (2,4), (3,5), (4,6)]
+              [start, end]
+  
+  Greedy: Always pick activity that ENDS earliest
+  
+  Why? Ends earliest = leaves most room for future activities
+  
+  Pick (1,3) → Pick (4,6) → Done! 2 activities
+
+DOESN'T WORK: Coin Change (some denominations)
+  Problem: Coins [1, 3, 4], make 6
+  
+  Greedy: Pick largest coin that fits
+  6 - 4 = 2, 2 - 1 = 1, 1 - 1 = 0 → 3 coins (4,1,1)
+  
+  Optimal: 3 + 3 = 6 → 2 coins!
+  
+  Greedy FAILED because local best ≠ global best
+```
+
+### When Can You Use Greedy?
+
+```
+Greedy works when problem has:
+
+1. GREEDY CHOICE PROPERTY
+   → A local optimal choice leads to global optimal
+   → You never need to reconsider past choices
+
+2. OPTIMAL SUBSTRUCTURE
+   → Optimal solution contains optimal sub-solutions
+   → (Same as DP, but greedy doesn't reconsider)
+
+Quick test: Does picking "best now" ever hurt you later?
+  → No: Greedy works
+  → Yes: Need DP or other approach
+```
+
+### Greedy vs Dynamic Programming
+
+```
+GREEDY:                      DP:
+├── One choice per step      ├── Consider ALL choices
+├── Never look back          ├── Compare subproblems
+├── O(n) or O(n log n)       ├── O(n²) or O(n×target)
+├── Simpler but limited      ├── More powerful but complex
+└── Must prove correctness   └── Always correct (if done right)
+
+Example: Jump Game
+  
+  Greedy solution (works here):
+    Track "max reachable index"
+    If current index > max reachable → stuck → return false
+    
+  Why greedy works here?
+    If you CAN reach index i, you can also reach all indices < i
+    So tracking max is sufficient!
+```
+
+### Common Greedy Patterns
+
+```
+1. INTERVAL SCHEDULING:
+   → Sort by end time
+   → Pick non-overlapping greedily
+   
+2. MERGE INTERVALS:
+   → Sort by start time
+   → Merge if overlap
+   
+3. HUFFMAN / FREQUENCY-BASED:
+   → Always process lowest frequency first
+   
+4. KADANE'S (Max Subarray):
+   → Reset sum when it becomes negative
+   → Local decision: "start fresh or continue?"
+```
+
+### Thought Process Template
+
+```
+🧠 "Can I solve this greedily?"
+
+1. Is there a clear "best" choice at each step?
+   → Yes: Formulate the greedy criterion
+
+2. Does picking "best now" ever hurt later?
+   → No: Greedy is likely correct
+   → Yes: Consider DP instead
+
+3. Can I prove correctness?
+   → Exchange argument: Show greedy ≥ any other choice
+   → Induction: Show greedy stays optimal
+
+4. Common greedy signals:
+   → "Maximum/minimum number of..."
+   → "Earliest/latest..."
+   → "Most/least frequent..."
+```
+
+---
+
 ## 💻 Core Problems
 
 ### Problem 1: Maximum Subarray (Kadane's Algorithm)
