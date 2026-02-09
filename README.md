@@ -224,25 +224,25 @@ Learn from how big companies architect their systems:
 
 Master algorithmic patterns, not individual problems:
 
-- [DSA Interview Roadmap](./dsa/00-dsa-roadmap.md) ⭐ - Step-by-step learning plan
-- [Time & Space Complexity](./dsa/01-time-space-complexity.md) - Big O Analysis
+- [DSA Interview Roadmap](./interview-prep/dsa/leetcode-patterns/00-dsa-roadmap.md) ⭐ - Step-by-step learning plan
+- [Time & Space Complexity](./interview-prep/dsa/leetcode-patterns/01-time-space-complexity.md) - Big O Analysis
 - **Core Patterns (Tier 1)**
-  - [Arrays & Hashing](./dsa/02-arrays-hashing/00-overview.md) - Two Sum, Group Anagrams
-  - [Two Pointers](./dsa/03-two-pointers/00-overview.md) - Palindromes, 3Sum, Trapping Rain Water
-  - [Sliding Window](./dsa/04-sliding-window/00-overview.md) - Substrings, Max K Sum
-  - [Binary Search](./dsa/05-binary-search/00-overview.md) - Rotated Arrays, Search Matrix
-  - [Linked Lists](./dsa/06-linked-lists/00-overview.md) - Fast/Slow Pointers, Reversal
-  - [Trees](./dsa/08-trees/00-overview.md) - BFS, DFS, Traversals, BST
-  - [Dynamic Programming](./dsa/12-dynamic-programming/00-overview.md) - 1D/2D DP, Knapsack
+  - [Arrays & Hashing](./interview-prep/dsa/leetcode-patterns/02-arrays-hashing.md) - Two Sum, Group Anagrams
+  - [Two Pointers](./interview-prep/dsa/leetcode-patterns/03-two-pointers.md) - Palindromes, 3Sum, Trapping Rain Water
+  - [Sliding Window](./interview-prep/dsa/leetcode-patterns/04-sliding-window.md) - Substrings, Max K Sum
+  - [Binary Search](./interview-prep/dsa/leetcode-patterns/05-binary-search.md) - Rotated Arrays, Search Matrix
+  - [Linked Lists](./interview-prep/dsa/leetcode-patterns/06-linked-lists.md) - Fast/Slow Pointers, Reversal
+  - [Trees](./interview-prep/dsa/leetcode-patterns/08-trees.md) - BFS, DFS, Traversals, BST
+  - [Dynamic Programming](./interview-prep/dsa/leetcode-patterns/12-dynamic-programming.md) - 1D/2D DP, Knapsack
 - **Important Patterns (Tier 2-3)**
-  - [Stacks & Queues](./dsa/07-stacks-queues/00-overview.md) - Monotonic Stack
-  - [Heaps & Priority Queues](./dsa/09-heaps-priority-queues/00-overview.md) - Top K elements
-  - [Graphs](./dsa/10-graphs/00-overview.md) - BFS, DFS, Union-Find, Topo Sort
-  - [Backtracking](./dsa/11-backtracking/00-overview.md) - Subsets, Permutations
-  - [Greedy](./dsa/13-greedy/00-overview.md) - Intervals, Jump Game
-  - [Intervals](./dsa/14-intervals/00-overview.md) - Overlapping intervals
-  - [Bit Manipulation](./dsa/15-bit-manipulation/00-overview.md) - XOR tricks
-- [Interview Q&A](./dsa/16-interview-qa.md) ⭐ - UMPIRE method & tips
+  - [Stacks & Queues](./interview-prep/dsa/leetcode-patterns/07-stacks-queues.md) - Monotonic Stack
+  - [Heaps & Priority Queues](./interview-prep/dsa/leetcode-patterns/09-heaps-priority-queues.md) - Top K elements
+  - [Graphs](./interview-prep/dsa/leetcode-patterns/10-graphs.md) - BFS, DFS, Union-Find, Topo Sort
+  - [Backtracking](./interview-prep/dsa/leetcode-patterns/11-backtracking.md) - Subsets, Permutations
+  - [Greedy](./interview-prep/dsa/leetcode-patterns/13-greedy.md) - Intervals, Jump Game
+  - [Intervals](./interview-prep/dsa/leetcode-patterns/14-intervals.md) - Overlapping intervals
+  - [Bit Manipulation](./interview-prep/dsa/leetcode-patterns/15-bit-manipulation.md) - XOR tricks
+- [Interview Q&A](./interview-prep/dsa/leetcode-patterns/16-interview-qa.md) ⭐ - UMPIRE method & tips
 
 ### 8. Low-Level Design (LLD) / Machine Coding! 🚀*
 -->
