@@ -79,6 +79,25 @@
         👉 <a href="./career-growth/technical-architect-roadmap.md"><b>Read the Full Roadmap</b></a>
     </td>
 </tr>
+<tr>
+    <td width="30%">
+         <div align="center">
+            <h3>🧠 AI/ML Leadership Roadmap 🆕</h3>
+            <p>Prepare for Director/Head of AI Engineering roles with a 12-week structured plan.</p>
+        </div>
+    </td>
+    <td width="70%">
+        <b>What's Inside:</b>
+        <ul>
+            <li>🤖 <b>Generative AI & LLMs</b>: RAG, Fine-tuning, Agentic AI, MCP.</li>
+            <li>📊 <b>ML Engineering</b>: PyTorch, Hugging Face, LangChain.</li>
+            <li>⚙️ <b>LLMOps</b>: Production deployment, monitoring, governance.</li>
+            <li>🎯 <b>Interview Prep</b>: Technical & leadership question bank.</li>
+        </ul>
+        <br>
+        👉 <a href="./career-growth/ai-ml-leadership-roadmap.md"><b>Start Your AI Journey</b></a>
+    </td>
+</tr>
 </table>
 
 ---
