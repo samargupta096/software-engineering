@@ -105,6 +105,34 @@ If $W=1$, Node A might have "Cart: {Apple}" and Node B "Cart: {Banana}".
 1.  **Last Write Wins (LWW)**: Trust the timestamp. Easier, but can lose data.
 2.  **Vector Clocks**: Keep history `[A:1, B:2]`. Return BOTH versions to the client and let the client merge them (Amazon's original Dynamo approach).
 
+### Visualizing Quorum (W + R > N)
+
+```mermaid
+flowchart LR
+    subgraph "N=3 Replicas"
+        N1["Node 1<br/>✅ Write ACK"]
+        N2["Node 2<br/>✅ Write ACK"]
+        N3["Node 3<br/>⏳ Async"]
+    end
+
+    Client -- "PUT key=cart" --> N1
+    Client --> N2
+    Client -.-> N3
+
+    subgraph "W=2: Success after 2 ACKs"
+        N1 --> OK["✅ Write Success"]
+        N2 --> OK
+    end
+
+    subgraph "R=2: Read from 2 nodes"
+        N1 --> Read["Compare versions"]
+        N3 --> Read
+        Read --> Latest["Return latest value"]
+    end
+```
+
+> **Rule**: If `W + R > N` (e.g., 2+2 > 3), at least 1 node overlaps between read & write set → **Strong Consistency**
+
 ---
 
 ## 🕵️ Failure Detection (Gossip Protocol)

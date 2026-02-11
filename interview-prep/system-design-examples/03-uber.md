@@ -153,6 +153,38 @@ flowchart LR
 
 ---
 
+## 🔄 Ride Lifecycle State Machine
+
+```mermaid
+stateDiagram-v2
+    [*] --> Requested : Rider requests ride
+    Requested --> Matching : System finds drivers
+    Matching --> Requested : No driver accepts (retry)
+    Matching --> Matched : Driver accepts
+    Matched --> DriverEnRoute : Driver heading to pickup
+    DriverEnRoute --> Arrived : Driver at pickup
+    Arrived --> InProgress : Rider boards, trip starts
+    InProgress --> Completed : Reach destination
+    Completed --> [*]
+
+    Requested --> Cancelled : Rider cancels
+    Matched --> Cancelled : Rider or driver cancels
+    DriverEnRoute --> Cancelled : Rider cancels (fee applies)
+    Cancelled --> [*]
+
+    note right of Matching
+        Nearby drivers found via
+        Geohash / Redis GEORADIUS
+    end note
+
+    note right of InProgress
+        Real-time location tracked
+        Surge pricing locked in
+    end note
+```
+
+---
+
 ## 💾 Database Schema
 
 ```sql

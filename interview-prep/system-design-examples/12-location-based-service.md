@@ -84,6 +84,41 @@ graph TD
     NE --> NE_SE
 ```
 
+### Geohash vs QuadTree Comparison
+
+| Aspect | Geohash | QuadTree |
+|--------|---------|----------|
+| **Structure** | String prefix hierarchy | Tree with 4 children per node |
+| **Updates** | Easy (recompute hash) | Rebuild subtree (costly) |
+| **Storage** | DB-friendly (string index) | In-memory tree |
+| **Edge Cases** | Boundary issues (different prefix) | Handles gracefully |
+| **Best For** | Static places (Yelp) | Moving objects (Uber drivers) |
+
+### Nearby Search Flow
+
+```mermaid
+sequenceDiagram
+    participant App as Mobile App
+    participant API as API Gateway
+    participant LBS as LBS Service
+    participant Cache as Redis Cache
+    participant DB as Database
+
+    App->>API: GET /nearby?lat=12.97&lng=77.59&radius=2km
+    API->>LBS: Find nearby places
+    LBS->>LBS: Compute Geohash prefix "tdr1w"
+    LBS->>Cache: Check geohash cache
+    alt Cache Hit
+        Cache-->>LBS: Return cached results
+    else Cache Miss
+        LBS->>DB: SELECT WHERE geohash LIKE 'tdr1%'
+        DB-->>LBS: Return places
+        LBS->>Cache: Store results (TTL 5min)
+    end
+    LBS->>LBS: Filter by exact radius (Haversine)
+    LBS-->>App: Return sorted results
+```
+
 ---
 
 ## 🏛️ High-Level Architecture

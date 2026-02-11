@@ -60,6 +60,45 @@ SELECT RANK() OVER (ORDER BY score DESC) FROM Leaderboard WHERE user_id = 123;
 2.  **Get Rank**: `ZREVRANK leaderboard "user_123"` (Returns index, e.g., 5)
 3.  **Get Top 10**: `ZREVRANGE leaderboard 0 9`
 
+### ZSET Internal Structure
+
+```mermaid
+flowchart LR
+    subgraph "HashMap (O(1) lookup)"
+        H1["user_123 → 1500"]
+        H2["user_456 → 2300"]
+        H3["user_789 → 900"]
+    end
+
+    subgraph "Skip List (O(log N) rank)"
+        L3["Level 3: 900 ──────────────────→ 2300"]
+        L2["Level 2: 900 ────→ 1500 ────→ 2300"]
+        L1["Level 1: 900 → 1500 → 2300"]
+    end
+
+    H1 -.-> L1
+    H2 -.-> L1
+    H3 -.-> L1
+```
+
+### Score Update Flow
+
+```mermaid
+sequenceDiagram
+    participant Game as Game Client
+    participant API as Score Service
+    participant Redis as Redis ZSET
+    participant DB as MySQL
+    participant Kafka as Kafka
+
+    Game->>API: POST /score (user=123, score=1500)
+    API->>Redis: ZADD leaderboard 1500 "user_123"
+    Redis-->>API: OK (O(log N))
+    API->>DB: INSERT score_history (async)
+    API->>Kafka: Publish "score_updated"
+    Kafka->>Game: WebSocket push "Your rank: #42"
+```
+
 ---
 
 ## 🏛️ High-Level Architecture

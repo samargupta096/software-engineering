@@ -169,6 +169,34 @@ user:{user_id}:timeline → [tweet_id1, tweet_id2, ...]
 
 ---
 
+## 🔄 Tweet Lifecycle State Machine
+
+```mermaid
+stateDiagram-v2
+    [*] --> Composing : User opens editor
+    Composing --> Published : Submit tweet
+    Published --> Visible : Passes content filter
+    Published --> Flagged : Content filter catch
+    Flagged --> Visible : Manual review OK
+    Flagged --> Removed : Violates policy
+    Visible --> Engagements : Like / Retweet / Reply
+    Engagements --> Visible : Engagement recorded
+    Visible --> Removed : User deletes
+    Removed --> [*]
+
+    note right of Published
+        Fan-out triggered here
+        (Push to follower timelines)
+    end note
+
+    note right of Visible
+        Indexed in Elasticsearch
+        Available in Search
+    end note
+```
+
+---
+
 ## 📚 Key Takeaways
 
 - Hybrid fan-out approach for best performance

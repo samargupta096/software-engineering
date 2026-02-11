@@ -19,9 +19,9 @@
 | :--- | :--- | :--- |
 | **URL Shortener** (TinyURL) | Hashing, Encoding (Base62), ID Generation, Redirection (301 vs 302) | ✅ [Link](./06-url-shortener.md) |
 | **Rate Limiter** | Token Bucket, Leaky Bucket, Sliding Window, Redis (Lua scripts), Distributed Counters | ✅ [Link](./07-rate-limiter.md) |
-| **Unique ID Generator** | Snowflake ID,UUID, Database Tickets, Clock Synchronization (NTP) | 🔲 |
-| **Web Crawler** | BFS, Politeness, DNS Resolution, Checkpointing, Bloom Filters (Dedup) | 🔲 |
-| **Notification System** | Fan-out, Message Queues (Kafka/RabbitMQ), Push vs Pull, Retry Mechanisms | 🔲 |
+| **Unique ID Generator** | Snowflake ID,UUID, Database Tickets, Clock Synchronization (NTP) | ✅ [Link](./08-unique-id-generator.md) |
+| **Web Crawler** | BFS, Politeness, DNS Resolution, Checkpointing, Bloom Filters (Dedup) | ✅ [Link](./09-web-crawler.md) |
+| **Notification System** | Fan-out, Message Queues (Kafka/RabbitMQ), Push vs Pull, Retry Mechanisms | ✅ [Link](./10-notification-system.md) |
 
 ---
 

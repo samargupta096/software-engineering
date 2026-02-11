@@ -72,6 +72,42 @@
     3.  Server **rewinds** world state to $T - 100ms$.
     4.  Checks if hit was valid *at that moment*.
 
+### Prediction & Reconciliation Timeline
+
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant S as Server
+
+    Note over C: T=0: Player presses "Move Right"
+    C->>C: Predict: X=0 → X=5 (instant)
+    C->>S: Input: "Move Right" (T=0)
+    Note over C: T=50ms: Player sees X=5 ✅
+
+    Note over S: T=100ms: Receives input
+    S->>S: Simulate: X=0 → X=5 ✅
+    S-->>C: Confirm: X=5 (matches prediction)
+    Note over C: No correction needed ✅
+
+    Note over C,S: --- Mismatch Scenario ---
+    C->>C: Predict: X=5 → X=10
+    C->>S: Input: "Move Right" (T=100ms)
+    S->>S: Simulate: X=5 → X=7 (hit wall!)
+    S-->>C: Correct: X=7 ⚠️
+    C->>C: Snap to X=7, re-simulate pending inputs
+```
+
+### Sync Model Comparison
+
+| Aspect | Lockstep | State Sync |
+|--------|----------|------------|
+| **Games** | RTS (Age of Empires) | FPS/MOBA (CS:GO, Dota) |
+| **Sends** | Commands only | Full world state |
+| **Bandwidth** | Very Low | High |
+| **Latency** | Fastest player = slowest | Independent per player |
+| **Cheating** | Replay validation | Server authority |
+| **Desync** | Fatal (game breaks) | Self-correcting |
+
 ---
 
 ## 🏛️ High-Level Architecture

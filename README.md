@@ -17,7 +17,7 @@
 <th>3. Core Components</th>
 </tr>
 <tr>
-<td valign="top"><div align="center"><img src="./assets/animations/computer-science-fundamentals.gif" width="200" alt="CS"></div><br><b>Master the core pillars:</b><br><ul><li>💻 <a href="./cs-fundamentals/operating-system-guide.md">Operating Systems</a></li><li>🌐 <a href="./cs-fundamentals/networking-fundamentals.md">Networking</a></li><li>🗄️ <a href="./cs-fundamentals/dbms/00-roadmap.md">DBMS Masterclass</a> ⭐</li></ul></td>
+<td valign="top"><div align="center"><img src="./assets/animations/computer-science-fundamentals.gif" width="200" alt="CS"></div><br><b>Master the core pillars:</b><br><ul><li>💻 <a href="./cs-fundamentals/operating-system-guide.md">Operating Systems</a></li><li>🌐 <a href="./cs-fundamentals/networking-fundamentals.md">Networking</a></li><li>🗄️ <a href="./cs-fundamentals/dbms/00-roadmap.md">DBMS Masterclass</a> ⭐</li><li>🛠️ <a href="./cs-fundamentals/compiler-design.md">Compiler Design</a> 🆕</li></ul></td>
 <td valign="top"><div align="center"><img src="./assets/animations/system-design-fundamentals.gif" width="200" alt="SysDesign"></div><br><b>Build your foundation:</b><br><ul><li>📐 <a href="./fundamentals/01-system-design-basics.md">Basics</a></li><li>⚖️ <a href="./fundamentals/02-cap-theorem.md">CAP Theorem</a></li><li>🚀 <a href="./fundamentals/03-scalability-patterns.md">Scalability</a></li><li>🗄️ <a href="./fundamentals/03b-dbms-fundamentals.md">DBMS Fundamentals</a> ⭐</li><li>📊 <a href="./fundamentals/03c-database-modeling.md">Database Modeling</a> ⭐</li><li>🔗 <a href="./fundamentals/03d-spring-jpa-hibernate.md">JPA & Hibernate</a></li><li>📝 <a href="./fundamentals/03e-sql-interview-queries.md">SQL Interview Queries</a></li><li>🏛️ <a href="./fundamentals/09-clean-hexagonal-architecture.md">Clean & Hexagonal Architecture</a> ⭐🆕</li></ul></td>
 <td valign="top"><div align="center"><img src="./assets/animations/core-components.gif" width="200" alt="Components"></div><br><b>Essential building blocks:</b><br><ul><li>🏗️ <a href="./components/overview.md">Components Overview</a> ⭐</li><li>🔍 <a href="./components/search/README.md">Elasticsearch Suite</a> ⭐🆕<br>&nbsp;&nbsp;└ <a href="./components/search/elasticsearch-deep-dive.md">Hub</a> | <a href="./components/search/elasticsearch-research.md">Research</a> | <a href="./components/search/elasticsearch-internals-architecture.md">Internals</a></li><li>📨 <a href="./components/messaging/README.md">Kafka Suite</a> ⭐🆕<br>&nbsp;&nbsp;└ <a href="./components/messaging/kafka-deep-dive.md">Hub</a> | <a href="./components/messaging/kafka-fundamentals.md">Fundamentals</a> | <a href="./components/messaging/kafka-internals-architecture.md">Internals</a></li><li>🐘 <a href="./fundamentals/04-postgresql-guide.md">PostgreSQL</a></li><li>🐬 <a href="./fundamentals/05-mysql-indexing-sharding-partitioning.md">MySQL</a></li><li>🍃 <a href="./fundamentals/06-mongodb-deep-dive.md">MongoDB</a></li><li>⚡ <a href="./fundamentals/06b-dynamodb-deep-dive.md">DynamoDB</a></li><li>� <a href="./fundamentals/07-oracle-deep-dive.md">Oracle</a></li><li>📡 <a href="./fundamentals/08-event-driven-architecture.md">Event-Driven Architecture</a></li></ul></td>
 </tr>
@@ -106,7 +106,7 @@
 
 | Step | Topic | Focus |
 | :---: | :--- | :--- |
-| 0️⃣ | [**CS Fundamentals**](./cs-fundamentals/) | OS, Networking, DBMS |
+| 0️⃣ | [**CS Fundamentals**](./cs-fundamentals/) | OS, Networking, DBMS, Compiler Design |
 | 1️⃣ | [**System Design Basics**](./fundamentals/01-system-design-basics.md) | Core concepts, CAP, Scalability |
 | 2️⃣ | [**Core Components**](./components/overview.md) | Load balancers, Caching, Queues |
 | 3️⃣ | [**Cloud & AWS**](./aws/aws-services-guide.md) | S3, Lambda, ECS, VPC |
@@ -176,6 +176,7 @@ Learn from how big companies architect their systems:
 ### 📚 CS Fundamentals
 - 💻 [Operating System Guide](./cs-fundamentals/operating-system-guide.md)
 - 🌐 [Networking Fundamentals](./cs-fundamentals/networking-fundamentals.md)
+- 🛠️ [Compiler Design](./cs-fundamentals/compiler-design.md) 🆕
 - **🗄️ DBMS Masterclass**
     - 🗺️ [00 Roadmap](./cs-fundamentals/dbms/00-roadmap.md)
     - 🏛️ [01 Architecture](./cs-fundamentals/dbms/01-architecture.md)

@@ -79,6 +79,28 @@ We need **Transformation**.
 ### Verdict
 Use **OT** for centralized web apps (Google Docs). Use **CRDT** for decentralized/local-first apps (Figma, Notion).
 
+### OT Transformation — Step by Step
+
+```mermaid
+sequenceDiagram
+    participant A as User A
+    participant S as Server
+    participant B as User B
+
+    Note over A,B: Document: "CAT" (v0)
+    A->>S: Insert "H" at index 1 (v0)
+    B->>S: Insert "R" at index 3 (v0)
+    Note over S: Receives A first: "CAT" → "CHAT" (v1)
+    S->>S: Transform B's op against A's op
+    Note over S: B intended index 3 on "CAT"
+    Note over S: A inserted before index 3 → shift +1
+    Note over S: B's op becomes: Insert "R" at index 4
+    S->>S: Apply transformed B: "CHAT" → "CHART" (v2)
+    S-->>A: Send B's transformed op
+    S-->>B: Send A's op + acknowledgment
+    Note over A,B: Both converge: "CHART" ✅
+```
+
 ---
 
 ## 🏛️ High-Level Architecture

@@ -53,6 +53,52 @@ We need $O(1)$ add, $O(1)$ cancel, $O(1)$ execute.
 *   **Order Lookup**: `HashMap<OrderID, Order>`.
     *   To execute cancellations efficiently in $O(1)$.
 
+### Order Book Visual
+
+```mermaid
+flowchart LR
+    subgraph "📕 Asks (Sell) — Sorted Low→High"
+        A1["$151.00 × 200 shares"]
+        A2["$151.50 × 500 shares"]
+        A3["$152.00 × 100 shares"]
+    end
+
+    subgraph "📗 Bids (Buy) — Sorted High→Low"
+        B1["$150.50 × 300 shares"]
+        B2["$150.00 × 150 shares"]
+        B3["$149.50 × 400 shares"]
+    end
+
+    Spread["Spread: $0.50"]
+    B1 -.-> Spread
+    Spread -.-> A1
+```
+
+> **Match happens** when a new Buy order price ≥ lowest Ask, or new Sell price ≤ highest Bid.
+
+### Order Matching Sequence
+
+```mermaid
+sequenceDiagram
+    participant T as Trader
+    participant GW as FIX Gateway
+    participant SEQ as Sequencer
+    participant ME as Matching Engine
+    participant MD as Market Data Feed
+
+    T->>GW: BUY 100 AAPL @ Market
+    GW->>GW: Validate format + auth
+    GW->>SEQ: Assign Sequence #1042
+    SEQ->>ME: Process Order #1042
+    ME->>ME: Check Ask side of book
+    Note over ME: Best Ask: $151.00 × 200
+    ME->>ME: Fill 100 shares @ $151.00
+    ME->>ME: Update book: Ask $151 → 100 remaining
+    ME-->>T: Execution Report: Filled 100 @ $151
+    ME->>MD: Trade: AAPL $151.00 × 100
+    MD->>MD: Multicast to all subscribers
+```
+
 ---
 
 ## ⚡ Concurrency: Why Locks are Bad

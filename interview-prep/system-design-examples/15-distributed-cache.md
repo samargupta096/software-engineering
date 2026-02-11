@@ -56,6 +56,35 @@
 *   **Pros**: Maximum write speed.
 *   **Cons**: **Data Loss risk** if cache crashes before sync.
 
+### Strategy Comparison Flowchart
+
+```mermaid
+flowchart LR
+    subgraph "Cache-Aside (Lazy)"
+        R1[Read Request] --> C1{Cache Hit?}
+        C1 -->|Yes| Return1[Return Data]
+        C1 -->|No| DB1[(Read DB)]
+        DB1 --> Fill1[Fill Cache]
+        Fill1 --> Return1
+        W1[Write Request] --> WDB1[(Write DB)]
+        WDB1 --> Del1[Delete Cache Key]
+    end
+
+    subgraph "Write-Through"
+        R2[Read Request] --> C2{Cache Hit?}
+        C2 -->|Yes| Return2[Return Data]
+        C2 -->|No| DB2[(Read DB)]
+        W2[Write Request] --> WC2[Write Cache]
+        WC2 --> WDB2[(Sync Write DB)]
+    end
+
+    subgraph "Write-Back"
+        W3[Write Request] --> WC3[Write Cache Only]
+        WC3 --> ACK3[Return ACK]
+        WC3 -.->|Async batch| WDB3[(Write DB)]
+    end
+```
+
 ---
 
 ## 🗑️ Eviction Policies
@@ -108,6 +137,26 @@ flowchart TB
 ### 3. Cache Penetration 🕳️
 *   **Problem**: Malicious user requests non-existent keys (`id=-1`). Hits execution of DB query every time.
 *   **Fix**: **Bloom Filter**. Check if key *might* exist before ensuring DB call. Or cache `key: null`.
+
+### The Three Demons — Visual Summary
+
+```mermaid
+flowchart TD
+    subgraph "❄️ Avalanche"
+        A1["1000 keys expire<br/>at same time"] --> A2["DB overwhelmed"]
+        A2 --> A3["Fix: Jitter TTL<br/>60s + rand(0-10s)"]
+    end
+
+    subgraph "🔥 Breakdown"
+        B1["1 hot key expires"] --> B2["1000 threads<br/>hit DB"]
+        B2 --> B3["Fix: Mutex Lock<br/>1 thread rebuilds"]
+    end
+
+    subgraph "🕳️ Penetration"
+        C1["Non-existent key<br/>requested"] --> C2["Every request<br/>hits DB"]
+        C2 --> C3["Fix: Bloom Filter<br/>or cache null"]
+    end
+```
 
 ---
 

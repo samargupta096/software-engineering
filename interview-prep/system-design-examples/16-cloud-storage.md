@@ -85,6 +85,29 @@ If you edit 1 byte in a 1GB file:
 *   Only **one** 4MB chunk changes hash.
 *   Client uploads only that 1 new chunk.
 
+### Chunking & Delta Sync — Visual
+
+```mermaid
+flowchart LR
+    subgraph "Original File (v1)"
+        A1["Chunk A<br/>hash: abc1"]
+        B1["Chunk B<br/>hash: def2"]
+        C1["Chunk C<br/>hash: ghi3"]
+        D1["Chunk D<br/>hash: jkl4"]
+    end
+
+    subgraph "Edited File (v2)"
+        A2["Chunk A<br/>hash: abc1 ✅"]
+        B2["Chunk B<br/>hash: xyz9 🔄"]
+        C2["Chunk C<br/>hash: ghi3 ✅"]
+        D2["Chunk D<br/>hash: jkl4 ✅"]
+    end
+
+    B2 -->|"Only this chunk<br/>uploaded"| S3[(S3)]
+```
+
+> Only 1 of 4 chunks changed → upload 4MB instead of 1GB 🚀
+
 ---
 
 ## 💾 Metadata Database
@@ -110,21 +133,29 @@ We need to store the directory tree.
 
 **Scenario**: User A adds `foo.txt`. User B needs to see it.
 
-1.  **User A Client**:
-    *   Detects change (File Watcher).
-    *   Chunks file. Checks dedup. Uploads new chunks to S3.
-    *   Calls Metadata Service: "Create `foo.txt`, parent=root, chunks=[hash1]".
-2.  **Metadata Service**:
-    *   Updates MySQL.
-    *   Sends event to Notification Service ("Change in Root Folder").
-3.  **Notification Service**:
-    *   Finds all active clients watching User A's root.
-    *   Sends "Sync Trigger".
-4.  **User B Client**:
-    *   Receives trigger.
-    *   Calls Metadata Service: "What changed?"
-    *   Downloads only new chunks from S3.
-    *   Reconstructs file locally.
+```mermaid
+sequenceDiagram
+    participant A as User A Client
+    participant Meta as Metadata Service
+    participant S3 as S3 Storage
+    participant Notify as Notification Service
+    participant B as User B Client
+
+    A->>A: File Watcher detects change
+    A->>A: Chunk file + compute hashes
+    A->>Meta: "Do you have hash abc1?"
+    Meta-->>A: "Yes" (dedup - skip upload)
+    A->>S3: Upload only NEW chunks
+    A->>Meta: Create foo.txt, chunks=[abc1, xyz9]
+    Meta->>Meta: Update MySQL (ACID)
+    Meta->>Notify: "Change in root folder"
+    Notify->>B: "Sync Trigger" (WebSocket)
+    B->>Meta: "What changed since v5?"
+    Meta-->>B: "New file: foo.txt, chunks=[abc1, xyz9]"
+    B->>B: Check local cache for abc1 ✅
+    B->>S3: Download only xyz9
+    B->>B: Reconstruct file locally
+```
 
 ---
 
