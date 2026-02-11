@@ -1,4 +1,4 @@
-[🏠 Home](../../README.md) | [🗄️ DBMS Roadmap](./00-roadmap.md) | [⬅️ NoSQL Types](./17-nosql-types.md) | [➡️ HLD Basics](../../fundamentals/01-system-design-basics.md)
+[🏠 Home](../../README.md) | [🗄️ DBMS Roadmap](./00-roadmap.md) | [⬅️ NoSQL Types](./17-nosql-types.md) | [➡️ Database Deep Dive](./20-database-deep-dive.md)
 
 # ⚖️ CAP Theorem & PACELC
 

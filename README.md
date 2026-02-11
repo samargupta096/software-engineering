@@ -196,6 +196,7 @@ Learn from how big companies architect their systems:
     - 👯 [16 Replication](./cs-fundamentals/dbms/16-replication.md)
     - 🚫 [17 NoSQL Types](./cs-fundamentals/dbms/17-nosql-types.md)
     - ⚖️ [18 CAP Theorem](./cs-fundamentals/dbms/18-cap-theorem.md)
+    - 🗃️ [20 Database Deep Dive](./cs-fundamentals/dbms/20-database-deep-dive.md) ⭐🆕
 
 ### 🧱 Architecture Fundamentals
 - 📐 [01 System Design Basics](./fundamentals/01-system-design-basics.md)
