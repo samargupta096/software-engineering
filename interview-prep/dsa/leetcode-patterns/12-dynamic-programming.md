@@ -139,6 +139,53 @@ BOTTOM-UP (Tabulation):
 
 ---
 
+## 📊 DP Approach — Visual Comparison
+
+```mermaid
+graph TD
+    subgraph TopDown["🔽 Top-Down (Memoization)"]
+        direction TB
+        T5["fib(5)"] --> T4["fib(4)"]
+        T5 --> T3a["fib(3) ← cached!"]
+        T4 --> T3["fib(3)"]
+        T4 --> T2a["fib(2) ← cached!"]
+        T3 --> T2["fib(2)"]
+        T3 --> T1["fib(1) = 1"]
+        T2 --> T1a["fib(1) = 1"]
+        T2 --> T0["fib(0) = 0"]
+    end
+
+    subgraph BottomUp["🔼 Bottom-Up (Tabulation)"]
+        direction LR
+        B0["dp[0]=0"] --> B1["dp[1]=1"] --> B2["dp[2]=1"] --> B3["dp[3]=2"] --> B4["dp[4]=3"] --> B5["dp[5]=5"]
+    end
+
+    style T5 fill:#ef4444,color:#fff
+    style T3a fill:#22c55e,color:#fff
+    style T2a fill:#22c55e,color:#fff
+    style B5 fill:#3b82f6,color:#fff
+```
+
+### 🧭 DP Pattern Selector
+
+```mermaid
+flowchart TD
+    A["DP Problem?"] --> B{"What type?"}
+    B -- "Linear sequence" --> C["📊 1D DP\n(Fibonacci, House Robber)"]
+    B -- "Two sequences" --> D["📋 2D DP\n(LCS, Edit Distance)"]
+    B -- "Grid traversal" --> E["🗺️ Grid DP\n(Unique Paths, Min Path)"]
+    B -- "Target sum/amount" --> F["🎒 Knapsack DP\n(Coin Change, Subset Sum)"]
+    B -- "Subsequence length" --> G["📏 LIS Pattern\n(nested loop comparison)"]
+
+    style C fill:#3b82f6,color:#fff
+    style D fill:#8b5cf6,color:#fff
+    style E fill:#22c55e,color:#fff
+    style F fill:#f59e0b,color:#000
+    style G fill:#ef4444,color:#fff
+```
+
+---
+
 ## 🔧 Top-Down vs Bottom-Up
 
 ### Problem: Fibonacci (n=5)

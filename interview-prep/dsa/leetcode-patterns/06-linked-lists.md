@@ -112,6 +112,51 @@ Fast moves 2x speed:
 
 ---
 
+## 📊 Linked List — Visual Architecture
+
+```mermaid
+graph LR
+    subgraph SinglyLinked["Singly Linked List"]
+        direction LR
+        N1["1 | •→"] --> N2["2 | •→"] --> N3["3 | •→"] --> N4["4 | •→"] --> NULL1["null"]
+    end
+
+    subgraph DoublyLinked["Doubly Linked List"]
+        direction LR
+        D1["←• | 1 | •→"] <--> D2["←• | 2 | •→"] <--> D3["←• | 3 | •→"]
+    end
+
+    style N1 fill:#3b82f6,color:#fff
+    style N2 fill:#3b82f6,color:#fff
+    style N3 fill:#3b82f6,color:#fff
+    style N4 fill:#3b82f6,color:#fff
+    style D1 fill:#8b5cf6,color:#fff
+    style D2 fill:#8b5cf6,color:#fff
+    style D3 fill:#8b5cf6,color:#fff
+```
+
+### 🧭 Linked List Problem Decision Tree
+
+```mermaid
+flowchart TD
+    A["Linked List Problem"] --> B{"What's the goal?"}
+    B -- "Find middle / detect cycle" --> C["🏃 Fast & Slow Pointers"]
+    B -- "Reverse all/part" --> D["🔄 Prev-Curr-Next\nIn-Place Reversal"]
+    B -- "Find Kth from end" --> E["📏 Two Pointers\nwith K gap"]
+    B -- "Merge lists" --> F["🔗 Dummy Node +\nTwo-Pointer Merge"]
+    B -- "Modify head" --> G["🎭 Dummy Node\n(avoid edge cases)"]
+    B -- "Add numbers / carry" --> H["➕ Digit-by-digit\nwith carry"]
+
+    style C fill:#22c55e,color:#fff
+    style D fill:#3b82f6,color:#fff
+    style E fill:#8b5cf6,color:#fff
+    style F fill:#f59e0b,color:#000
+    style G fill:#ef4444,color:#fff
+    style H fill:#06b6d4,color:#fff
+```
+
+---
+
 ## 🔧 Core Techniques
 
 ### 1. Fast & Slow Pointers (Floyd's Algorithm)

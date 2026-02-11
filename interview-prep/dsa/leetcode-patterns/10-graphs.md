@@ -146,6 +146,56 @@ If we can't process all nodes → CYCLE exists
 
 ---
 
+## 📊 Graph Representations — Visual
+
+```mermaid
+graph LR
+    subgraph AdjList["Adjacency List"]
+        direction TB
+        AL0["0 → [1, 2]"]
+        AL1["1 → [0, 3]"]
+        AL2["2 → [0, 3]"]
+        AL3["3 → [1, 2]"]
+    end
+
+    subgraph Visual["Graph View"]
+        V0((0)) --- V1((1))
+        V0 --- V2((2))
+        V1 --- V3((3))
+        V2 --- V3
+    end
+
+    style V0 fill:#3b82f6,color:#fff
+    style V1 fill:#22c55e,color:#fff
+    style V2 fill:#f59e0b,color:#000
+    style V3 fill:#ef4444,color:#fff
+```
+
+### 🧭 Graph Algorithm Selector
+
+```mermaid
+flowchart TD
+    A["Graph Problem"] --> B{"What's the goal?"}
+    B -- "Shortest path (unweighted)" --> C["🌊 BFS\n(level-by-level)"]
+    B -- "Shortest path (weighted)" --> D["⚖️ Dijkstra\n(priority queue)"]
+    B -- "Explore all paths" --> E["🔍 DFS\n(recursion/stack)"]
+    B -- "Detect cycle" --> F{"Directed?"}
+    F -- "Yes" --> G["🔄 DFS with 3 colors\n(white/gray/black)"]
+    F -- "No" --> H["🤝 Union-Find\nor DFS"]
+    B -- "Ordering with dependencies" --> I["📋 Topological Sort\n(Kahns BFS)"]
+    B -- "Connected components" --> J["🏝️ BFS/DFS or\nUnion-Find"]
+
+    style C fill:#3b82f6,color:#fff
+    style D fill:#8b5cf6,color:#fff
+    style E fill:#22c55e,color:#fff
+    style G fill:#ef4444,color:#fff
+    style H fill:#f59e0b,color:#000
+    style I fill:#06b6d4,color:#fff
+    style J fill:#ec4899,color:#fff
+```
+
+---
+
 ## 🔧 Core Traversals
 
 ### 1. BFS (Shortest Path)

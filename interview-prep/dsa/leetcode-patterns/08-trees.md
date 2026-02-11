@@ -120,6 +120,50 @@ The queue ensures FIFO order = level-by-level!
 
 ---
 
+## 📊 Binary Tree — Structure & Traversal
+
+```mermaid
+graph TD
+    subgraph BinaryTree["Binary Tree Structure"]
+        R["1 (Root)"] --> L["2 (Left)"]
+        R --> RR["3 (Right)"]
+        L --> LL["4"]
+        L --> LR["5"]
+        RR --> RRL["6"]
+        RR --> RRR["7"]
+    end
+
+    style R fill:#ef4444,color:#fff
+    style L fill:#3b82f6,color:#fff
+    style RR fill:#3b82f6,color:#fff
+    style LL fill:#22c55e,color:#fff
+    style LR fill:#22c55e,color:#fff
+    style RRL fill:#22c55e,color:#fff
+    style RRR fill:#22c55e,color:#fff
+```
+
+> **Traversal orders**: Preorder `[1,2,4,5,3,6,7]` • Inorder `[4,2,5,1,6,3,7]` • Postorder `[4,5,2,6,7,3,1]`
+
+### 🧭 Tree Problem Decision Flowchart
+
+```mermaid
+flowchart TD
+    A["Tree Problem"] --> B{"What info do you need?"}
+    B -- "Level/depth info" --> C["🏗️ BFS\n(Queue, level-by-level)"]
+    B -- "Path from root to leaf" --> D["🔍 DFS Pre-order\n(pass info down)"]
+    B -- "Aggregate subtree result" --> E["📊 DFS Post-order\n(combine children up)"]
+    B -- "Sorted order in BST" --> F["📋 In-order DFS\n(left → root → right)"]
+    B -- "Compare two trees" --> G["🔀 Parallel DFS\n(recurse both simultaneously)"]
+
+    style C fill:#f59e0b,color:#000
+    style D fill:#3b82f6,color:#fff
+    style E fill:#22c55e,color:#fff
+    style F fill:#8b5cf6,color:#fff
+    style G fill:#ef4444,color:#fff
+```
+
+---
+
 ## 🔧 Core Traversals
 
 ### 1. DFS Traversals

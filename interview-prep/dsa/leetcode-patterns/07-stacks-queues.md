@@ -136,6 +136,56 @@ Perfect for: Sliding Window Maximum
 
 ---
 
+## 📊 Stack vs Queue — Visual Comparison
+
+```mermaid
+graph TB
+    subgraph Stack["📚 Stack (LIFO)"]
+        direction TB
+        ST["Top → "] --> S3["3 ← push/pop"]
+        S3 --> S2["2"]
+        S2 --> S1["1"]
+    end
+
+    subgraph Queue["🚶 Queue (FIFO)"]
+        direction LR
+        QIN["Enqueue →"] --> Q1["1"] --> Q2["2"] --> Q3["3"] --> QOUT["→ Dequeue"]
+    end
+
+    subgraph Deque["🔄 Deque (Both ends)"]
+        direction LR
+        DIN["←→"] --> DA["A"] --> DB["B"] --> DC["C"] --> DOUT["←→"]
+    end
+
+    style Stack fill:#3b82f6,color:#fff
+    style Queue fill:#22c55e,color:#fff
+    style Deque fill:#f59e0b,color:#000
+```
+
+### 🧭 Stack / Queue Problem Selector
+
+```mermaid
+flowchart TD
+    A["Stack or Queue?"] --> B{"Processing order?"}
+    B -- "Most recent first" --> C{"What kind?"}
+    C -- "Matching pairs" --> D["📚 Classic Stack\n(parentheses, tags)"]
+    C -- "Next greater/smaller" --> E["📊 Monotonic Stack\n(decreasing/increasing)"]
+    C -- "Evaluate expression" --> F["🔢 Operator Stack\n(RPN, calculator)"]
+    C -- "Track min/max" --> G["📋 Auxiliary Stack\n(MinStack pattern)"]
+    B -- "In order / level-by-level" --> H{"Constraint?"}
+    H -- "Level order tree" --> I["🌳 BFS Queue"]
+    H -- "Sliding window max/min" --> J["🔄 Monotonic Deque"]
+
+    style D fill:#3b82f6,color:#fff
+    style E fill:#8b5cf6,color:#fff
+    style F fill:#06b6d4,color:#fff
+    style G fill:#ef4444,color:#fff
+    style I fill:#22c55e,color:#fff
+    style J fill:#f59e0b,color:#000
+```
+
+---
+
 ## 🔧 Core Techniques
 
 ### 1. Monotonic Stack

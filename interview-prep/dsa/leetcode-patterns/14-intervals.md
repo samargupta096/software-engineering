@@ -133,6 +133,29 @@ Instead of simulation, use EVENT points:
 
 ---
 
+### 🧭 Interval Problem Selector
+
+```mermaid
+flowchart TD
+    A["Interval Problem"] --> B{"What's the goal?"}
+    B -- "Merge overlapping" --> C["🔗 Sort by START\n(extend current end)"]
+    B -- "Max non-overlapping" --> D["✂️ Sort by END\n(greedy: earliest finish)"]
+    B -- "Count simultaneous" --> E["📊 Sweep Line\n(event points ±1)"]
+    B -- "Insert new interval" --> F["📥 Linear Scan\n(before/overlap/after)"]
+    B -- "Min rooms needed" --> G["🏢 Two Pointers\n(sort starts + ends)"]
+
+    C --> H["Overlap: next.start ≤ curr.end\n→ Merge: extend end"]
+    D --> I["Pick if start ≥ prev end\n→ Count: increment"]
+
+    style C fill:#3b82f6,color:#fff
+    style D fill:#22c55e,color:#fff
+    style E fill:#8b5cf6,color:#fff
+    style F fill:#f59e0b,color:#000
+    style G fill:#ef4444,color:#fff
+```
+
+---
+
 ## 💻 Core Problems
 
 ### Problem 1: Merge Intervals

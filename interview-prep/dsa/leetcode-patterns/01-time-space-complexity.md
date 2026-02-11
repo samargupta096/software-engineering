@@ -43,6 +43,53 @@ O(n log n) : *********************************
 O(n²)      : ****************************************************************************************************
 ```
 
+### 📈 Growth Rate Comparison
+
+```mermaid
+xychart-beta
+    title "Operations vs Input Size"
+    x-axis "Input Size (n)" [10, 20, 50, 100, 200, 500]
+    y-axis "Operations" 0 --> 250000
+    line "O(n)" [10, 20, 50, 100, 200, 500]
+    line "O(n log n)" [33, 86, 282, 664, 1529, 4482]
+    line "O(n²)" [100, 400, 2500, 10000, 40000, 250000]
+```
+
+> **Key Takeaway**: O(n²) explodes at scale — at n=500, it's **500×** slower than O(n)!
+
+---
+
+## 🧭 How to Determine Complexity — Flowchart
+
+```mermaid
+flowchart TD
+    A["Analyze the code"] --> B{"Any loops?"}
+    B -- No --> C["O(1) — Constant"]
+    B -- Yes --> D{"Nested loops?"}
+    D -- No --> E{"Does loop halve input?"}
+    E -- Yes --> F["O(log n) — Logarithmic"]
+    E -- No --> G["O(n) — Linear"]
+    D -- Yes --> H{"Inner loop depends on outer?"}
+    H -- No --> I["O(n × m) — consider inputs"]
+    H -- Yes --> J{"Inner halves each time?"}
+    J -- Yes --> K["O(n log n) — Linearithmic"]
+    J -- No --> L["O(n²) — Quadratic"]
+    
+    A --> M{"Recursion?"}
+    M -- Yes --> N{"Branches per call?"}
+    N -- "1 branch" --> O["O(n) or O(log n)"]
+    N -- "2 branches" --> P["O(2ⁿ) — without memo\nO(n) — with memo"]
+    N -- "n branches" --> Q["O(n!) — Factorial"]
+
+    style C fill:#22c55e,color:#fff
+    style F fill:#3b82f6,color:#fff
+    style G fill:#3b82f6,color:#fff
+    style K fill:#f59e0b,color:#fff
+    style L fill:#ef4444,color:#fff
+    style P fill:#ef4444,color:#fff
+    style Q fill:#dc2626,color:#fff
+```
+
 ---
 
 ## 🧮 How to Calculate

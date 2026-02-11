@@ -131,6 +131,28 @@ Clear lowest set bit   |  n & (n-1)       |  5 & 4 = 4
 
 ---
 
+### 🧭 Bit Operation Selector
+
+```mermaid
+flowchart TD
+    A["Bit Manipulation Problem"] --> B{"What's the goal?"}
+    B -- "Find unique element" --> C["⊕ XOR all elements\n(pairs cancel out)"]
+    B -- "Count set bits" --> D["🔢 n & n-1 loop\n(removes rightmost 1)"]
+    B -- "Check power of 2" --> E["✅ n & n-1 == 0\n(exactly one set bit)"]
+    B -- "Get/Set/Clear bit i" --> F["🎯 Bitmask operations\n(shift + AND/OR)"]
+    B -- "Generate all subsets" --> G["🔄 Bitmask enumeration\n(0 to 2^n - 1)"]
+    B -- "Swap without temp" --> H["↔️ XOR swap\n(a^=b, b^=a, a^=b)"]
+
+    style C fill:#3b82f6,color:#fff
+    style D fill:#22c55e,color:#fff
+    style E fill:#8b5cf6,color:#fff
+    style F fill:#f59e0b,color:#000
+    style G fill:#ef4444,color:#fff
+    style H fill:#06b6d4,color:#fff
+```
+
+---
+
 ## 🔧 Core Operations
 
 ```java

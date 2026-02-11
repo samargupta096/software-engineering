@@ -125,6 +125,56 @@ Template:
 
 ---
 
+## 📊 Backtracking — Decision Tree Visual
+
+```mermaid
+graph TD
+    ROOT["Start: []"] --> A["Include 1?"]
+    A -- Yes --> B["[1]"]
+    A -- No --> C["[]"]
+    B --> D["Include 2?"]
+    D -- Yes --> E["[1,2] ✅"]
+    D -- No --> F["[1] ✅"]
+    C --> G["Include 2?"]
+    G -- Yes --> H["[2] ✅"]
+    G -- No --> I["[] ✅"]
+
+    style ROOT fill:#6366f1,color:#fff
+    style E fill:#22c55e,color:#fff
+    style F fill:#22c55e,color:#fff
+    style H fill:#22c55e,color:#fff
+    style I fill:#22c55e,color:#fff
+    style A fill:#f59e0b,color:#000
+    style D fill:#f59e0b,color:#000
+    style G fill:#f59e0b,color:#000
+```
+
+> Every leaf is a valid subset. The tree explores all 2ⁿ possibilities.
+
+### 🧭 Backtracking Type Selector
+
+```mermaid
+flowchart TD
+    A["Backtracking Problem"] --> B{"What are you finding?"}
+    B -- "All subsets" --> C["📦 Subsets\n(every state is valid)"]
+    B -- "Select k elements" --> D["🎯 Combinations\n(add at length k)"]
+    B -- "All orderings" --> E["🔀 Permutations\n(use each once)"]
+    B -- "Valid configuration" --> F["🧩 Constraint Satisfaction\n(Sudoku, N-Queens)"]
+    B -- "Path in grid/string" --> G["🗺️ Grid/String DFS\n(mark visited, backtrack)"]
+
+    C --> H["Use start index\nNo duplicates"]
+    D --> H
+    E --> I["Use visited array\nCheck all elements"]
+
+    style C fill:#3b82f6,color:#fff
+    style D fill:#22c55e,color:#fff
+    style E fill:#8b5cf6,color:#fff
+    style F fill:#ef4444,color:#fff
+    style G fill:#f59e0b,color:#000
+```
+
+---
+
 ## 🔧 Core Template
 
 ```java

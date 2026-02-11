@@ -121,6 +121,57 @@ Height = log(n), so insert/remove = O(log n)
 
 ---
 
+## 📊 Heap Structure — Visual
+
+```mermaid
+graph TD
+    subgraph MinHeap["Min-Heap (PriorityQueue default)"]
+        H1["1"] --> H3["3"]
+        H1 --> H2["2"]
+        H3 --> H5["5"]
+        H3 --> H4["4"]
+        H2 --> H7["7"]
+        H2 --> H6["6"]
+    end
+
+    subgraph Array["Array Representation"]
+        direction LR
+        A0["[0]=1"] --> A1["[1]=3"] --> A2["[2]=2"] --> A3["[3]=5"] --> A4["[4]=4"] --> A5["[5]=7"] --> A6["[6]=6"]
+    end
+
+    style H1 fill:#22c55e,color:#fff
+    style H3 fill:#3b82f6,color:#fff
+    style H2 fill:#3b82f6,color:#fff
+    style H5 fill:#6366f1,color:#fff
+    style H4 fill:#6366f1,color:#fff
+    style H7 fill:#6366f1,color:#fff
+    style H6 fill:#6366f1,color:#fff
+```
+
+> **Key**: Parent `i` → Left child `2i+1`, Right child `2i+2`. Height = O(log n).
+
+### 🧭 Heap Problem Selector
+
+```mermaid
+flowchart TD
+    A["Heap Problem?"] --> B{"What's needed?"}
+    B -- "K largest elements" --> C["Min-Heap size K\n(kicks out small values)"]
+    B -- "K smallest elements" --> D["Max-Heap size K\n(kicks out large values)"]
+    B -- "Running median" --> E["Two Heaps\nMaxHeap left + MinHeap right"]
+    B -- "Merge K sorted" --> F["Min-Heap\n(one element per list)"]
+    B -- "Top K frequent" --> G["HashMap + Min-Heap\n(or Bucket Sort)"]
+    B -- "Schedule tasks" --> H["Max-Heap\n(priority scheduling)"]
+
+    style C fill:#22c55e,color:#fff
+    style D fill:#3b82f6,color:#fff
+    style E fill:#8b5cf6,color:#fff
+    style F fill:#f59e0b,color:#000
+    style G fill:#06b6d4,color:#fff
+    style H fill:#ef4444,color:#fff
+```
+
+---
+
 ## 🔧 Java Heap Basics
 
 ```java

@@ -132,6 +132,33 @@ Example: Jump Game
 
 ---
 
+### 🧭 Greedy vs DP Decision Flowchart
+
+```mermaid
+flowchart TD
+    A["Optimization Problem"] --> B{"Does picking best now\never hurt later?"}
+    B -- "No, never" --> C["✅ Greedy Works!"]
+    B -- "Yes, sometimes" --> D["🔄 Use DP Instead"]
+    B -- "Not sure" --> E{"Can you prove\ngreedy choice property?"}
+    E -- "Yes" --> C
+    E -- "No" --> D
+
+    C --> F{"What type?"}
+    F -- "Interval scheduling" --> G["📅 Sort by end time"]
+    F -- "Max subarray" --> H["📈 Kadanes Algorithm"]
+    F -- "Reachability" --> I["🏃 Track max reach"]
+    F -- "Partitioning" --> J["✂️ Track furthest extent"]
+
+    style C fill:#22c55e,color:#fff
+    style D fill:#3b82f6,color:#fff
+    style G fill:#f59e0b,color:#000
+    style H fill:#8b5cf6,color:#fff
+    style I fill:#ef4444,color:#fff
+    style J fill:#06b6d4,color:#fff
+```
+
+---
+
 ## 💻 Core Problems
 
 ### Problem 1: Maximum Subarray (Kadane's Algorithm)

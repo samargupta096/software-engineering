@@ -57,6 +57,43 @@ Like a library:
   Go directly to shelf #9 (O(1))
 ```
 
+### 🗺️ HashMap Internal Architecture
+
+```mermaid
+graph TD
+    subgraph HashMap["HashMap&lt;String, Integer&gt;"]
+        direction TB
+        KEY["key: 'John'"] --> HASH["hashCode() → 2847593"]
+        HASH --> MOD["2847593 % 16 = 9"]
+        MOD --> BUCKET["Bucket Array (size 16)"]
+    end
+
+    subgraph Buckets["Bucket Array"]
+        B0["[0] null"]
+        B1["[1] null"]
+        B2["[2] 'Alice'→5"]
+        B3["[3] null"]
+        B9["[9] 'John'→28 → 'Bob'→15"]
+        B15["[15] 'Eve'→42"]
+    end
+
+    BUCKET --> B9
+
+    subgraph Collision["Collision at Bucket 9"]
+        N1["Node: John=28"] --> N2["Node: Bob=15"] --> N3["null"]
+    end
+
+    B9 --> Collision
+
+    style KEY fill:#3b82f6,color:#fff
+    style HASH fill:#8b5cf6,color:#fff
+    style B9 fill:#f59e0b,color:#000
+    style N1 fill:#22c55e,color:#fff
+    style N2 fill:#22c55e,color:#fff
+```
+
+> **Load Factor**: When buckets > 75% full, HashMap **doubles** its size and rehashes everything. This keeps average chain length short → O(1) lookups.
+
 ### When HashMap FAILS (and what to use instead)
 
 | Problem | Why HashMap Fails | Alternative |

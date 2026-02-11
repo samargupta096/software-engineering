@@ -93,6 +93,54 @@ This GUARANTEES we never skip the answer!
 
 ---
 
+## 📊 Two Pointer Variations — Visual Overview
+
+```mermaid
+graph LR
+    subgraph Converging["🔄 Opposite Direction (Converging)"]
+        direction LR
+        CL["L →"] ~~~ CM["· · ·"] ~~~ CR["← R"]
+    end
+
+    subgraph Parallel["➡️ Same Direction (Fast-Slow)"]
+        direction LR
+        PS["S →"] ~~~ PF["F →→"]
+    end
+
+    subgraph Anchor["📌 Anchor + Expand"]
+        direction LR
+        AI["Fix i"] ~~~ AL["L →"] ~~~ AR["← R"]
+    end
+
+    style Converging fill:#3b82f6,color:#fff
+    style Parallel fill:#22c55e,color:#fff
+    style Anchor fill:#f59e0b,color:#000
+```
+
+### 🧭 Which Variation Should I Use?
+
+```mermaid
+flowchart TD
+    A["Two Pointer Problem?"] --> B{"Is array sorted?"}
+    B -- Yes --> C{"Looking for pair/triplet?"}
+    C -- Yes --> D["🔄 Converging Pointers\n(opposite ends)"]
+    C -- No --> E{"Merging two arrays?"}
+    E -- Yes --> F["➡️ Same Direction\n(parallel pointers)"]
+    B -- No --> G{"Remove duplicates\nor partition?"}
+    G -- Yes --> H["➡️ Read/Write Pointers\n(slow + fast)"]
+    G -- No --> I{"Linked list cycle?"}
+    I -- Yes --> J["➡️ Fast-Slow Pointers\n(Floyd's Algorithm)"]
+    I -- No --> K["Consider HashMap\ninstead"]
+
+    style D fill:#3b82f6,color:#fff
+    style F fill:#22c55e,color:#fff
+    style H fill:#22c55e,color:#fff
+    style J fill:#8b5cf6,color:#fff
+    style K fill:#ef4444,color:#fff
+```
+
+---
+
 ## 🔧 Pattern Variations
 
 ### 1. Opposite Direction (Converging)

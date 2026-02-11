@@ -93,6 +93,39 @@ VARIABLE Window (condition given):
 
 ---
 
+## 📊 Sliding Window — State Machine
+
+```mermaid
+stateDiagram-v2
+    [*] --> Expanding: Initialize left=0
+    Expanding --> Expanding: right++ (add element)
+    Expanding --> Valid: Condition met
+    Valid --> Shrinking: Record answer
+    Shrinking --> Shrinking: left++ (remove element)
+    Shrinking --> Expanding: Condition broken
+    Valid --> [*]: End of array
+```
+
+### 🧭 Fixed or Variable? Decision Flowchart
+
+```mermaid
+flowchart TD
+    A["Sliding Window Problem"] --> B{"Window size given?"}
+    B -- "Yes (size = K)" --> C["📏 Fixed Window"]
+    C --> C1["Template:\n• Build window of K\n• Slide: add right, remove left"]
+    B -- "No (condition given)" --> D{"Find shortest or longest?"}
+    D -- "Longest/Maximum" --> E["📐 Variable — Expand"]
+    E --> E1["Template:\n• Expand right always\n• Shrink left when INVALID"]
+    D -- "Shortest/Minimum" --> F["📐 Variable — Shrink"]
+    F --> F1["Template:\n• Expand right always\n• Shrink left while VALID"]
+
+    style C fill:#3b82f6,color:#fff
+    style E fill:#22c55e,color:#fff
+    style F fill:#f59e0b,color:#000
+```
+
+---
+
 ## 🔧 Pattern Variations
 
 ### 1. Fixed Size Window

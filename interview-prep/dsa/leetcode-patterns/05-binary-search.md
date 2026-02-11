@@ -105,6 +105,44 @@ Only 20 steps to search 1 MILLION items!
 
 ---
 
+## 📊 Search Space Elimination — Visual
+
+```mermaid
+graph TD
+    A["[1, 3, 5, 7, 9, 11, 13]\ntarget = 9"] --> B{"mid = 7\n7 < 9?"}
+    B -- "Yes → go RIGHT" --> C["[9, 11, 13]\nEliminated: 1,3,5,7"]
+    C --> D{"mid = 11\n11 > 9?"}
+    D -- "Yes → go LEFT" --> E["[9]\nEliminated: 11,13"]
+    E --> F{"mid = 9\n9 == 9? ✅"}
+
+    style A fill:#6366f1,color:#fff
+    style C fill:#3b82f6,color:#fff
+    style E fill:#22c55e,color:#fff
+    style F fill:#16a34a,color:#fff
+```
+
+> Each step eliminates **half** the remaining elements → O(log n)
+
+### 🧭 Which Binary Search Template?
+
+```mermaid
+flowchart TD
+    A["Binary Search Problem"] --> B{"What are you finding?"}
+    B -- "Exact value" --> C["Classic BS\nleft <= right\nreturn mid"]
+    B -- "First element ≥ target" --> D["Left Bound\nleft < right\nright = mid"]
+    B -- "Last element ≤ target" --> E["Right Bound\nleft < right\nleft = mid + 1"]
+    B -- "Min satisfying condition" --> F["Search on Answer\nleft < right\nright = mid"]
+    B -- "Max satisfying condition" --> G["Search on Answer\nleft < right\nleft = mid + 1"]
+
+    style C fill:#22c55e,color:#fff
+    style D fill:#3b82f6,color:#fff
+    style E fill:#8b5cf6,color:#fff
+    style F fill:#f59e0b,color:#000
+    style G fill:#ef4444,color:#fff
+```
+
+---
+
 ## 🔧 Templates
 
 ### 1. Classic Binary Search
