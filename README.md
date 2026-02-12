@@ -45,7 +45,7 @@ flowchart TD
 <th>6. Java Landscape</th>
 </tr>
 <tr>
-<td valign="top"><div align="center"><img src="./assets/animations/cloud-aws.gif" width="200" alt="Cloud"></div><br><b>Master cloud services:</b><br><ul><li>☁️ <a href="./aws/aws-services-guide.md">AWS Services</a> ⭐</li><li>🛠️ <a href="./aws/aws-cdk-guide.md">AWS CDK</a></li></ul></td>
+<td valign="top"><div align="center"><img src="./assets/animations/cloud-aws.gif" width="200" alt="Cloud"></div><br><b>Master cloud services:</b><br><ul><li>☁️ <a href="./aws/aws-services-guide.md">AWS Services</a> ⭐</li><li>📝 <a href="./aws/developer-associate-exam-guide.md">Dev Associate Exam</a> ⭐🆕</li><li>📅 <a href="./aws/aws-developer-study-plan.md">10-Day Study Plan</a> ⭐🆕</li><li>🛠️ <a href="./aws/aws-cdk-guide.md">AWS CDK</a></li></ul></td>
 <td valign="top"><div align="center"><img src="./assets/animations/infrastructure-devops.gif" width="200" alt="DevOps"></div><br><b>Container & Deployment:</b><br><ul><li>🐳 <a href="./devops/docker-guide.md">Docker</a> ⭐</li><li>☸️ <a href="./devops/kubernetes-guide.md">Kubernetes</a> ⭐</li><li>🌍 <a href="./devops/terraform/README.md">Terraform</a> ⭐</li><li>🏭 <a href="./devops/terraform/real-world-project.md">Prod Architecture</a></li></ul></td>
 <td valign="top"><div align="center"><img src="./assets/animations/java-landscape.gif" width="200" alt="Java"></div><br><b>Modern Java Dev:</b><br><ul><li>☕ <a href="./java/modern-features-guide.md">Java 8-21 Features</a></li><li>🍃 <a href="./java/spring/spring-boot-guide.md">Spring Boot</a> ⭐</li><li>🎤 <a href="./java/interview-questions.md">Interview Qs</a></li></ul></td>
 </tr>
