@@ -8,6 +8,24 @@
 
 ## 📚 Learning Path
 
+```mermaid
+flowchart TD
+    CS(CS Fundamentals) --> SD(System Design)
+    SD --> CC(Core Components)
+    CC --> CA(Cloud & AWS)
+    CA --> ID(Infrastructure & DevOps)
+    ID --> JL(Java Landscape)
+    JL --> RW(Real-World Designs)
+    RW --> IP(Interview Prep)
+    IP --> HP(Hands-On Projects)
+    HP --> GA(GenAI & LLM)
+    GA --> FM(Frontend Mastery)
+
+    style CS fill:#f96,stroke:#333,stroke-width:2px
+    style SD fill:#69f,stroke:#333,stroke-width:2px
+    style RW fill:#f69,stroke:#333,stroke-width:4px
+```
+
 
 
 <table>
@@ -119,156 +137,6 @@
 | 🔟 | [**Hands-On Projects**](./projects/) | Kafka, RAG API, LLM Fine-tuning |
 | 1️⃣1️⃣ | [**GenAI & LLM**](./components/genai/genai-fundamentals.md) | ML/DL, RAG, Fine-tuning, Agentic AI |
 | 1️⃣2️⃣ | [**Frontend Mastery**](./java/javascript-es6-guide.md) | JS ES6+, TypeScript, React, Angular |
-
-<!--
-## 📁 Repository Structure
-(Hidden to reduce redundancy, as all links are covered above)
-
-### 8. Low-Level Design (LLD) / Machine Coding 🆕
-
-Master object-oriented design and coding interviews:
-
-- [LLD Interview Roadmap](./lld/00-lld-interview-roadmap.md) ⭐ - Approach and learning path
-- [OOD Fundamentals](./lld/01-ood-fundamentals.md) - Four pillars of OOP
-- [SOLID Principles](./lld/02-solid-principles.md) ⭐ - Write maintainable code
-- **Design Patterns**
-  - [Patterns Overview](./lld/03-design-patterns/00-patterns-overview.md)
-  - [Creational Patterns](./lld/03-design-patterns/01-creational-patterns.md) - Singleton, Factory, Builder
-  - [Structural Patterns](./lld/03-design-patterns/02-structural-patterns.md) - Adapter, Decorator, Facade
-  - [Behavioral Patterns](./lld/03-design-patterns/03-behavioral-patterns.md) - Observer, Strategy, State
-- **Common LLD Problems**
-  - [Parking Lot](./lld/04-common-designs/01-parking-lot.md) ⭐
-  - [Elevator System](./lld/04-common-designs/02-elevator-system.md) ⭐
-  - [Movie Ticket Booking](./lld/04-common-designs/03-movie-ticket-booking.md) ⭐
-  - [Vending Machine](./lld/04-common-designs/04-vending-machine.md)
-  - [Chess Game](./lld/04-common-designs/05-chess-game.md)
-  - [Expense Splitter (Splitwise)](./lld/04-common-designs/06-expense-splitter.md)
-  - [Library Management](./lld/04-common-designs/07-library-management.md)
-  - [ATM Machine](./lld/04-common-designs/08-atm-machine.md)
-  - [Tic-Tac-Toe](./lld/04-common-designs/09-tic-tac-toe.md)
-  - [Snake & Ladder](./lld/04-common-designs/10-snake-ladder.md)
-- [Interview Q&A](./lld/05-interview-qa.md) ⭐ - 15+ common questions with answers
-
-### 9. Real-World System Designs
-
-Learn from how big companies architect their systems:
-- 🗺️ [00 Interview Roadmap](./designs/00-interview-roadmap.md)
-- 📺 [01 OTT Platform](./designs/01-ott-platform.md)
-- 🐦 [02 Twitter](./designs/02-twitter.md)
-- 🚕 [03 Uber](./designs/03-uber.md)
-- 💬 [04 WhatsApp](./designs/04-whatsapp.md)
-- 🍿 [05 Netflix Deep Dive](./designs/05-netflix/01-system-design-interview.md)
-- 🔗 [06 URL Shortener](./designs/06-url-shortener.md)
-- 🚦 [07 Rate Limiter](./designs/07-rate-limiter.md)
-- 🆔 [08 Unique ID Generator](./designs/08-unique-id-generator.md)
-- 🕷️ [09 Web Crawler](./designs/09-web-crawler.md)
-- 🔔 [10 Notification System](./designs/10-notification-system.md)
-- 🛒 [11 E-commerce](./designs/11-ecommerce.md)
-- 📍 [12 Location Based Service](./designs/12-location-based-service.md)
-- 📝 [13 Google Docs](./designs/13-google-docs.md)
-- 🔑 [14 Key-Value Store](./designs/14-key-value-store.md)
-- ⚡ [15 Distributed Cache](./designs/15-distributed-cache.md)
-- ☁️ [16 Cloud Storage](./designs/16-cloud-storage.md)
-- 🏆 [17 Gaming Leaderboard](./designs/17-gaming-leaderboard.md)
-- 🎮 [18 Multiplayer Game State](./designs/18-multiplayer-game-state.md)
-- 📉 [19 Stock Exchange](./designs/19-stock-exchange.md)
-
-### 📚 CS Fundamentals
-- 💻 [Operating System Guide](./cs-fundamentals/operating-system-guide.md)
-- 🌐 [Networking Fundamentals](./cs-fundamentals/networking-fundamentals.md)
-- 🛠️ [Compiler Design](./cs-fundamentals/compiler-design.md) 🆕
-- **🗄️ DBMS Masterclass**
-    - 🗺️ [00 Roadmap](./cs-fundamentals/dbms/00-roadmap.md)
-    - 🏛️ [01 Architecture](./cs-fundamentals/dbms/01-architecture.md)
-    - 📐 [02 ER Modeling](./cs-fundamentals/dbms/02-er-modeling.md)
-    - 📊 [03 Relational Model](./cs-fundamentals/dbms/03-relational-model.md)
-    - 📏 [04 Normalization](./cs-fundamentals/dbms/04-normalization.md)
-    - 💾 [05 Storage Internals](./cs-fundamentals/dbms/05-storage-internals.md)
-    - 📑 [06 Indexing (B-Tree)](./cs-fundamentals/dbms/06-indexing-btree.md)
-    - 🔎 [07 Advanced Indexing](./cs-fundamentals/dbms/07-advanced-indexing.md)
-    - ⚛️ [08 ACID Properties](./cs-fundamentals/dbms/08-acid-properties.md)
-    - 🔄 [09 Concurrency Control](./cs-fundamentals/dbms/09-concurrency-control.md)
-    - 🔒 [10 Isolation Levels](./cs-fundamentals/dbms/10-isolation-levels.md)
-    - 🕒 [11 MVCC](./cs-fundamentals/dbms/11-mvcc.md)
-    - 📝 [12 SQL Commands](./cs-fundamentals/dbms/12-sql-commands.md)
-    - 🔗 [13 Joins](./cs-fundamentals/dbms/13-joins.md)
-    - ⚡ [14 Query Optimization](./cs-fundamentals/dbms/14-query-optimization.md)
-    - ⚖️ [15 Scaling](./cs-fundamentals/dbms/15-scaling.md)
-    - 👯 [16 Replication](./cs-fundamentals/dbms/16-replication.md)
-    - 🚫 [17 NoSQL Types](./cs-fundamentals/dbms/17-nosql-types.md)
-    - ⚖️ [18 CAP Theorem](./cs-fundamentals/dbms/18-cap-theorem.md)
-    - 🗃️ [20 Database Deep Dive](./cs-fundamentals/dbms/20-database-deep-dive.md) ⭐🆕
-
-### 🧱 Architecture Fundamentals
-- 📐 [01 System Design Basics](./fundamentals/01-system-design-basics.md)
-- ⚖️ [02 CAP Theorem](./fundamentals/02-cap-theorem.md)
-- 🚀 [03 Scalability Patterns](./fundamentals/03-scalability-patterns.md)
-- 🐘 [04 PostgreSQL Guide](./fundamentals/04-postgresql-guide.md)
-
-### 🧩 Core Components
-- 🏗️ [00 Components Overview](./components/overview.md)
-- 🔍 [Elasticsearch Deep Dive](./components/search/elasticsearch-deep-dive.md)
-
-### ☁️ Cloud & Infrastructure
-- ☁️ [AWS Services Guide](./aws/aws-services-guide.md)
-- 🛠️ [AWS CDK Guide](./aws/aws-cdk-guide.md)
-- 🐳 [Docker Guide](./devops/docker-guide.md)
-- ☸️ [Kubernetes Guide](./devops/kubernetes-guide.md)
-- **🌍 Terraform Hub**
-    - 📖 [README](./devops/terraform/README.md)
-    - 🧠 [Terraform Deep Dive](./devops/terraform/terraform-guide.md)
-    - 🏭 [AWS Production Architecture](./devops/terraform/real-world-project.md)
-
-### ☕ Java & Frameworks
-- 📘 [Modern Java Guide](./java/modern-features-guide.md)
-- ☕ [Java 8 Features](./java/features/java8-features.md)
-- ☕ [Java 9-11 Features](./java/features/java9-11-features.md)
-- ☕ [Java 12-17 Features](./java/features/java12-17-features.md)
-- ☕ [Java 18-21 Features](./java/features/java18-21-features.md)
-- 🎤 [Interview Questions](./java/interview-questions.md) - Common Java interview topics
-- [🍃 Spring Boot Guide](./java/spring/spring-boot-guide.md) ⭐ - Production-ready Spring Boot apps
-- **☕ Java Internals (Core Java)** 🆕
-  - [Java Internals Roadmap](./java/core-java/00-java-internals-roadmap.md) ⭐ - Learning path & memory hooks
-  - [JVM Architecture](./java/core-java/01-jvm-architecture.md) - JDK/JRE/JVM, ClassLoader
-  - [Memory Model](./java/core-java/02-memory-model.md) - Heap, Stack, String Pool
-  - [Garbage Collection](./java/core-java/03-garbage-collection.md) - G1, ZGC, tuning
-  - [JIT Compilation](./java/core-java/04-jit-compilation.md) - HotSpot, C1/C2
-  - [Collections Framework](./java/core-java/05-collections-framework.md) - When to use which
-  - [Collections Internals](./java/core-java/06-collections-internals.md) - HashMap deep dive
-  - [Multithreading Basics](./java/core-java/07-multithreading-basics.md) - Threads, ExecutorService
-  - [Concurrency Advanced](./java/core-java/08-concurrency-advanced.md) - synchronized, volatile, Atomic
-  - [Concurrency Utilities](./java/core-java/09-concurrency-utilities.md) - Latch, Barrier, CompletableFuture
-  - [Java Internals Q&A](./java/core-java/10-interview-qa.md) ⭐ - 30+ interview questions
-
-
-### 7. DSA & LeetCode Patterns 🆕
-
-Master algorithmic patterns, not individual problems:
-
-- [DSA Interview Roadmap](./interview-prep/dsa/leetcode-patterns/00-dsa-roadmap.md) ⭐ - Step-by-step learning plan
-- [Time & Space Complexity](./interview-prep/dsa/leetcode-patterns/01-time-space-complexity.md) - Big O Analysis
-- **Core Patterns (Tier 1)**
-  - [Arrays & Hashing](./interview-prep/dsa/leetcode-patterns/02-arrays-hashing.md) - Two Sum, Group Anagrams
-  - [Two Pointers](./interview-prep/dsa/leetcode-patterns/03-two-pointers.md) - Palindromes, 3Sum, Trapping Rain Water
-  - [Sliding Window](./interview-prep/dsa/leetcode-patterns/04-sliding-window.md) - Substrings, Max K Sum
-  - [Binary Search](./interview-prep/dsa/leetcode-patterns/05-binary-search.md) - Rotated Arrays, Search Matrix
-  - [Linked Lists](./interview-prep/dsa/leetcode-patterns/06-linked-lists.md) - Fast/Slow Pointers, Reversal
-  - [Trees](./interview-prep/dsa/leetcode-patterns/08-trees.md) - BFS, DFS, Traversals, BST
-  - [Dynamic Programming](./interview-prep/dsa/leetcode-patterns/12-dynamic-programming.md) - 1D/2D DP, Knapsack
-- **Important Patterns (Tier 2-3)**
-  - [Stacks & Queues](./interview-prep/dsa/leetcode-patterns/07-stacks-queues.md) - Monotonic Stack
-  - [Heaps & Priority Queues](./interview-prep/dsa/leetcode-patterns/09-heaps-priority-queues.md) - Top K elements
-  - [Graphs](./interview-prep/dsa/leetcode-patterns/10-graphs.md) - BFS, DFS, Union-Find, Topo Sort
-  - [Backtracking](./interview-prep/dsa/leetcode-patterns/11-backtracking.md) - Subsets, Permutations
-  - [Greedy](./interview-prep/dsa/leetcode-patterns/13-greedy.md) - Intervals, Jump Game
-  - [Intervals](./interview-prep/dsa/leetcode-patterns/14-intervals.md) - Overlapping intervals
-  - [Bit Manipulation](./interview-prep/dsa/leetcode-patterns/15-bit-manipulation.md) - XOR tricks
-- [Interview Q&A](./interview-prep/dsa/leetcode-patterns/16-interview-qa.md) ⭐ - UMPIRE method & tips
-
-### 8. Low-Level Design (LLD) / Machine Coding! 🚀*
--->
-
-
 
 <p align="center">
   <img src="https://komarev.com/ghpvc/?username=Samarpitgupta&repo=software-engineering&label=Visitors&color=0e75b6&style=flat" alt="Visitors" />
