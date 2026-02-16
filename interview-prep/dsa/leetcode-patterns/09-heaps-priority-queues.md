@@ -434,7 +434,7 @@ public int leastInterval(char[] tasks, int n) {
 
 ---
 
-## 📝 Practice Problems
+## 📝 Practice Problems — Detailed Solutions
 
 | # | Problem | Difficulty | Link | Key Insight |
 |---|---------|------------|------|-------------|
@@ -445,6 +445,369 @@ public int leastInterval(char[] tasks, int n) {
 | 5 | Task Scheduler | 🟡 Medium | [LeetCode](https://leetcode.com/problems/task-scheduler/) | Greedy max freq |
 | 6 | Find Median | 🔴 Hard | [LeetCode](https://leetcode.com/problems/find-median-from-data-stream/) | Two heaps |
 | 7 | Merge K Lists | 🔴 Hard | [LeetCode](https://leetcode.com/problems/merge-k-sorted-lists/) | Min heap |
+
+---
+
+### Problem 1: Kth Largest Element in an Array 🟡
+
+> **Given** an integer array and k, find the kth largest element.
+
+#### 🧠 Approach Diagram
+
+```mermaid
+flowchart TD
+    A["Min-heap of size k"] --> B["Add element"]
+    B --> C{"Heap size > k?"}
+    C -->|Yes| D["Remove min\n(too small to be kth largest)"]
+    C -->|No| E["Keep"]
+    D --> F["Heap top = kth largest"]
+```
+
+#### ✅ Optimal: Min-Heap — O(n log k) Time, O(k) Space
+
+```java
+public int findKthLargest(int[] nums, int k) {
+    PriorityQueue<Integer> minHeap = new PriorityQueue<>();
+    
+    for (int num : nums) {
+        minHeap.offer(num);
+        if (minHeap.size() > k) {
+            minHeap.poll();  // remove smallest — not in top k
+        }
+    }
+    return minHeap.peek();  // smallest of top k = kth largest
+}
+```
+
+```
+Example: nums = [3,2,1,5,6,4], k = 2
+
+Add 3: heap=[3]
+Add 2: heap=[2,3]
+Add 1: size>2, poll 1: heap=[2,3]   (1 too small)
+Add 5: size>2, poll 2: heap=[3,5]   (2 too small)
+Add 6: size>2, poll 3: heap=[5,6]   (3 too small)
+Add 4: size>2, poll 4: heap=[5,6]   (4 too small)
+
+peek() = 5 ✅ (2nd largest)
+
+💡 WHY min-heap of size k?
+   The k largest elements stay in the heap.
+   The smallest of these (heap top) is the kth largest.
+```
+
+---
+
+### Problem 2: Last Stone Weight 🟢
+
+> **Given** stones with weights, smash the two heaviest. Return the last remaining weight.
+
+#### ✅ Optimal: Max-Heap — O(n log n) Time, O(n) Space
+
+```java
+public int lastStoneWeight(int[] stones) {
+    PriorityQueue<Integer> maxHeap = new PriorityQueue<>(Collections.reverseOrder());
+    for (int s : stones) maxHeap.offer(s);
+    
+    while (maxHeap.size() > 1) {
+        int first = maxHeap.poll();   // heaviest
+        int second = maxHeap.poll();  // second heaviest
+        if (first != second) {
+            maxHeap.offer(first - second);  // remaining fragment
+        }
+    }
+    return maxHeap.isEmpty() ? 0 : maxHeap.peek();
+}
+```
+
+```
+Example: stones = [2,7,4,1,8,1]
+
+Heap: [8,7,4,2,1,1]
+Smash 8,7 → 1: [4,2,1,1,1]
+Smash 4,2 → 2: [2,1,1,1]
+Smash 2,1 → 1: [1,1,1]
+Smash 1,1 → destroyed: [1]
+Return 1 ✅
+
+💡 Max-heap gives O(log n) access to the two heaviest stones.
+```
+
+---
+
+### Problem 3: K Closest Points to Origin 🟡
+
+> **Given** points on a plane, find the k closest to origin (0,0).
+
+#### ✅ Optimal: Max-Heap of size k — O(n log k) Time, O(k) Space
+
+```java
+public int[][] kClosest(int[][] points, int k) {
+    // Max-heap by distance (farthest at top)
+    PriorityQueue<int[]> maxHeap = new PriorityQueue<>(
+        (a, b) -> (b[0]*b[0] + b[1]*b[1]) - (a[0]*a[0] + a[1]*a[1])
+    );
+    
+    for (int[] p : points) {
+        maxHeap.offer(p);
+        if (maxHeap.size() > k) {
+            maxHeap.poll();  // remove farthest
+        }
+    }
+    return maxHeap.toArray(new int[k][]);
+}
+```
+
+```
+Example: points = [[1,3],[-2,2],[5,8],[0,1]], k = 2
+
+Distances: [1,3]=10, [-2,2]=8, [5,8]=89, [0,1]=1
+Add [1,3](10): heap=[[1,3]]
+Add [-2,2](8): heap=[[-2,2],[1,3]]  (max-heap: farthest on top)
+Add [5,8](89): poll [1,3](10): heap=[[5,8],[-2,2]]... 
+  Wait — poll removes farthest! heap=[[-2,2],[5,8]] → poll [5,8]
+  heap=[[-2,2]]... then re-add: heap=[[-2,2],[1,3]]
+  
+Actually: Add [5,8], size>2, poll farthest [5,8]: heap=[[-2,2],[1,3]]
+Add [0,1](1): poll farthest [1,3](10): heap=[[-2,2],[0,1]]
+
+Result: [[-2,2],[0,1]] ✅
+
+💡 No need to compute sqrt — comparing squared distances works!
+```
+
+---
+
+### Problem 4: Top K Frequent Elements 🟡
+
+> **Given** array, find the k most frequent elements.
+
+#### ✅ Optimal: Bucket Sort — O(n) Time, O(n) Space
+
+```java
+public int[] topKFrequent(int[] nums, int k) {
+    Map<Integer, Integer> freq = new HashMap<>();
+    for (int n : nums) freq.merge(n, 1, Integer::sum);
+    
+    // Bucket sort — index = frequency
+    List<Integer>[] buckets = new List[nums.length + 1];
+    for (var entry : freq.entrySet()) {
+        int f = entry.getValue();
+        if (buckets[f] == null) buckets[f] = new ArrayList<>();
+        buckets[f].add(entry.getKey());
+    }
+    
+    // Collect from highest frequency
+    int[] result = new int[k];
+    int idx = 0;
+    for (int i = buckets.length - 1; i >= 0 && idx < k; i--) {
+        if (buckets[i] != null) {
+            for (int num : buckets[i]) {
+                result[idx++] = num;
+                if (idx == k) break;
+            }
+        }
+    }
+    return result;
+}
+```
+
+```
+Example: nums = [1,1,1,2,2,3], k = 2
+
+Freq: {1:3, 2:2, 3:1}
+Buckets: [_, [3], [2], [1], _, _, _]
+                 ↑freq=1 ↑freq=2 ↑freq=3
+
+Collect from right: bucket[3]=[1], bucket[2]=[2]
+Result: [1, 2] ✅
+
+💡 ALTERNATIVE: Min-heap of size k → O(n log k)
+   Bucket sort avoids heap entirely for O(n)!
+```
+
+---
+
+### Problem 5: Task Scheduler 🟡
+
+> **Given** tasks and cooldown `n`, find minimum intervals to complete all tasks.
+
+#### 🧠 Approach Diagram
+
+```mermaid
+flowchart TD
+    A["Count frequencies"] --> B["Use max-heap\n(most frequent first)"]
+    B --> C["Each cycle: n+1 slots"]
+    C --> D["Fill with tasks\nor idle"]
+    D --> E{"All tasks done?"}
+    E -->|No| C
+    E -->|Yes| F["Return total time"]
+```
+
+#### ✅ Optimal: Greedy + Formula — O(n) Time, O(1) Space
+
+```java
+public int leastInterval(char[] tasks, int n) {
+    int[] freq = new int[26];
+    for (char t : tasks) freq[t - 'A']++;
+    
+    int maxFreq = 0, maxCount = 0;
+    for (int f : freq) {
+        if (f > maxFreq) { maxFreq = f; maxCount = 1; }
+        else if (f == maxFreq) maxCount++;
+    }
+    
+    // Formula: (maxFreq - 1) × (n + 1) + maxCount
+    int result = (maxFreq - 1) * (n + 1) + maxCount;
+    return Math.max(result, tasks.length);
+}
+```
+
+```
+Example: tasks = [A,A,A,B,B,B], n = 2
+
+maxFreq = 3 (A and B both appear 3 times)
+maxCount = 2 (two tasks with max frequency)
+
+Formula: (3-1) × (2+1) + 2 = 2 × 3 + 2 = 8
+
+Schedule: A B _ A B _ A B
+          ←n+1→ ←n+1→ +maxCount
+
+Result: 8 ✅
+
+💡 WHY this formula?
+   - (maxFreq-1) full cycles of (n+1) slots each
+   - Last partial cycle has only maxCount tasks
+   - If tasks fill all idle slots → answer is just tasks.length
+```
+
+---
+
+### Problem 6: Find Median from Data Stream 🔴
+
+> **Design** a data structure that finds the median from a stream of integers.
+
+#### 🧠 Approach Diagram
+
+```mermaid
+flowchart LR
+    subgraph "Max-Heap (left half)"
+        A["smaller values\ntop = largest of left"]
+    end
+    subgraph "Min-Heap (right half)"
+        B["larger values\ntop = smallest of right"]
+    end
+    A --- C["Median = average of tops\nor top of larger heap"]
+    B --- C
+```
+
+#### ✅ Optimal: Two Heaps — O(log n) add, O(1) find
+
+```java
+class MedianFinder {
+    PriorityQueue<Integer> maxHeap = new PriorityQueue<>(Collections.reverseOrder()); // left
+    PriorityQueue<Integer> minHeap = new PriorityQueue<>();  // right
+    
+    public void addNum(int num) {
+        maxHeap.offer(num);                    // add to left
+        minHeap.offer(maxHeap.poll());         // balance: move max of left to right
+        
+        if (minHeap.size() > maxHeap.size()) { // keep left >= right in size
+            maxHeap.offer(minHeap.poll());
+        }
+    }
+    
+    public double findMedian() {
+        if (maxHeap.size() > minHeap.size()) {
+            return maxHeap.peek();
+        }
+        return (maxHeap.peek() + minHeap.peek()) / 2.0;
+    }
+}
+```
+
+```
+Example: Stream = [5, 2, 8, 1]
+
+Add 5: maxHeap=[5], minHeap=[]      → median=5
+Add 2: maxHeap=[2], minHeap=[5]     → median=(2+5)/2=3.5
+Add 8: maxHeap=[2,5], minHeap=[8]   → median=5
+Add 1: maxHeap=[1,2], minHeap=[5,8] → median=(2+5)/2=3.5
+
+Sorted: [1, 2, | 5, 8]
+         maxHeap  minHeap
+
+💡 INVARIANTS:
+   1. All elements in maxHeap ≤ all elements in minHeap
+   2. Size difference ≤ 1
+   3. maxHeap.size() ≥ minHeap.size()
+   This guarantees tops are always the middle elements!
+```
+
+---
+
+### Problem 7: Merge K Sorted Lists 🔴
+
+> **Given** k sorted linked lists, merge them into one sorted list.
+
+#### ✅ Optimal: Min-Heap — O(N log k) Time, O(k) Space
+
+```java
+public ListNode mergeKLists(ListNode[] lists) {
+    PriorityQueue<ListNode> heap = new PriorityQueue<>(
+        (a, b) -> a.val - b.val
+    );
+    
+    for (ListNode list : lists) {
+        if (list != null) heap.offer(list);
+    }
+    
+    ListNode dummy = new ListNode(0);
+    ListNode curr = dummy;
+    
+    while (!heap.isEmpty()) {
+        ListNode smallest = heap.poll();
+        curr.next = smallest;
+        curr = curr.next;
+        if (smallest.next != null) heap.offer(smallest.next);
+    }
+    return dummy.next;
+}
+```
+
+```
+Example: lists = [[1,4,5], [1,3,4], [2,6]]
+
+Heap: [1(list1), 1(list2), 2(list3)]
+Poll 1(list1), push 4: [1(list2), 2, 4]
+Poll 1(list2), push 3: [2, 3, 4]
+Poll 2(list3), push 6: [3, 4, 6]
+Poll 3, push 4:        [4, 4, 6]
+Poll 4(list1), push 5: [4, 5, 6]
+Poll 4(list2):          [5, 6]
+Poll 5:                 [6]
+Poll 6:                 []
+
+Result: 1→1→2→3→4→4→5→6 ✅
+
+💡 Heap always has at most k elements (one per list).
+   Each of the N total elements is pushed/polled once → O(N log k).
+```
+
+---
+
+## 📊 Complexity Comparison
+
+| # | Problem | Time | Space | Heap Type |
+|---|---------|------|-------|-----------|
+| 1 | Kth Largest | O(n log k) | O(k) | Min-heap size k |
+| 2 | Last Stone Weight | O(n log n) | O(n) | Max-heap |
+| 3 | K Closest Points | O(n log k) | O(k) | Max-heap size k |
+| 4 | Top K Frequent | O(n) | O(n) | Bucket sort |
+| 5 | Task Scheduler | O(n) | O(1) | Formula/Greedy |
+| 6 | Find Median | O(log n) add | O(n) | Two heaps |
+| 7 | Merge K Lists | O(N log k) | O(k) | Min-heap |
 
 ---
 

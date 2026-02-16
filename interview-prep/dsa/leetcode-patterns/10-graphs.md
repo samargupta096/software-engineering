@@ -477,7 +477,7 @@ class UnionFind {
 
 ---
 
-## 📝 Practice Problems
+## 📝 Practice Problems — Detailed Solutions
 
 | # | Problem | Difficulty | Link | Key Insight |
 |---|---------|------------|------|-------------|
@@ -488,6 +488,352 @@ class UnionFind {
 | 5 | Course Schedule | 🟡 Medium | [LeetCode](https://leetcode.com/problems/course-schedule/) | Topo Sort |
 | 6 | Rotting Oranges | 🟡 Medium | [LeetCode](https://leetcode.com/problems/rotting-oranges/) | Multi-source BFS |
 | 7 | Word Ladder | 🔴 Hard | [LeetCode](https://leetcode.com/problems/word-ladder/) | BFS shortest path |
+
+---
+
+### Problem 1: Number of Islands 🟡
+
+> **Given** a 2D grid of '1's (land) and '0's (water), count the number of islands.
+
+#### ✅ Optimal: DFS Flood Fill — O(R×C) Time, O(R×C) Space
+
+```java
+public int numIslands(char[][] grid) {
+    int count = 0;
+    for (int r = 0; r < grid.length; r++) {
+        for (int c = 0; c < grid[0].length; c++) {
+            if (grid[r][c] == '1') {
+                count++;
+                dfs(grid, r, c);  // sink the entire island
+            }
+        }
+    }
+    return count;
+}
+
+private void dfs(char[][] grid, int r, int c) {
+    if (r < 0 || c < 0 || r >= grid.length || c >= grid[0].length || grid[r][c] == '0')
+        return;
+    grid[r][c] = '0';  // mark visited (sink)
+    dfs(grid, r+1, c); dfs(grid, r-1, c);
+    dfs(grid, r, c+1); dfs(grid, r, c-1);
+}
+```
+
+```
+Example:
+1 1 0 0 0      0 0 0 0 0
+1 1 0 0 0  →   0 0 0 0 0    Island 1 (sunk)
+0 0 1 0 0      0 0 0 0 0    Island 2 (sunk)
+0 0 0 1 1      0 0 0 0 0    Island 3 (sunk)
+
+Count = 3 ✅
+
+💡 DFS "sinks" each island by marking '1' → '0'.
+   Each cell visited at most once → O(R×C).
+```
+
+---
+
+### Problem 2: Clone Graph 🟡
+
+> **Given** a reference of a node in an undirected graph, return a deep copy.
+
+#### ✅ Optimal: BFS/DFS + HashMap — O(V+E) Time, O(V) Space
+
+```java
+public Node cloneGraph(Node node) {
+    if (node == null) return null;
+    
+    Map<Node, Node> map = new HashMap<>();
+    map.put(node, new Node(node.val));
+    
+    Queue<Node> queue = new LinkedList<>();
+    queue.offer(node);
+    
+    while (!queue.isEmpty()) {
+        Node curr = queue.poll();
+        for (Node neighbor : curr.neighbors) {
+            if (!map.containsKey(neighbor)) {
+                map.put(neighbor, new Node(neighbor.val));
+                queue.offer(neighbor);
+            }
+            map.get(curr).neighbors.add(map.get(neighbor));
+        }
+    }
+    return map.get(node);
+}
+```
+
+```
+💡 HashMap serves dual purpose:
+   1. Tracks visited nodes (prevents infinite loops in cycles)
+   2. Maps original → clone (links new nodes)
+```
+
+---
+
+### Problem 3: Max Area of Island 🟡
+
+> **Given** a grid, find the island with the maximum area.
+
+#### ✅ Optimal: DFS with area counting — O(R×C) Time
+
+```java
+public int maxAreaOfIsland(int[][] grid) {
+    int maxArea = 0;
+    for (int r = 0; r < grid.length; r++) {
+        for (int c = 0; c < grid[0].length; c++) {
+            if (grid[r][c] == 1) {
+                maxArea = Math.max(maxArea, dfs(grid, r, c));
+            }
+        }
+    }
+    return maxArea;
+}
+
+private int dfs(int[][] grid, int r, int c) {
+    if (r < 0 || c < 0 || r >= grid.length || c >= grid[0].length || grid[r][c] == 0)
+        return 0;
+    grid[r][c] = 0;  // mark visited
+    return 1 + dfs(grid, r+1, c) + dfs(grid, r-1, c)
+             + dfs(grid, r, c+1) + dfs(grid, r, c-1);
+}
+```
+
+```
+💡 Same as Number of Islands, but DFS RETURNS a count.
+   Each recursive call returns 1 (for itself) + sum of neighbors.
+```
+
+---
+
+### Problem 4: Pacific Atlantic Water Flow 🟡
+
+> **Given** heights matrix, find cells that can flow to both Pacific and Atlantic oceans.
+
+#### 🧠 Approach Diagram
+
+```mermaid
+flowchart TD
+    A["DFS from Pacific edges\n(top + left)"] --> C["Intersection = answer"]
+    B["DFS from Atlantic edges\n(bottom + right)"] --> C
+```
+
+#### ✅ Optimal: Reverse DFS from Borders — O(R×C) Time
+
+```java
+public List<List<Integer>> pacificAtlantic(int[][] heights) {
+    int m = heights.length, n = heights[0].length;
+    boolean[][] pacific = new boolean[m][n], atlantic = new boolean[m][n];
+    
+    for (int r = 0; r < m; r++) {
+        dfs(heights, pacific, r, 0, 0);       // left edge (Pacific)
+        dfs(heights, atlantic, r, n-1, 0);    // right edge (Atlantic)
+    }
+    for (int c = 0; c < n; c++) {
+        dfs(heights, pacific, 0, c, 0);       // top edge (Pacific)
+        dfs(heights, atlantic, m-1, c, 0);    // bottom edge (Atlantic)
+    }
+    
+    List<List<Integer>> result = new ArrayList<>();
+    for (int r = 0; r < m; r++)
+        for (int c = 0; c < n; c++)
+            if (pacific[r][c] && atlantic[r][c])
+                result.add(Arrays.asList(r, c));
+    return result;
+}
+
+private void dfs(int[][] h, boolean[][] visited, int r, int c, int prev) {
+    if (r<0 || c<0 || r>=h.length || c>=h[0].length || visited[r][c] || h[r][c]<prev)
+        return;
+    visited[r][c] = true;
+    dfs(h, visited, r+1, c, h[r][c]); dfs(h, visited, r-1, c, h[r][c]);
+    dfs(h, visited, r, c+1, h[r][c]); dfs(h, visited, r, c-1, h[r][c]);
+}
+```
+
+```
+💡 REVERSE THINKING: Instead of "can water flow FROM cell TO ocean",
+   ask "can ocean REACH cell?" (DFS uphill from ocean edges).
+   Cells reachable by BOTH oceans are the answer.
+```
+
+---
+
+### Problem 5: Course Schedule 🟡
+
+> **Given** prerequisites, determine if you can finish all courses (cycle detection).
+
+#### ✅ Optimal: Topological Sort (BFS/Kahn's) — O(V+E) Time
+
+```java
+public boolean canFinish(int numCourses, int[][] prerequisites) {
+    int[] inDegree = new int[numCourses];
+    List<List<Integer>> adj = new ArrayList<>();
+    for (int i = 0; i < numCourses; i++) adj.add(new ArrayList<>());
+    
+    for (int[] pre : prerequisites) {
+        adj.get(pre[1]).add(pre[0]);
+        inDegree[pre[0]]++;
+    }
+    
+    Queue<Integer> queue = new LinkedList<>();
+    for (int i = 0; i < numCourses; i++)
+        if (inDegree[i] == 0) queue.offer(i);
+    
+    int completed = 0;
+    while (!queue.isEmpty()) {
+        int course = queue.poll();
+        completed++;
+        for (int next : adj.get(course)) {
+            if (--inDegree[next] == 0) queue.offer(next);
+        }
+    }
+    return completed == numCourses;  // all courses completed = no cycle
+}
+```
+
+```
+Example: n=4, prereqs=[[1,0],[2,0],[3,1],[3,2]]
+         0 → 1 → 3
+         0 → 2 → 3
+
+inDegree: [0, 1, 1, 2]
+Queue: [0] → process 0, reduce 1,2
+Queue: [1, 2] → process 1, reduce 3
+Queue: [2] → process 2, reduce 3
+Queue: [3] → process 3
+completed=4 == numCourses=4 → true ✅
+
+💡 If cycle exists, some nodes never reach inDegree 0,
+   so completed < numCourses → return false.
+```
+
+---
+
+### Problem 6: Rotting Oranges 🟡
+
+> **Given** a grid with fresh(1) and rotten(2) oranges, find minutes until all rotten.
+
+#### ✅ Optimal: Multi-source BFS — O(R×C) Time
+
+```java
+public int orangesRotting(int[][] grid) {
+    Queue<int[]> queue = new LinkedList<>();
+    int fresh = 0;
+    
+    // Add ALL rotten oranges to queue (multi-source)
+    for (int r = 0; r < grid.length; r++)
+        for (int c = 0; c < grid[0].length; c++) {
+            if (grid[r][c] == 2) queue.offer(new int[]{r, c});
+            else if (grid[r][c] == 1) fresh++;
+        }
+    
+    int minutes = 0;
+    int[][] dirs = {{1,0},{-1,0},{0,1},{0,-1}};
+    
+    while (!queue.isEmpty() && fresh > 0) {
+        minutes++;
+        int size = queue.size();
+        for (int i = 0; i < size; i++) {
+            int[] cell = queue.poll();
+            for (int[] d : dirs) {
+                int r = cell[0]+d[0], c = cell[1]+d[1];
+                if (r>=0 && c>=0 && r<grid.length && c<grid[0].length && grid[r][c]==1) {
+                    grid[r][c] = 2;
+                    fresh--;
+                    queue.offer(new int[]{r, c});
+                }
+            }
+        }
+    }
+    return fresh == 0 ? minutes : -1;
+}
+```
+
+```
+Example:
+2 1 1      2 2 1      2 2 2      2 2 2
+1 1 0  →   2 1 0  →   2 2 0  →   2 2 0
+0 1 1      0 1 1      0 1 1      0 2 1   → 1 more = 4 min
+
+💡 MULTI-SOURCE BFS: All rotten oranges start simultaneously.
+   Each BFS level = 1 minute. When fresh==0, we're done.
+```
+
+---
+
+### Problem 7: Word Ladder 🔴
+
+> **Given** beginWord, endWord, and wordList, find shortest transformation sequence.
+
+#### ✅ Optimal: BFS — O(M² × N) Time (M=word length, N=wordList size)
+
+```java
+public int ladderLength(String beginWord, String endWord, List<String> wordList) {
+    Set<String> wordSet = new HashSet<>(wordList);
+    if (!wordSet.contains(endWord)) return 0;
+    
+    Queue<String> queue = new LinkedList<>();
+    queue.offer(beginWord);
+    int steps = 1;
+    
+    while (!queue.isEmpty()) {
+        int size = queue.size();
+        for (int i = 0; i < size; i++) {
+            char[] word = queue.poll().toCharArray();
+            
+            for (int j = 0; j < word.length; j++) {
+                char original = word[j];
+                for (char c = 'a'; c <= 'z'; c++) {
+                    word[j] = c;
+                    String newWord = new String(word);
+                    
+                    if (newWord.equals(endWord)) return steps + 1;
+                    if (wordSet.contains(newWord)) {
+                        queue.offer(newWord);
+                        wordSet.remove(newWord);  // mark visited
+                    }
+                }
+                word[j] = original;
+            }
+        }
+        steps++;
+    }
+    return 0;
+}
+```
+
+```
+Example: "hit" → "cog", wordList = ["hot","dot","dog","lot","log","cog"]
+
+BFS Level 1: hit
+BFS Level 2: hot (h→h, i→o)
+BFS Level 3: dot, lot
+BFS Level 4: dog, log
+BFS Level 5: cog ← FOUND!
+
+Return 5 ✅
+
+💡 BFS guarantees shortest path!
+   Try all 26 letter substitutions at each position.
+   Remove from wordSet when visited to prevent cycles.
+```
+
+---
+
+## 📊 Complexity Comparison
+
+| # | Problem | Time | Space | Technique |
+|---|---------|------|-------|-----------|
+| 1 | Number of Islands | O(R×C) | O(R×C) | DFS flood fill |
+| 2 | Clone Graph | O(V+E) | O(V) | BFS + HashMap |
+| 3 | Max Area of Island | O(R×C) | O(R×C) | DFS counting |
+| 4 | Pacific Atlantic | O(R×C) | O(R×C) | Reverse DFS |
+| 5 | Course Schedule | O(V+E) | O(V+E) | Topological sort |
+| 6 | Rotting Oranges | O(R×C) | O(R×C) | Multi-source BFS |
+| 7 | Word Ladder | O(M²×N) | O(M×N) | BFS shortest path |
 
 ---
 

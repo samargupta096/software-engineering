@@ -392,7 +392,7 @@ public int coinChange(int[] coins, int amount) {
 
 ---
 
-## 📝 Practice Problems
+## 📝 Practice Problems — Detailed Solutions
 
 | # | Problem | Difficulty | Link | Key Insight |
 |---|---------|------------|------|-------------|
@@ -403,6 +403,313 @@ public int coinChange(int[] coins, int amount) {
 | 5 | LIS | 🟡 Medium | [LeetCode](https://leetcode.com/problems/longest-increasing-subsequence/) | Nested loop |
 | 6 | LCS | 🟡 Medium | [LeetCode](https://leetcode.com/problems/longest-common-subsequence/) | 2D Grid |
 | 7 | Edit Distance | 🔴 Hard | [LeetCode](https://leetcode.com/problems/edit-distance/) | Insert/Del/Replace |
+
+---
+
+### Problem 1: Climbing Stairs 🟢
+
+> **Given** n steps, you can climb 1 or 2 at a time. How many distinct ways?
+
+#### ✅ Optimal — O(n) Time, O(1) Space
+
+```java
+public int climbStairs(int n) {
+    if (n <= 2) return n;
+    int prev2 = 1, prev1 = 2;
+    for (int i = 3; i <= n; i++) {
+        int curr = prev1 + prev2;
+        prev2 = prev1;
+        prev1 = curr;
+    }
+    return prev1;
+}
+```
+
+```
+n=5: ways = 1, 2, 3, 5, 8 → Fibonacci!
+
+💡 dp[i] = dp[i-1] + dp[i-2]
+   From step i: could have come from i-1 (1 step) or i-2 (2 steps)
+   Only need last 2 values → O(1) space
+```
+
+---
+
+### Problem 2: House Robber 🟡
+
+> **Given** houses with money, rob maximum without robbing adjacent houses.
+
+#### ✅ Optimal — O(n) Time, O(1) Space
+
+```java
+public int rob(int[] nums) {
+    int prev2 = 0, prev1 = 0;
+    for (int num : nums) {
+        int curr = Math.max(prev1, prev2 + num);  // skip or rob
+        prev2 = prev1;
+        prev1 = curr;
+    }
+    return prev1;
+}
+```
+
+```
+Example: nums = [2, 7, 9, 3, 1]
+
+i=0: max(0, 0+2) = 2  [rob house 0]
+i=1: max(2, 0+7) = 7  [rob house 1]
+i=2: max(7, 2+9) = 11 [rob houses 0,2]
+i=3: max(11, 7+3) = 11 [skip house 3]
+i=4: max(11, 11+1) = 12 [rob houses 0,2,4]
+
+Result: 12 ✅
+
+💡 At each house: max(skip it, rob it + best from 2 ago)
+```
+
+---
+
+### Problem 3: Longest Palindromic Substring 🟡
+
+> **Given** a string, find the longest palindromic substring.
+
+#### ✅ Optimal: Expand Around Center — O(n²) Time, O(1) Space
+
+```java
+public String longestPalindrome(String s) {
+    int start = 0, maxLen = 0;
+    
+    for (int i = 0; i < s.length(); i++) {
+        int len1 = expand(s, i, i);     // odd: "aba"
+        int len2 = expand(s, i, i + 1); // even: "abba"
+        int len = Math.max(len1, len2);
+        
+        if (len > maxLen) {
+            maxLen = len;
+            start = i - (len - 1) / 2;
+        }
+    }
+    return s.substring(start, start + maxLen);
+}
+
+private int expand(String s, int left, int right) {
+    while (left >= 0 && right < s.length() && s.charAt(left) == s.charAt(right)) {
+        left--; right++;
+    }
+    return right - left - 1;
+}
+```
+
+```
+Example: s = "babad"
+
+Center i=0 'b': expand → "b" (len=1)
+Center i=1 'a': expand → "bab" (len=3) ✅
+Center i=2 'b': expand → "aba" (len=3)
+Center i=3 'a': expand → "a" (len=1)
+
+Result: "bab" ✅
+
+💡 Every palindrome has a center. Try each char as center
+   and expand outward. Check both odd and even lengths.
+```
+
+---
+
+### Problem 4: Coin Change 🟡
+
+> **Given** coins and amount, find fewest coins to make the amount.
+
+#### ✅ Optimal: Bottom-Up DP — O(amount × coins) Time, O(amount) Space
+
+```java
+public int coinChange(int[] coins, int amount) {
+    int[] dp = new int[amount + 1];
+    Arrays.fill(dp, amount + 1);  // impossible value
+    dp[0] = 0;
+    
+    for (int a = 1; a <= amount; a++) {
+        for (int coin : coins) {
+            if (coin <= a) {
+                dp[a] = Math.min(dp[a], 1 + dp[a - coin]);
+            }
+        }
+    }
+    return dp[amount] > amount ? -1 : dp[amount];
+}
+```
+
+```
+Example: coins = [1,3,4], amount = 6
+
+dp[0]=0
+dp[1]=1 (1)
+dp[2]=2 (1+1)
+dp[3]=1 (3)
+dp[4]=1 (4)
+dp[5]=2 (1+4)
+dp[6]=2 (3+3) ✅
+
+💡 dp[a] = "fewest coins to make amount a"
+   For each coin, check: "if I use this coin, how many more do I need?"
+   dp[a] = min(dp[a], 1 + dp[a - coin])
+```
+
+---
+
+### Problem 5: Longest Increasing Subsequence 🟡
+
+> **Given** array, find length of longest strictly increasing subsequence.
+
+#### ✅ Optimal: DP + Binary Search — O(n log n) Time
+
+```java
+public int lengthOfLIS(int[] nums) {
+    List<Integer> tails = new ArrayList<>();
+    
+    for (int num : nums) {
+        int pos = Collections.binarySearch(tails, num);
+        if (pos < 0) pos = -(pos + 1);
+        
+        if (pos == tails.size()) tails.add(num);
+        else tails.set(pos, num);
+    }
+    return tails.size();
+}
+```
+
+```
+Example: nums = [10, 9, 2, 5, 3, 7, 101, 18]
+
+Process 10:  tails = [10]
+Process 9:   tails = [9]     (replace 10)
+Process 2:   tails = [2]     (replace 9)
+Process 5:   tails = [2, 5]
+Process 3:   tails = [2, 3]  (replace 5)
+Process 7:   tails = [2, 3, 7]
+Process 101: tails = [2, 3, 7, 101]
+Process 18:  tails = [2, 3, 7, 18] (replace 101)
+
+Length = 4 ✅ (subsequence: [2, 3, 7, 101] or [2, 3, 7, 18])
+
+💡 tails[i] = smallest tail element for IS of length i+1
+   Binary search finds where to place each number.
+```
+
+---
+
+### Problem 6: Longest Common Subsequence 🟡
+
+> **Given** two strings, find the length of their longest common subsequence.
+
+#### ✅ Optimal: 2D DP — O(m×n) Time, O(m×n) Space
+
+```java
+public int longestCommonSubsequence(String text1, String text2) {
+    int m = text1.length(), n = text2.length();
+    int[][] dp = new int[m + 1][n + 1];
+    
+    for (int i = 1; i <= m; i++) {
+        for (int j = 1; j <= n; j++) {
+            if (text1.charAt(i-1) == text2.charAt(j-1)) {
+                dp[i][j] = 1 + dp[i-1][j-1];  // match → diagonal + 1
+            } else {
+                dp[i][j] = Math.max(dp[i-1][j], dp[i][j-1]);  // skip one
+            }
+        }
+    }
+    return dp[m][n];
+}
+```
+
+```
+Example: text1 = "abcde", text2 = "ace"
+
+    ""  a  c  e
+""   0  0  0  0
+a    0  1  1  1
+b    0  1  1  1
+c    0  1  2  2
+d    0  1  2  2
+e    0  1  2  3 ← LCS = "ace", length 3 ✅
+
+💡 Match → take diagonal + 1 (both chars contribute)
+   No match → max(skip char from text1, skip char from text2)
+```
+
+---
+
+### Problem 7: Edit Distance 🔴
+
+> **Given** two words, find minimum operations (insert/delete/replace) to convert.
+
+#### 🧠 Approach Diagram
+
+```mermaid
+flowchart TD
+    A["Compare chars\nword1[i] vs word2[j]"] --> B{"Match?"}
+    B -->|Yes| C["dp[i-1][j-1]\n(no cost)"]
+    B -->|No| D["1 + min of:"]
+    D --> E["dp[i-1][j] (Delete)"]
+    D --> F["dp[i][j-1] (Insert)"]
+    D --> G["dp[i-1][j-1] (Replace)"]
+```
+
+#### ✅ Optimal: 2D DP — O(m×n) Time, O(m×n) Space
+
+```java
+public int minDistance(String word1, String word2) {
+    int m = word1.length(), n = word2.length();
+    int[][] dp = new int[m + 1][n + 1];
+    
+    for (int i = 0; i <= m; i++) dp[i][0] = i;  // delete all
+    for (int j = 0; j <= n; j++) dp[0][j] = j;  // insert all
+    
+    for (int i = 1; i <= m; i++) {
+        for (int j = 1; j <= n; j++) {
+            if (word1.charAt(i-1) == word2.charAt(j-1)) {
+                dp[i][j] = dp[i-1][j-1];              // no cost
+            } else {
+                dp[i][j] = 1 + Math.min(dp[i-1][j-1], // replace
+                               Math.min(dp[i-1][j],     // delete
+                                        dp[i][j-1]));   // insert
+            }
+        }
+    }
+    return dp[m][n];
+}
+```
+
+```
+Example: word1 = "horse", word2 = "ros"
+
+    ""  r  o  s
+""   0  1  2  3
+h    1  1  2  3
+o    2  2  1  2
+r    3  2  2  2
+s    4  3  3  2
+e    5  4  4  3 ← 3 operations ✅
+
+Operations: horse → rorse (replace h→r) → rose (delete r) → ros (delete e)
+
+💡 Base cases: empty → other word requires insert/delete for each char
+   Three choices map to three DP neighbors (up, left, diagonal)
+```
+
+---
+
+## 📊 Complexity Comparison
+
+| # | Problem | Time | Space | DP Type |
+|---|---------|------|-------|---------|
+| 1 | Climbing Stairs | O(n) | O(1) | Fibonacci |
+| 2 | House Robber | O(n) | O(1) | Fibonacci + skip |
+| 3 | Longest Palindromic | O(n²) | O(1) | Expand center |
+| 4 | Coin Change | O(a×c) | O(a) | Unbounded knapsack |
+| 5 | LIS | O(n log n) | O(n) | Patience sorting |
+| 6 | LCS | O(m×n) | O(m×n) | 2D grid |
+| 7 | Edit Distance | O(m×n) | O(m×n) | 2D grid |
 
 ---
 

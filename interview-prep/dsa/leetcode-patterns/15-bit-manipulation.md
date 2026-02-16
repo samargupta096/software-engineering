@@ -225,7 +225,7 @@ public int[] countBits(int n) {
 
 ---
 
-## 📝 Practice Problems
+## 📝 Practice Problems — Detailed Solutions
 
 | # | Problem | Difficulty | Link | Key Insight |
 |---|---------|------------|------|-------------|
@@ -234,6 +234,198 @@ public int[] countBits(int n) {
 | 3 | Counting Bits | 🟢 Easy | [LeetCode](https://leetcode.com/problems/counting-bits/) | DP + Bits |
 | 4 | Reverse Bits | 🟢 Easy | [LeetCode](https://leetcode.com/problems/reverse-bits/) | Shift |
 | 5 | Sum of Two Integers | 🟡 Medium | [LeetCode](https://leetcode.com/problems/sum-of-two-integers/) | Bits Adder |
+
+---
+
+### Problem 1: Single Number 🟢
+
+> **Given** array where every element appears twice except one, find the single one.
+
+#### ✅ Optimal: XOR — O(n) Time, O(1) Space
+
+```java
+public int singleNumber(int[] nums) {
+    int result = 0;
+    for (int num : nums) result ^= num;
+    return result;
+}
+```
+
+```
+Example: nums = [4, 1, 2, 1, 2]
+
+0 ^ 4 = 4     (0100)
+4 ^ 1 = 5     (0101)
+5 ^ 2 = 7     (0111)
+7 ^ 1 = 6     (0110)   ← 1 cancels out
+6 ^ 2 = 4     (0100)   ← 2 cancels out
+
+Result: 4 ✅
+
+💡 XOR properties:
+   a ^ a = 0  (self-cancellation)
+   a ^ 0 = a  (identity)
+   Order doesn't matter (commutative & associative)
+   All pairs cancel → only unique element remains!
+```
+
+---
+
+### Problem 2: Number of 1 Bits 🟢
+
+> **Given** an unsigned integer, return the number of '1' bits.
+
+#### ✅ Optimal: Brian Kernighan's — O(k) Time (k = number of 1 bits)
+
+```java
+public int hammingWeight(int n) {
+    int count = 0;
+    while (n != 0) {
+        n &= (n - 1);  // remove lowest set bit
+        count++;
+    }
+    return count;
+}
+```
+
+```
+Example: n = 11 (1011)
+
+n=1011: n-1=1010, n&(n-1)=1010, count=1
+n=1010: n-1=1001, n&(n-1)=1000, count=2
+n=1000: n-1=0111, n&(n-1)=0000, count=3
+n=0000: done!
+
+Result: 3 ✅
+
+💡 n & (n-1) clears the LOWEST set bit.
+   Each step removes exactly one '1' bit.
+   Runs in O(k) where k = number of 1 bits, not 32.
+```
+
+---
+
+### Problem 3: Counting Bits 🟢
+
+> **Given** n, return array where ans[i] = number of 1's in binary of i.
+
+#### ✅ Optimal: DP — O(n) Time, O(n) Space
+
+```java
+public int[] countBits(int n) {
+    int[] dp = new int[n + 1];
+    for (int i = 1; i <= n; i++) {
+        dp[i] = dp[i >> 1] + (i & 1);  // right shift + check last bit
+    }
+    return dp;
+}
+```
+
+```
+i=0: dp[0] = 0         (0000) → 0
+i=1: dp[0] + 1 = 1     (0001) → 1
+i=2: dp[1] + 0 = 1     (0010) → 1
+i=3: dp[1] + 1 = 2     (0011) → 2
+i=4: dp[2] + 0 = 1     (0100) → 1
+i=5: dp[2] + 1 = 2     (0101) → 2
+
+Result: [0, 1, 1, 2, 1, 2] ✅
+
+💡 i >> 1 strips the last bit → same number of 1's minus that bit
+   i & 1 checks if last bit is 1
+   So: bits(i) = bits(i/2) + lastBit(i)
+```
+
+---
+
+### Problem 4: Reverse Bits 🟢
+
+> **Given** a 32-bit unsigned integer, reverse its bits.
+
+#### ✅ Optimal: Bit-by-Bit — O(1) Time, O(1) Space
+
+```java
+public int reverseBits(int n) {
+    int result = 0;
+    for (int i = 0; i < 32; i++) {
+        result <<= 1;            // make room for next bit
+        result |= (n & 1);      // add last bit of n
+        n >>= 1;                 // remove last bit of n
+    }
+    return result;
+}
+```
+
+```
+Example: n = 43261596
+Binary:  00000010100101000001111010011100
+Reverse: 00111001011110000010100101000000
+
+💡 Extract rightmost bit of n, place it in result,
+   shift both. Repeat 32 times. Like reversing a string
+   but with bits instead of characters.
+```
+
+---
+
+### Problem 5: Sum of Two Integers 🟡
+
+> **Given** two integers, return their sum without using + or -.
+
+#### ✅ Optimal: Bit Manipulation — O(1) Time
+
+```java
+public int getSum(int a, int b) {
+    while (b != 0) {
+        int carry = (a & b) << 1;  // carry bits (both 1 → carry)
+        a = a ^ b;                  // sum without carry
+        b = carry;                  // add carry in next iteration
+    }
+    return a;
+}
+```
+
+```
+Example: a = 5 (101), b = 3 (011)
+
+Iteration 1:
+  carry = (101 & 011) << 1 = (001) << 1 = 010
+  a = 101 ^ 011 = 110
+  b = 010
+
+Iteration 2:
+  carry = (110 & 010) << 1 = (010) << 1 = 100
+  a = 110 ^ 010 = 100
+  b = 100
+
+Iteration 3:
+  carry = (100 & 100) << 1 = (100) << 1 = 1000
+  a = 100 ^ 100 = 000
+  b = 1000
+
+Iteration 4:
+  carry = (000 & 1000) << 1 = 0
+  a = 000 ^ 1000 = 1000 = 8
+  b = 0 → done!
+
+Result: 8 ✅ (5 + 3 = 8)
+
+💡 XOR = addition without carry
+   AND + shift = carry bits
+   Repeat until no more carry (b == 0)
+```
+
+---
+
+## 📊 Complexity Comparison
+
+| # | Problem | Time | Space | Technique |
+|---|---------|------|-------|-----------|
+| 1 | Single Number | O(n) | O(1) | XOR cancellation |
+| 2 | Number of 1 Bits | O(k) | O(1) | Brian Kernighan's |
+| 3 | Counting Bits | O(n) | O(n) | DP + right shift |
+| 4 | Reverse Bits | O(1) | O(1) | Bit extraction |
+| 5 | Sum of Two Ints | O(1) | O(1) | XOR + carry |
 
 ---
 

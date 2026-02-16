@@ -247,7 +247,7 @@ public int eraseOverlapIntervals(int[][] intervals) {
 
 ---
 
-## 📝 Practice Problems
+## 📝 Practice Problems — Detailed Solutions
 
 | # | Problem | Difficulty | Link | Key Insight |
 |---|---------|------------|------|-------------|
@@ -255,6 +255,186 @@ public int eraseOverlapIntervals(int[][] intervals) {
 | 2 | Insert Interval | 🟡 Medium | [LeetCode](https://leetcode.com/problems/insert-interval/) | Linear scan |
 | 3 | Non-overlapping | 🟡 Medium | [LeetCode](https://leetcode.com/problems/non-overlapping-intervals/) | Sort end |
 | 4 | Meeting Rooms II | 🟡 Medium | [LeetCode](https://leetcode.com/problems/meeting-rooms-ii/) | Two pointers |
+
+---
+
+### Problem 1: Merge Intervals 🟡
+
+> **Given** a collection of intervals, merge all overlapping intervals.
+
+#### ✅ Optimal: Sort + Merge — O(n log n) Time
+
+```java
+public int[][] merge(int[][] intervals) {
+    Arrays.sort(intervals, (a, b) -> a[0] - b[0]);
+    List<int[]> result = new ArrayList<>();
+    
+    for (int[] interval : intervals) {
+        if (result.isEmpty() || result.get(result.size()-1)[1] < interval[0]) {
+            result.add(interval);  // no overlap, add new
+        } else {
+            result.get(result.size()-1)[1] = 
+                Math.max(result.get(result.size()-1)[1], interval[1]);  // extend end
+        }
+    }
+    return result.toArray(new int[result.size()][]);
+}
+```
+
+```
+Example: [[1,3],[2,6],[8,10],[15,18]]
+
+Sorted: [1,3], [2,6], [8,10], [15,18]
+
+[1,3] + [2,6] → overlap (3≥2) → merge to [1,6]
+[1,6] + [8,10] → no overlap (6<8) → add [8,10]
+[8,10] + [15,18] → no overlap → add [15,18]
+
+Result: [[1,6], [8,10], [15,18]] ✅
+
+💡 After sorting by start: overlap iff prev.end ≥ curr.start
+   Merge by extending end to max(prev.end, curr.end)
+```
+
+---
+
+### Problem 2: Insert Interval 🟡
+
+> **Given** sorted non-overlapping intervals and a new interval, insert and merge.
+
+#### ✅ Optimal: Three-Phase — O(n) Time
+
+```java
+public int[][] insert(int[][] intervals, int[] newInterval) {
+    List<int[]> result = new ArrayList<>();
+    int i = 0;
+    
+    // Phase 1: Add all intervals BEFORE newInterval
+    while (i < intervals.length && intervals[i][1] < newInterval[0]) {
+        result.add(intervals[i++]);
+    }
+    
+    // Phase 2: Merge overlapping intervals with newInterval
+    while (i < intervals.length && intervals[i][0] <= newInterval[1]) {
+        newInterval[0] = Math.min(newInterval[0], intervals[i][0]);
+        newInterval[1] = Math.max(newInterval[1], intervals[i][1]);
+        i++;
+    }
+    result.add(newInterval);
+    
+    // Phase 3: Add all intervals AFTER newInterval
+    while (i < intervals.length) {
+        result.add(intervals[i++]);
+    }
+    return result.toArray(new int[result.size()][]);
+}
+```
+
+```
+Example: intervals = [[1,2],[3,5],[6,7],[8,10],[12,16]], newInterval = [4,8]
+
+Phase 1: [1,2] → end=2 < 4 → add
+Phase 2: [3,5] overlaps → merge [3,8]
+         [6,7] overlaps → merge [3,8]
+         [8,10] overlaps → merge [3,10]
+Phase 3: [12,16] → add
+
+Result: [[1,2], [3,10], [12,16]] ✅
+
+💡 Three phases: before, overlap (merge), after.
+   No sorting needed since input is already sorted.
+```
+
+---
+
+### Problem 3: Non-overlapping Intervals 🟡
+
+> **Given** intervals, find minimum number to remove to make them non-overlapping.
+
+#### ✅ Optimal: Sort by End — O(n log n) Time
+
+```java
+public int eraseOverlapIntervals(int[][] intervals) {
+    Arrays.sort(intervals, (a, b) -> a[1] - b[1]);  // sort by END
+    int removals = 0, prevEnd = Integer.MIN_VALUE;
+    
+    for (int[] interval : intervals) {
+        if (interval[0] >= prevEnd) {
+            prevEnd = interval[1];  // no overlap, keep it
+        } else {
+            removals++;             // overlap, remove current
+        }
+    }
+    return removals;
+}
+```
+
+```
+Example: [[1,2],[2,3],[3,4],[1,3]]
+
+Sorted by end: [1,2], [2,3], [1,3], [3,4]
+
+[1,2] → keep (prevEnd=2)
+[2,3] → 2≥2, keep (prevEnd=3)
+[1,3] → 1<3, overlap! remove
+[3,4] → 3≥3, keep (prevEnd=4)
+
+Removals: 1 ✅
+
+💡 SORT BY END (not start)!
+   This is the "activity selection" greedy — picking intervals
+   that end earliest leaves maximum room for future intervals.
+```
+
+---
+
+### Problem 4: Meeting Rooms II 🟡
+
+> **Given** meeting time intervals, find the minimum number of conference rooms required.
+
+#### ✅ Optimal: Min-Heap — O(n log n) Time
+
+```java
+public int minMeetingRooms(int[][] intervals) {
+    Arrays.sort(intervals, (a, b) -> a[0] - b[0]);
+    PriorityQueue<Integer> heap = new PriorityQueue<>();  // end times
+    
+    for (int[] interval : intervals) {
+        if (!heap.isEmpty() && heap.peek() <= interval[0]) {
+            heap.poll();  // reuse room (earliest ending meeting is done)
+        }
+        heap.offer(interval[1]);  // assign room
+    }
+    return heap.size();
+}
+```
+
+```
+Example: [[0,30],[5,10],[15,20]]
+
+Sort by start: [0,30], [5,10], [15,20]
+
+[0,30] → heap: [30] (1 room)
+[5,10] → 30 > 5, can't reuse → heap: [10, 30] (2 rooms)
+[15,20] → 10 ≤ 15, reuse room! heap: [20, 30] (still 2 rooms)
+
+Result: 2 ✅
+
+💡 Min-heap tracks "when each room becomes free" (end times).
+   If earliest free room is done before new meeting starts, reuse it.
+   Heap size = rooms in use.
+```
+
+---
+
+## 📊 Complexity Comparison
+
+| # | Problem | Time | Space | Technique |
+|---|---------|------|-------|-----------|
+| 1 | Merge Intervals | O(n log n) | O(n) | Sort + extend |
+| 2 | Insert Interval | O(n) | O(n) | Three-phase |
+| 3 | Non-overlapping | O(n log n) | O(1) | Sort by end |
+| 4 | Meeting Rooms II | O(n log n) | O(n) | Min-heap |
 
 ---
 
