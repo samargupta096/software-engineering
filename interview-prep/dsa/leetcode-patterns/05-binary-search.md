@@ -295,7 +295,30 @@ public int search(int[] nums, int target) {
 }
 ```
 
-**Key Insight**: One half is always sorted.
+**Visualization**:
+```
+nums = [4, 5, 6, 7, 0, 1, 2], target = 0
+
+Step 1: left=0, right=6, mid=3 → nums[3]=7 ≠ 0
+        Left half [4,5,6,7] sorted (nums[0]=4 ≤ nums[3]=7)
+        target=0 NOT in [4,7) → search right: left=4
+
+        [4, 5, 6, 7, 0, 1, 2]
+                     L     R
+
+Step 2: left=4, right=6, mid=5 → nums[5]=1 ≠ 0
+        Left half [0,1] sorted (nums[4]=0 ≤ nums[5]=1)
+        target=0 IS in [0,1) → search left: right=4
+
+        [4, 5, 6, 7, 0, 1, 2]
+                     LR
+
+Step 3: left=4, right=4, mid=4 → nums[4]=0 == target → return 4 ✅
+```
+
+**Key Insight**: One half is always sorted — check if target is in that half.
+
+**Complexity**: Time O(log n) — halving search space each step. Space O(1).
 
 ---
 
@@ -320,6 +343,29 @@ public int findMin(int[] nums) {
 }
 ```
 
+**Visualization**:
+```
+nums = [3, 4, 5, 1, 2]
+
+Step 1: left=0, right=4, mid=2 → nums[2]=5 > nums[4]=2
+        Min is in RIGHT half → left=3
+        [3, 4, 5, 1, 2]
+                  L  R
+
+Step 2: left=3, right=4, mid=3 → nums[3]=1 ≤ nums[4]=2
+        Min is in LEFT half (including mid) → right=3
+        [3, 4, 5, 1, 2]
+                  LR
+
+Step 3: left=3 == right=3 → return nums[3]=1 ✅
+
+💡 KEY: Compare mid with RIGHT (not left)!
+   If nums[mid] > nums[right] → rotation pivot is to the right
+   Otherwise → min is at mid or to the left
+```
+
+**Complexity**: Time O(log n). Space O(1).
+
 ---
 
 ### Problem 3: Search a 2D Matrix
@@ -343,6 +389,29 @@ public boolean searchMatrix(int[][] matrix, int target) {
     return false;
 }
 ```
+
+**Visualization**:
+```
+matrix = [[1,  3,  5,  7],
+          [10, 11, 16, 20],
+          [23, 30, 34, 60]]    target = 16
+
+Treat as 1D: [1, 3, 5, 7, 10, 11, 16, 20, 23, 30, 34, 60]
+              0  1  2  3   4   5   6   7   8   9  10  11
+
+Index→2D: row = mid / n, col = mid % n  (n=4 columns)
+
+Step 1: left=0, right=11, mid=5 → row=5/4=1, col=5%4=1
+        matrix[1][1]=11 < 16 → left=6
+
+Step 2: left=6, right=11, mid=8 → row=8/4=2, col=8%4=0
+        matrix[2][0]=23 > 16 → right=7
+
+Step 3: left=6, right=7, mid=6 → row=6/4=1, col=6%4=2
+        matrix[1][2]=16 == target → return true ✅
+```
+
+**Complexity**: Time O(log(m×n)). Space O(1).
 
 ---
 
@@ -374,6 +443,36 @@ private boolean canFinish(int[] piles, int h, int speed) {
     return hours <= h;
 }
 ```
+
+**Visualization**:
+```
+piles = [3, 6, 7, 11], h = 8
+
+Search space: speed ∈ [1, 11]
+
+Step 1: left=1, right=11, mid=6
+        Hours: ⌈3/6⌉+⌈6/6⌉+⌈7/6⌉+⌈11/6⌉ = 1+1+2+2 = 6 ≤ 8 ✅
+        Can finish → try slower: right=6
+
+Step 2: left=1, right=6, mid=3
+        Hours: ⌈3/3⌉+⌈6/3⌉+⌈7/3⌉+⌈11/3⌉ = 1+2+3+4 = 10 > 8 ❌
+        Too slow → try faster: left=4
+
+Step 3: left=4, right=6, mid=5
+        Hours: ⌈3/5⌉+⌈6/5⌉+⌈7/5⌉+⌈11/5⌉ = 1+2+2+3 = 8 ≤ 8 ✅
+        Can finish → try slower: right=5
+
+Step 4: left=4, right=5, mid=4
+        Hours: ⌈3/4⌉+⌈6/4⌉+⌈7/4⌉+⌈11/4⌉ = 1+2+2+3 = 8 ≤ 8 ✅
+        Can finish → right=4
+
+Step 5: left=4 == right=4 → return 4 ✅
+
+💡 "Search on Answer" pattern: Binary search on the ANSWER space,
+   not the input array. Feasibility check replaces comparison.
+```
+
+**Complexity**: Time O(n log k) where n=piles, k=max pile. Space O(1).
 
 ---
 

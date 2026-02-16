@@ -189,6 +189,22 @@ public int[][] merge(int[][] intervals) {
 }
 ```
 
+**Visualization**:
+```
+Input: [[1,3],[2,6],[8,10],[15,18]]
+
+Sorted: [1,3], [2,6], [8,10], [15,18]
+
+[1,3]+[2,6]: overlap (3≥2) → merge to [1,6]
+[1,6]+[8,10]: no overlap (6<8) → add [8,10]
+[8,10]+[15,18]: no overlap → add [15,18]
+
+Result: [[1,6],[8,10],[15,18]] ✅
+💡 Sort by start. Overlap iff prev.end ≥ curr.start.
+```
+
+**Complexity**: Time O(n log n). Space O(n).
+
 ### Problem 2: Insert Interval
 
 ```java
@@ -221,6 +237,21 @@ public int[][] insert(int[][] intervals, int[] newInterval) {
 }
 ```
 
+**Visualization**:
+```
+intervals=[[1,2],[3,5],[6,7],[8,10],[12,16]], new=[4,8]
+
+Phase 1: [1,2] end=2 < 4 → add directly
+Phase 2: [3,5] overlaps → merge [3,8]
+         [6,7] overlaps → [3,8]
+         [8,10] overlaps → [3,10]
+Phase 3: [12,16] → add directly
+
+Result: [[1,2],[3,10],[12,16]] ✅
+```
+
+**Complexity**: Time O(n). Space O(n).
+
 ### Problem 3: Non-overlapping Intervals
 
 ```java
@@ -244,6 +275,23 @@ public int eraseOverlapIntervals(int[][] intervals) {
     return intervals.length - count;
 }
 ```
+
+**Visualization**:
+```
+intervals = [[1,2],[2,3],[3,4],[1,3]]
+
+Sorted by END: [1,2],[2,3],[1,3],[3,4]
+
+end=2, count=1
+[2,3]: start=2 ≥ end=2 → count=2, end=3
+[1,3]: start=1 < end=3 → skip (remove this one)
+[3,4]: start=3 ≥ end=3 → count=3, end=4
+
+Remove: 4 - 3 = 1 ✅
+💡 Sort by END time. Greedy: keep interval that ends earliest.
+```
+
+**Complexity**: Time O(n log n). Space O(1).
 
 ---
 

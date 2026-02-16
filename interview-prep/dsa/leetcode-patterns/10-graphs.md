@@ -311,6 +311,8 @@ private void dfs(char[][] grid, int r, int c) {
 Island #1 found, sink neighbors. Then #2, #3. Total = 3
 ```
 
+**Complexity**: Time O(m×n). Space O(m×n) worst-case recursion.
+
 ---
 
 ### Problem 2: Course Schedule (Topological Sort)
@@ -349,6 +351,26 @@ public boolean canFinish(int numCourses, int[][] prerequisites) {
 }
 ```
 
+**Visualization (Kahn's Algorithm)**:
+```
+numCourses=4, prereqs=[[1,0],[2,0],[3,1],[3,2]]
+
+Graph:  0 → 1 → 3
+        0 → 2 → 3
+
+In-degrees: [0:0, 1:1, 2:1, 3:2]
+
+Queue starts: [0]  (in-degree 0)
+Poll 0: count=1. Decrement 1→0, 2→0 → queue=[1, 2]
+Poll 1: count=2. Decrement 3→1 → queue=[2]
+Poll 2: count=3. Decrement 3→0 → queue=[3]
+Poll 3: count=4. No neighbors.
+
+count(4) == numCourses(4) → true ✅ (no cycle)
+```
+
+**Complexity**: Time O(V+E). Space O(V+E).
+
 ---
 
 ### Problem 3: Clone Graph
@@ -375,6 +397,22 @@ private Node dfsClone(Node node, Map<Node, Node> visited) {
     return clone;
 }
 ```
+
+**Visualization**:
+```
+Original:  1 --- 2       Clone:  1' --- 2'
+           |     |               |      |
+           4 --- 3               4' --- 3'
+
+DFS from 1: create 1', recurse to neighbors
+  Visit 2: create 2', recurse...
+    Visit 3: create 3'. Visit 4→already cloned as 4' ✅
+  Visit 4: create 4'. Visit 1→already cloned as 1' ✅
+
+💡 HashMap prevents infinite loops and enables reconnecting clones.
+```
+
+**Complexity**: Time O(V+E). Space O(V).
 
 ---
 
@@ -418,6 +456,26 @@ private void dfs(int[][] h, boolean[][] visited, int r, int c, int prevH) {
     dfs(h, visited, r, c-1, h[r][c]);
 }
 ```
+
+**Visualization**:
+```
+Heights:  1  2  2  3  5
+          3  2  3  4  4
+          2  4  5  3  1
+          6  7  1  4  5
+
+Pacific touches: top + left borders
+Atlantic touches: bottom + right borders
+
+DFS from Pacific borders (can reach ↑): marks reachable cells
+DFS from Atlantic borders (can reach ↓): marks reachable cells
+Result = intersection of both sets
+
+💡 Reverse thinking: instead of "where does water flow?"
+   ask "what cells can reach each ocean?" (DFS from ocean borders inward)
+```
+
+**Complexity**: Time O(m×n). Space O(m×n).
 
 ---
 
@@ -463,6 +521,24 @@ class UnionFind {
 ```
 
 **Use Case**: Number of Connected Components in an Undirected Graph.
+
+**Visualization**:
+```
+Nodes: {0, 1, 2, 3, 4}. Edges: (0,1), (1,2), (3,4)
+
+Initially: parent = [0,1,2,3,4] (each is own parent)
+
+union(0,1): parent[1]=0 → {0,1} {2} {3} {4}
+union(1,2): find(1)=0, parent[2]=0 → {0,1,2} {3} {4}
+union(3,4): parent[4]=3 → {0,1,2} {3,4}
+
+Connected components = 2 ✅
+
+💡 Path compression: find(2) → 2→1→0, compress to 2→0 directly.
+   Union by rank: always attach shorter tree under taller.
+```
+
+**Complexity**: Time O(α(n)) ≈ O(1) amortized per operation. Space O(n).
 
 ---
 

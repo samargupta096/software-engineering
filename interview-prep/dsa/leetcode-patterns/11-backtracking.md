@@ -239,6 +239,8 @@ private void backtrack(int[] nums, int start, List<Integer> curr, List<List<Inte
  └── [3]
 ```
 
+**Complexity**: Time O(n × 2ⁿ). Space O(n) recursion depth.
+
 ---
 
 ### Problem 2: Permutations
@@ -269,6 +271,23 @@ private void backtrack(int[] nums, List<Integer> curr, List<List<Integer>> resul
 
 **Note**: For better performance than `contains`, use a boolean `used` array.
 
+**Visualization**:
+```
+nums = [1, 2, 3]
+
+          []
+      /    |    \
+    [1]   [2]   [3]
+   / \     |     |
+[1,2][1,3][2,1] [3,1]
+  |    |  [2,3] [3,2]
+[1,2,3][1,3,2] [2,1,3][2,3,1][3,1,2][3,2,1]
+
+Total: 3! = 6 permutations ✅
+```
+
+**Complexity**: Time O(n × n!). Space O(n).
+
 ---
 
 ### Problem 3: Combination Sum
@@ -297,6 +316,27 @@ private void backtrack(int[] candidates, int remain, int start,
     }
 }
 ```
+
+**Visualization**:
+```
+candidates = [2, 3, 6, 7], target = 7
+
+                    7
+           /      |      \
+       -2(5)   -3(4)    -7(0)✅
+      /   |      |   \
+  -2(3) -3(2) -3(1) -6(-2)✗
+   |      |      |
+ -2(1) -3(-1)✗ -7(-6)✗
+ -3(-2)✗
+   |
+ -7(-6)✗
+
+Valid: [2,2,3] and [7] ✅
+💡 Pass i (not i+1) to reuse same element.
+```
+
+**Complexity**: Time O(Target/MinVal). Space O(Target/MinVal).
 
 ---
 
@@ -332,6 +372,25 @@ private boolean dfs(char[][] board, int r, int c, String word, int idx) {
     return found;
 }
 ```
+
+**Visualization**:
+```
+board =  A B C E     word = "ABCCED"
+         S F C S
+         A D E E
+
+Start at (0,0)='A' → match word[0]
+  (0,1)='B' → match word[1]
+    (0,2)='C' → match word[2]
+      (1,2)='C' → match word[3]
+        (2,2)='E' → match word[4]
+          (2,1)='D' → match word[5] → found! ✅
+
+💡 Mark cell as '#' to prevent revisiting in same path.
+   Restore after returning (backtrack). No extra visited array needed.
+```
+
+**Complexity**: Time O(R×C × 3^L). Space O(L) where L=word length.
 
 ---
 

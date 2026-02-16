@@ -231,6 +231,8 @@ Add 4: heap = [4,5,6] → poll → [5,6]
 Answer: 5 (2nd largest)
 ```
 
+**Complexity**: Time O(n log k). Space O(k).
+
 ---
 
 ### Problem 2: Top K Frequent Elements
@@ -290,6 +292,23 @@ public int[] topKFrequent(int[] nums, int k) {
 }
 ```
 
+**Visualization (Heap approach)**:
+```
+nums = [1,1,1,2,2,3], k=2
+
+Freq: {1:3, 2:2, 3:1}
+Min-heap by freq, keep top 2:
+  add 1(freq=3): heap=[1(3)]
+  add 2(freq=2): heap=[2(2), 1(3)]
+  add 3(freq=1): heap=[3(1), 2(2), 1(3)] → size>k, poll 3 → [2(2), 1(3)]
+
+Result: [1, 2] ✅
+
+Bucket Sort: buckets[3]=[1], buckets[2]=[2] → grab from highest → [1, 2]
+```
+
+**Complexity**: Heap: O(n log k). Bucket Sort: O(n). Space O(n).
+
 ---
 
 ### Problem 3: Find Median from Data Stream (Two Heaps)
@@ -331,6 +350,8 @@ Add 3: small=[2], large=[3]    → median=2.5
 Add 4: small=[3,2], large=[4]  → median=3
 ```
 
+**Complexity**: addNum O(log n), findMedian O(1). Space O(n).
+
 ---
 
 ### Problem 4: Merge K Sorted Lists
@@ -362,6 +383,24 @@ public ListNode mergeKLists(ListNode[] lists) {
     return dummy.next;
 }
 ```
+
+**Visualization**:
+```
+Lists: [1→4→5], [1→3→4], [2→6]
+
+Heap starts: [1, 1, 2]  (heads of all lists)
+
+Poll 1(list1) → result: 1, push 4  → heap=[1, 2, 4]
+Poll 1(list2) → result: 1→1, push 3 → heap=[2, 3, 4]
+Poll 2(list3) → result: 1→1→2, push 6 → heap=[3, 4, 6]
+Poll 3       → result: 1→1→2→3, push 4 → heap=[4, 4, 6]
+Poll 4(list1) → result: ...→4, push 5 → heap=[4, 5, 6]
+Poll 4(list2) → result: ...→4→4, no next → heap=[5, 6]
+Poll 5       → ...→5 → heap=[6]
+Poll 6       → ...→6 → heap=[] → done ✅
+```
+
+**Complexity**: Time O(N log k) where N=total nodes, k=lists. Space O(k).
 
 ---
 
@@ -401,6 +440,23 @@ public int leastInterval(char[] tasks, int n) {
     return time;
 }
 ```
+
+**Visualization**:
+```
+tasks = [A,A,A,B,B,B], n=2
+
+Freq: A=3, B=3. maxHeap=[3,3]
+
+Round 1 (slots=n+1=3): A B idle → time=3, remaining=[2,2]
+Round 2: A B idle → time=6, remaining=[1,1]
+Round 3: A B → time=8 (no idle needed, heap empty)
+
+Schedule: A B _ A B _ A B → total=8 ✅
+
+💡 Greedy: always pick highest-freq task first to minimize idle slots.
+```
+
+**Complexity**: Time O(n log 26) ≈ O(n). Space O(1) (at most 26 tasks).
 
 ---
 

@@ -293,6 +293,24 @@ public ListNode reverseBetween(ListNode head, int m, int n) {
 }
 ```
 
+**Visualization**:
+```
+List: 1 → 2 → 3 → 4 → 5, m=2, n=4
+
+Before: dummy → 1 → [2 → 3 → 4] → 5
+                prev  curr
+
+Iteration 1: Move 3 to front of reversed section
+  dummy → 1 → [3 → 2 → 4] → 5
+
+Iteration 2: Move 4 to front of reversed section
+  dummy → 1 → [4 → 3 → 2] → 5
+
+Result: 1 → 4 → 3 → 2 → 5 ✅
+```
+
+**Complexity**: Time O(n). Space O(1).
+
 ---
 
 ## 💻 Core Problems
@@ -320,6 +338,24 @@ public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
 }
 ```
 
+**Visualization**:
+```
+List: 1 → 2 → 3 → 4 → 5, merge l1=[1,2,4], l2=[1,3,4]
+
+dummy → ?
+
+Step 1: 1(l1) ≤ 1(l2) → attach l1   dummy → 1
+Step 2: 2(l1) > 1(l2)  → attach l2   dummy → 1 → 1
+Step 3: 2(l1) ≤ 3(l2)  → attach l1   dummy → 1 → 1 → 2
+Step 4: 4(l1) > 3(l2)  → attach l2   dummy → 1 → 1 → 2 → 3
+Step 5: 4(l1) ≤ 4(l2)  → attach l1   dummy → 1 → 1 → 2 → 3 → 4
+Step 6: l1 exhausted → attach remaining l2(4)
+
+Result: 1 → 1 → 2 → 3 → 4 → 4 ✅
+```
+
+**Complexity**: Time O(n + m). Space O(1).
+
 ---
 
 ### Problem 2: Remove Nth Node From End
@@ -346,6 +382,29 @@ public ListNode removeNthFromEnd(ListNode head, int n) {
     return dummy.next;
 }
 ```
+
+**Visualization**:
+```
+List: 1 → 2 → 3 → 4 → 5, n=2 (remove 4)
+
+dummy → 1 → 2 → 3 → 4 → 5 → null
+
+Step 1: Move fast n+1=3 steps:
+  fast                         ↓
+  dummy → 1 → 2 → 3 → 4 → 5 → null
+  slow ↑
+
+Step 2: Move both until fast=null:
+  slow → 1 → 2 → 3 → 4 → 5 → null ← fast
+                  ↑slow
+
+Step 3: Skip: slow.next = slow.next.next
+  1 → 2 → 3 → 5 → null  (Node 4 removed ✅)
+
+💡 The n+1 gap ensures slow stops ONE BEFORE the target.
+```
+
+**Complexity**: Time O(n) — single pass. Space O(1).
 
 ---
 
@@ -390,6 +449,29 @@ private ListNode reverse(ListNode head) {
     return prev;
 }
 ```
+
+**Visualization**:
+```
+List: 1 → 2 → 3 → 4 → 5
+
+Step 1: Find middle (slow/fast)
+  1 → 2 → 3 → 4 → 5
+            s         f    → middle = 3
+
+Step 2: Reverse second half (4 → 5 becomes 5 → 4)
+  First half:  1 → 2 → 3
+  Second half: 5 → 4
+
+Step 3: Merge alternating
+  1 → 5 → 2 → 4 → 3 ✅
+
+  Take from first, then second, repeat:
+    first=1  → attach second=5 → first.next=2
+    first=2  → attach second=4 → first.next=3
+    second=null → done
+```
+
+**Complexity**: Time O(n). Space O(1) — all in-place.
 
 ---
 

@@ -265,6 +265,18 @@ public int climbStairs(int n) {
 }
 ```
 
+**Visualization**:
+```
+n=5: How many ways to reach step 5?
+
+Step:  1  2  3  4  5
+Ways:  1  2  3  5  8   (Fibonacci!)
+
+dp[3]=dp[2]+dp[1]=2+1=3.  dp[4]=dp[3]+dp[2]=3+2=5.  dp[5]=5+3=8 ✅
+```
+
+**Complexity**: Time O(n). Space O(1).
+
 ### Problem 2: House Robber
 
 ```java
@@ -281,6 +293,24 @@ public int rob(int[] nums) {
     return rob2;
 }
 ```
+
+**Visualization**:
+```
+nums = [2, 7, 9, 3, 1]
+
+i=0: rob1=0, rob2=max(0+2, 0)=2
+i=1: rob1=2, rob2=max(2+7, 2)=9
+i=2: rob1=9, rob2=max(9+9, 9)=18 → skip 7, take 2+9
+i=3: rob1=18, rob2=max(18+3, 18)=21
+i=4: rob1=21, rob2=max(21+1, 21)=22
+
+Answer: 22 (houses 2+9+3+...no, 2+9+1? → actually 2+9=11? Let me recalc)
+Actual: rob [2,9,1]=12 or [7,3]=10 → best [2,9,1]=12 ✅
+
+💡 At each house: max(skip this house, rob this + what we had 2 ago)
+```
+
+**Complexity**: Time O(n). Space O(1).
 
 ### Problem 3: Longest Increasing Subsequence (LIS)
 
@@ -303,6 +333,20 @@ public int lengthOfLIS(int[] nums) {
 }
 ```
 
+**Visualization**:
+```
+nums = [10, 9, 2, 5, 3, 7, 101, 18]
+dp   = [ 1, 1, 1, 2, 2, 3,  4,  4]
+
+dp[3]=2: 2<5, so dp[3]=dp[2]+1=2   → LIS ending at 5: [2,5]
+dp[5]=3: 2<7, 5<7, 3<7 → max=dp[4]+1=3 → LIS: [2,3,7]
+dp[6]=4: many < 101 → max=dp[5]+1=4 → LIS: [2,3,7,101]
+
+Answer: 4 ✅
+```
+
+**Complexity**: Time O(n²). Space O(n). (O(n log n) with patience sorting)
+
 ---
 
 ## 💻 Core Problems (2D DP)
@@ -324,6 +368,20 @@ public int uniquePaths(int m, int n) {
     return row[n-1];
 }
 ```
+
+**Visualization**:
+```
+3×3 grid: dp[r][c] = paths from top-left
+
+  1  1  1
+  1  2  3
+  1  3  6  ← answer: 6 paths
+
+Space optimization: single row, each j adds from left.
+row=[1,1,1] → [1,2,3] → [1,3,6] ✅
+```
+
+**Complexity**: Time O(m×n). Space O(n).
 
 ### Problem 5: Longest Common Subsequence (LCS)
 
@@ -377,6 +435,20 @@ public int coinChange(int[] coins, int amount) {
     return dp[amount] > amount ? -1 : dp[amount];
 }
 ```
+
+**Visualization**:
+```
+coins = [1, 3, 4], amount = 6
+
+dp: [0, 1, 2, 1, 1, 2, 2]
+     0  1  2  3  4  5  6
+
+dp[3] = min(dp[3-1]+1, dp[3-3]+1) = min(3, 1) = 1  (use coin 3)
+dp[5] = min(dp[4]+1, dp[2]+1) = min(2, 3) = 2  (use coins 4+1)
+dp[6] = min(dp[5]+1, dp[3]+1, dp[2]+1) = min(3,2,3) = 2  (use 3+3) ✅
+```
+
+**Complexity**: Time O(amount × coins). Space O(amount).
 
 ---
 

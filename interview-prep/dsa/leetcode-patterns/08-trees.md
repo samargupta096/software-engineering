@@ -236,6 +236,22 @@ public List<List<Integer>> levelOrder(TreeNode root) {
 }
 ```
 
+**Visualization**:
+```
+        3
+       / \
+      9   20
+         /  \
+        15   7
+
+Queue processing:
+  Level 0: [3]      → result = [[3]]
+  Level 1: [9, 20]  → result = [[3], [9, 20]]
+  Level 2: [15, 7]  → result = [[3], [9, 20], [15, 7]]
+```
+
+**Complexity**: Time O(n). Space O(w) where w = max width.
+
 ---
 
 ## 💻 Core Problems
@@ -270,6 +286,24 @@ public int maxDepth(TreeNode root) {
 }
 ```
 
+**Visualization**:
+```
+        3
+       / \
+      9   20
+         /  \
+        15   7
+
+Recursive: maxDepth(3) = 1 + max(maxDepth(9), maxDepth(20))
+           maxDepth(9) = 1 + max(0, 0) = 1
+           maxDepth(20)= 1 + max(maxDepth(15), maxDepth(7)) = 2
+           maxDepth(3) = 1 + max(1, 2) = 3 ✅
+
+BFS: Level 1: [3], Level 2: [9,20], Level 3: [15,7] → depth=3 ✅
+```
+
+**Complexity**: Time O(n). Space O(h) recursive / O(w) BFS.
+
 ---
 
 ### Problem 2: Invert Binary Tree
@@ -287,6 +321,22 @@ public TreeNode invertTree(TreeNode root) {
     return root;
 }
 ```
+
+**Visualization**:
+```
+Before:       4          After:        4
+             / \                      / \
+            2   7         →          7   2
+           / \ / \                  / \ / \
+          1  3 6  9                9  6 3  1
+
+Recursion (bottom-up): swap children at each node.
+  invertTree(2) swaps 1↔2↔3 → 3↔2↔1
+  invertTree(7) swaps 6↔7↔9 → 9↔7↔6
+  invertTree(4) swaps left↔right subtrees
+```
+
+**Complexity**: Time O(n). Space O(h).
 
 ---
 
@@ -315,6 +365,20 @@ private boolean isMirror(TreeNode t1, TreeNode t2) {
 }
 ```
 
+**Visualization**:
+```
+Same Tree:       Symmetric Tree:
+  1     1          1
+ / \   / \        / \
+2   3 2   3      2   2
+ ✅ Both match     / \ / \
+                3  4 4  3  ✅ Mirror match
+
+isMirror compares: left.left ↔ right.right AND left.right ↔ right.left
+```
+
+**Complexity**: Time O(n). Space O(h).
+
 ---
 
 ### Problem 4: Validate BST
@@ -333,6 +397,27 @@ private boolean validate(TreeNode node, long min, long max) {
 }
 ```
 
+**Visualization**:
+```
+        5
+       / \
+      1   7
+     / \ / \
+    0  3 6  8
+
+validate(5, -∞, +∞) ✅  5 in range
+  validate(1, -∞, 5) ✅  1 < 5
+    validate(0, -∞, 1) ✅
+    validate(3, 1, 5)  ✅  1 < 3 < 5
+  validate(7, 5, +∞)  ✅  7 > 5
+    validate(6, 5, 7)  ✅  5 < 6 < 7
+    validate(8, 7, +∞) ✅
+
+💡 Pass valid range down. Each node tightens the range.
+```
+
+**Complexity**: Time O(n). Space O(h).
+
 ---
 
 ### Problem 5: Lowest Common Ancestor
@@ -348,6 +433,28 @@ public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
     return left != null ? left : right;
 }
 ```
+
+**Visualization**:
+```
+        3
+       / \
+      5   1
+     / \ / \
+    6  2 0  8
+
+Find LCA of 5 and 1:
+  lca(3, 5, 1): left=lca(5...) right=lca(1...)
+    lca(5, 5, 1): root==p → return 5
+    lca(1, 5, 1): root==q → return 1
+  Both non-null → return 3 ✅
+
+Find LCA of 5 and 4:
+  lca(3): left=lca(5...) returns 5 (found p)
+    right=lca(1...) returns null (neither found)
+  left non-null, right null → return 5 (LCA of node with its descendant)
+```
+
+**Complexity**: Time O(n). Space O(h).
 
 ---
 
@@ -376,6 +483,34 @@ public class Codec {
     }
 }
 ```
+
+**Visualization**:
+```
+Tree:     1
+         / \
+        2   3
+       / \
+      4   5
+
+Serialize (preorder): "1,2,4,null,null,5,null,null,3,null,null"
+
+Deserialize:
+  poll "1" → node(1)
+    left:  poll "2" → node(2)
+      left:  poll "4" → node(4)
+        left:  poll "null" → null
+        right: poll "null" → null
+      right: poll "5" → node(5)
+        left:  poll "null" → null
+        right: poll "null" → null
+    right: poll "3" → node(3)
+      left:  poll "null" → null
+      right: poll "null" → null
+
+Reconstructed tree matches original ✅
+```
+
+**Complexity**: Time O(n). Space O(n) for the string.
 
 ---
 

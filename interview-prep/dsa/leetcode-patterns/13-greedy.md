@@ -180,6 +180,22 @@ public int maxSubArray(int[] nums) {
 }
 ```
 
+**Visualization**:
+```
+nums = [-2, 1, -3, 4, -1, 2, 1, -5, 4]
+
+i=0: curr=-2, max=-2
+i=1: curr=max(1,-1)=1, max=1
+i=3: curr=max(4,2)=4, max=4
+i=5: curr=max(2,5)=5, max=5
+i=6: curr=max(1,6)=6, max=6 ✅
+
+Answer: 6 → subarray [4,-1,2,1]
+💡 If prefix sum goes negative, restart.
+```
+
+**Complexity**: Time O(n). Space O(1).
+
 ### Problem 2: Jump Game
 
 ```java
@@ -194,6 +210,20 @@ public boolean canJump(int[] nums) {
     return true;
 }
 ```
+
+**Visualization**:
+```
+nums = [2, 3, 1, 1, 4]
+
+i=0: maxReach=max(0,2)=2
+i=1: maxReach=max(2,4)=4 → can reach end! ✅
+
+nums = [3, 2, 1, 0, 4]
+i=3: maxReach=3, i+nums[3]=3 → stuck at 3
+i=4: i=4 > maxReach=3 → false ✅
+```
+
+**Complexity**: Time O(n). Space O(1).
 
 ### Problem 3: Gas Station
 
@@ -221,6 +251,24 @@ public int canCompleteCircuit(int[] gas, int[] cost) {
 }
 ```
 
+**Visualization**:
+```
+gas  = [1, 2, 3, 4, 5]
+cost = [3, 4, 5, 1, 2]
+totalGas=15, totalCost=15 → possible!
+
+i=0: tank=1-3=-2 < 0 → start=1, tank=0
+i=1: tank=2-4=-2 < 0 → start=2, tank=0
+i=2: tank=3-5=-2 < 0 → start=3, tank=0
+i=3: tank=4-1=3
+i=4: tank=3+5-2=6
+
+Start=3 ✅
+💡 If total gas ≥ total cost, answer exists. Reset start when tank<0.
+```
+
+**Complexity**: Time O(n). Space O(1).
+
 ### Problem 4: Partition Labels
 
 ```java
@@ -245,6 +293,24 @@ public List<Integer> partitionLabels(String s) {
     return result;
 }
 ```
+
+**Visualization**:
+```
+s = "ababcbacadefegdehijhklij"
+
+Last index: a=8, b=5, c=7, d=14, e=15, ...
+
+i=0('a'): end=8. i=1('b'): end=max(8,5)=8.
+i=5('b'): end=8. i=7('c'): end=max(8,7)=8.
+i=8('a'): i==end → partition [0..8] len=9
+i=9('d'): end=14. i=11('e'): end=15.
+i=15('h'): i==end → partition [9..15] len=7
+i=16('i')→22: → partition [16..22] len=8
+
+Result: [9, 7, 8] ✅
+```
+
+**Complexity**: Time O(n). Space O(1) (26-char array).
 
 ---
 

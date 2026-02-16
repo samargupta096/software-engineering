@@ -196,6 +196,22 @@ public int singleNumber(int[] nums) {
 }
 ```
 
+**Visualization**:
+```
+nums = [4, 1, 2, 1, 2]
+
+0 ^ 4 = 4  (0100)
+4 ^ 1 = 5  (0101)
+5 ^ 2 = 7  (0111)
+7 ^ 1 = 6  (0110)  ← 1 cancels
+6 ^ 2 = 4  (0100)  ← 2 cancels
+
+Result: 4 ✅
+💡 a ^ a = 0 (pairs cancel). Only unique remains.
+```
+
+**Complexity**: Time O(n). Space O(1).
+
 ### Problem 2: Number of 1 Bits (Hamming Weight)
 
 ```java
@@ -208,6 +224,20 @@ public int hammingWeight(int n) {
     return count;
 }
 ```
+
+**Visualization**:
+```
+n = 11 (1011)
+
+n=1011: n-1=1010, n&(n-1)=1010, count=1
+n=1010: n-1=1001, n&(n-1)=1000, count=2
+n=1000: n-1=0111, n&(n-1)=0000, count=3
+n=0: done!
+
+Result: 3 ✅  (Brian Kernighan: each step removes lowest set bit)
+```
+
+**Complexity**: Time O(k) where k = number of 1 bits. Space O(1).
 
 ### Problem 3: Counting Bits
 
@@ -222,6 +252,21 @@ public int[] countBits(int n) {
     return ans;
 }
 ```
+
+**Visualization**:
+```
+i=0: dp[0]=0           (0000)
+i=1: dp[0]+1=1         (0001)
+i=2: dp[1]+0=1         (0010)
+i=3: dp[1]+1=2         (0011)
+i=4: dp[2]+0=1         (0100)
+i=5: dp[2]+1=2         (0101)
+
+Result: [0,1,1,2,1,2] ✅
+💡 bits(i) = bits(i>>1) + (i & 1)
+```
+
+**Complexity**: Time O(n). Space O(n).
 
 ---
 

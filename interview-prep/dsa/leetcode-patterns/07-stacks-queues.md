@@ -310,6 +310,26 @@ public int[] dailyTemperatures(int[] temperatures) {
 }
 ```
 
+**Visualization**:
+```
+temps = [73, 74, 75, 71, 69, 72, 76, 73]
+
+i=0: push 0. stack=[0(73)]
+i=1: 74>73 → pop 0, result[0]=1-0=1. push 1. stack=[1(74)]
+i=2: 75>74 → pop 1, result[1]=2-1=1. push 2. stack=[2(75)]
+i=3: 71<75 → push. stack=[2(75), 3(71)]
+i=4: 69<71 → push. stack=[2(75), 3(71), 4(69)]
+i=5: 72>69 → pop 4, result[4]=5-4=1
+     72>71 → pop 3, result[3]=5-3=2. push 5. stack=[2(75), 5(72)]
+i=6: 76>72 → pop 5, result[5]=6-5=1
+     76>75 → pop 2, result[2]=6-2=4. push 6. stack=[6(76)]
+i=7: 73<76 → push. stack=[6(76), 7(73)]
+
+result = [1, 1, 4, 2, 1, 1, 0, 0] ✅
+```
+
+**Complexity**: Time O(n) — each index pushed/popped once. Space O(n).
+
 ---
 
 ### Problem 2: Largest Rectangle in Histogram
@@ -333,7 +353,29 @@ public int largestRectangleArea(int[] heights) {
 }
 ```
 
+**Visualization**:
+```
+heights = [2, 1, 5, 6, 2, 3], answer = 10
+
+i=0: push 0. stack=[0(2)]
+i=1: 1<2 → pop 0, height=2, width=1, area=2. push 1. stack=[1(1)]
+i=2: push. stack=[1(1), 2(5)]
+i=3: push. stack=[1(1), 2(5), 3(6)]
+i=4: 2<6 → pop 3, height=6, width=4-2-1=1, area=6
+     2<5 → pop 2, height=5, width=4-1-1=2, area=10 ✅
+     push 4. stack=[1(1), 4(2)]
+i=5: push. stack=[1(1), 4(2), 5(3)]
+i=6: sentinel 0 triggers cleanup:
+     pop 5: height=3, width=6-4-1=1, area=3
+     pop 4: height=2, width=6-1-1=4, area=8
+     pop 1: height=1, width=6, area=6
+
+Max area = 10 ✅ (height=5, width=2)
+```
+
 **Key Insight**: For each bar, find how far left and right it extends.
+
+**Complexity**: Time O(n). Space O(n).
 
 ---
 
@@ -361,6 +403,24 @@ public int evalRPN(String[] tokens) {
     return stack.pop();
 }
 ```
+
+**Visualization**:
+```
+tokens = ["2", "1", "+", "3", "*"]
+
+Step 1: "2" → push 2.            stack=[2]
+Step 2: "1" → push 1.            stack=[2, 1]
+Step 3: "+" → pop 1, pop 2.      2+1=3, push.  stack=[3]
+Step 4: "3" → push 3.            stack=[3, 3]
+Step 5: "*" → pop 3, pop 3.      3*3=9, push.  stack=[9]
+
+Result: 9 ✅
+
+💡 Operands go on stack, operators pop two and push result.
+   Order matters for - and /: first popped = b, second = a → a op b
+```
+
+**Complexity**: Time O(n). Space O(n).
 
 ---
 
@@ -392,6 +452,27 @@ public int[] maxSlidingWindow(int[] nums, int k) {
     return result;
 }
 ```
+
+**Visualization**:
+```
+nums = [1, 3, -1, -3, 5, 3, 6, 7], k=3
+
+i=0: deque=[0(1)]
+i=1: 3>1 → remove 0. deque=[1(3)]
+i=2: -1<3 → keep. deque=[1(3), 2(-1)]. Window full → result[0]=3
+i=3: -3<-1 → keep. deque=[1(3), 2(-1), 3(-3)]. result[1]=3
+i=4: 5>-3,-1,3 → clear all. deque=[4(5)]. result[2]=5
+i=5: 3<5. deque=[4(5), 5(3)]. result[3]=5
+i=6: 6>3,5. idx 4 out of window. deque=[6(6)]. result[4]=6
+i=7: 7>6. deque=[7(7)]. result[5]=7
+
+result = [3, 3, 5, 5, 6, 7] ✅
+
+💡 Deque front = max of current window (always valid index).
+   Back elements removed if smaller than incoming element.
+```
+
+**Complexity**: Time O(n) — each element added/removed once. Space O(k).
 
 ---
 
