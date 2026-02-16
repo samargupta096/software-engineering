@@ -196,6 +196,8 @@ E - Evaluate complexity
 
 ## 🎯 Priority Problems (Blind 75 Core)
 
+> 📖 **[Complete BLIND 75 Study Guide →](./18-blind-75.md)** — All 75 problems with Java solutions, visualizations, and complexity analysis.
+
 ### Must Complete First
 - [ ] Two Sum
 - [ ] Valid Parentheses

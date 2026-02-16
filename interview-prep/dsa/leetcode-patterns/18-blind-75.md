@@ -766,3 +766,1602 @@ l=3,r=3 → return nums[3] = 1 ✅
 **Complexity**: Time O(log n). Space O(1).
 
 ---
+
+# 🔗 Linked Lists
+
+> [Deep dive →](./06-linked-lists.md)
+
+### 22. Reverse Linked List 🟢
+
+```java
+public ListNode reverseList(ListNode head) {
+    ListNode prev = null, curr = head;
+    while (curr != null) {
+        ListNode next = curr.next;
+        curr.next = prev;
+        prev = curr;
+        curr = next;
+    }
+    return prev;
+}
+```
+
+```
+1→2→3→null
+prev=null,curr=1: 1.next=null → prev=1,curr=2
+prev=1,curr=2: 2.next=1 → prev=2,curr=3
+prev=2,curr=3: 3.next=2 → prev=3,curr=null
+Result: 3→2→1→null ✅
+
+💡 Three pointers: prev, curr, next. Flip one link at a time.
+```
+
+**Complexity**: Time O(n). Space O(1).
+
+---
+
+### 23. Merge Two Sorted Lists 🟢
+
+```java
+public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+    ListNode dummy = new ListNode(0), curr = dummy;
+    while (l1 != null && l2 != null) {
+        if (l1.val <= l2.val) { curr.next = l1; l1 = l1.next; }
+        else { curr.next = l2; l2 = l2.next; }
+        curr = curr.next;
+    }
+    curr.next = (l1 != null) ? l1 : l2;
+    return dummy.next;
+}
+```
+
+```
+l1: 1→2→4    l2: 1→3→4
+Compare 1≤1→take l1. 2>1→take l2. 2≤3→take l1. 4>3→take l2. 4≤4→take l1. Append l2.
+Result: 1→1→2→3→4→4 ✅
+```
+
+**Complexity**: Time O(n+m). Space O(1).
+
+---
+
+### 24. Linked List Cycle 🟢
+
+```java
+public boolean hasCycle(ListNode head) {
+    ListNode slow = head, fast = head;
+    while (fast != null && fast.next != null) {
+        slow = slow.next;
+        fast = fast.next.next;
+        if (slow == fast) return true;
+    }
+    return false;
+}
+```
+
+```
+3→2→0→-4→(back to 2)
+slow: 3→2→0→-4→2   fast: 3→0→2→2
+Meet! → cycle ✅
+
+💡 Floyd's Tortoise and Hare: fast moves 2x, must meet if cycle exists.
+```
+
+**Complexity**: Time O(n). Space O(1).
+
+---
+
+### 25. Reorder List 🟡
+
+```java
+public void reorderList(ListNode head) {
+    ListNode slow = head, fast = head;
+    while (fast.next != null && fast.next.next != null) {
+        slow = slow.next; fast = fast.next.next;
+    }
+    ListNode prev = null, curr = slow.next;
+    slow.next = null;
+    while (curr != null) {
+        ListNode next = curr.next; curr.next = prev; prev = curr; curr = next;
+    }
+    ListNode first = head, second = prev;
+    while (second != null) {
+        ListNode t1 = first.next, t2 = second.next;
+        first.next = second; second.next = t1;
+        first = t1; second = t2;
+    }
+}
+```
+
+```
+1→2→3→4→5
+Find mid→3. Split [1→2→3],[4→5]. Reverse 2nd [5→4]. Interleave: 1→5→2→4→3 ✅
+
+💡 Find middle + reverse second half + merge alternating.
+```
+
+**Complexity**: Time O(n). Space O(1).
+
+---
+
+### 26. Remove Nth Node From End 🟡
+
+```java
+public ListNode removeNthFromEnd(ListNode head, int n) {
+    ListNode dummy = new ListNode(0, head), fast = dummy, slow = dummy;
+    for (int i = 0; i <= n; i++) fast = fast.next;
+    while (fast != null) { slow = slow.next; fast = fast.next; }
+    slow.next = slow.next.next;
+    return dummy.next;
+}
+```
+
+```
+1→2→3→4→5, n=2
+Advance fast by 3: fast→3. Move both until fast=null: slow→3.
+Remove slow.next(4): 1→2→3→5 ✅
+
+💡 Gap of n+1. When fast hits null, slow is right before target.
+```
+
+**Complexity**: Time O(n). Space O(1).
+
+---
+
+### 27. Merge K Sorted Lists 🔴
+
+```java
+public ListNode mergeKLists(ListNode[] lists) {
+    PriorityQueue<ListNode> heap = new PriorityQueue<>((a,b) -> a.val - b.val);
+    for (ListNode n : lists) if (n != null) heap.offer(n);
+    ListNode dummy = new ListNode(0), curr = dummy;
+    while (!heap.isEmpty()) {
+        ListNode node = heap.poll();
+        curr.next = node; curr = curr.next;
+        if (node.next != null) heap.offer(node.next);
+    }
+    return dummy.next;
+}
+```
+
+```
+[1→4→5],[1→3→4],[2→6] → heap=[1,1,2]
+Poll 1→push 4, poll 1→push 3, poll 2→push 6...
+Result: 1→1→2→3→4→4→5→6 ✅
+
+💡 Min-heap of size k. Always poll smallest head. O(N log k).
+```
+
+**Complexity**: Time O(N log k). Space O(k).
+
+---
+
+# 🌳 Trees
+
+> [Deep dive →](./08-trees.md)
+
+### 28. Invert Binary Tree 🟢
+
+```java
+public TreeNode invertTree(TreeNode root) {
+    if (root == null) return null;
+    TreeNode l = invertTree(root.left), r = invertTree(root.right);
+    root.left = r; root.right = l;
+    return root;
+}
+```
+
+```
+    4          4
+   / \   →   / \
+  2   7     7   2
+ / \ / \   / \ / \
+1  3 6  9 9  6 3  1   ✅
+
+💡 Post-order: invert children, then swap.
+```
+
+**Complexity**: Time O(n). Space O(h).
+
+---
+
+### 29. Maximum Depth of Binary Tree 🟢
+
+```java
+public int maxDepth(TreeNode root) {
+    if (root == null) return 0;
+    return 1 + Math.max(maxDepth(root.left), maxDepth(root.right));
+}
+```
+
+```
+    3       depth(3)=1+max(1,2)=3 ✅
+   / \      depth(9)=1, depth(20)=1+max(1,1)=2
+  9   20
+     / \
+   15   7
+```
+
+**Complexity**: Time O(n). Space O(h).
+
+---
+
+### 30. Same Tree 🟢
+
+```java
+public boolean isSameTree(TreeNode p, TreeNode q) {
+    if (p == null && q == null) return true;
+    if (p == null || q == null || p.val != q.val) return false;
+    return isSameTree(p.left, q.left) && isSameTree(p.right, q.right);
+}
+```
+
+**Complexity**: Time O(n). Space O(h).
+
+---
+
+### 31. Subtree of Another Tree 🟢
+
+```java
+public boolean isSubtree(TreeNode root, TreeNode subRoot) {
+    if (root == null) return false;
+    if (isSameTree(root, subRoot)) return true;
+    return isSubtree(root.left, subRoot) || isSubtree(root.right, subRoot);
+}
+```
+
+```
+💡 At each node check isSameTree. Reuses same-tree logic.
+```
+
+**Complexity**: Time O(m·n). Space O(h).
+
+---
+
+### 32. Lowest Common Ancestor of BST 🟡
+
+```java
+public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+    while (root != null) {
+        if (p.val < root.val && q.val < root.val) root = root.left;
+        else if (p.val > root.val && q.val > root.val) root = root.right;
+        else return root;
+    }
+    return null;
+}
+```
+
+```
+    6
+   / \     LCA(2,8)=6 (split)
+  2   8    LCA(2,4)=2 (p is ancestor)
+
+💡 BST: both < root→left, both > root→right, else split point=LCA.
+```
+
+**Complexity**: Time O(h). Space O(1).
+
+---
+
+### 33. Binary Tree Level Order Traversal 🟡
+
+```java
+public List<List<Integer>> levelOrder(TreeNode root) {
+    List<List<Integer>> res = new ArrayList<>();
+    if (root == null) return res;
+    Queue<TreeNode> q = new LinkedList<>();
+    q.offer(root);
+    while (!q.isEmpty()) {
+        int size = q.size();
+        List<Integer> level = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            TreeNode node = q.poll();
+            level.add(node.val);
+            if (node.left != null) q.offer(node.left);
+            if (node.right != null) q.offer(node.right);
+        }
+        res.add(level);
+    }
+    return res;
+}
+```
+
+```
+    3
+   / \    → [[3],[9,20],[15,7]] ✅
+  9   20
+     / \
+   15   7
+
+💡 BFS. Process levelSize nodes per iteration.
+```
+
+**Complexity**: Time O(n). Space O(w).
+
+---
+
+### 34. Validate Binary Search Tree 🟡
+
+```java
+public boolean isValidBST(TreeNode root) {
+    return validate(root, Long.MIN_VALUE, Long.MAX_VALUE);
+}
+private boolean validate(TreeNode n, long min, long max) {
+    if (n == null) return true;
+    if (n.val <= min || n.val >= max) return false;
+    return validate(n.left, min, n.val) && validate(n.right, n.val, max);
+}
+```
+
+```
+💡 Pass valid [min,max] range down. Each node tightens the range.
+```
+
+**Complexity**: Time O(n). Space O(h).
+
+---
+
+### 35. Kth Smallest Element in BST 🟡
+
+```java
+public int kthSmallest(TreeNode root, int k) {
+    Stack<TreeNode> stack = new Stack<>();
+    TreeNode curr = root;
+    while (curr != null || !stack.isEmpty()) {
+        while (curr != null) { stack.push(curr); curr = curr.left; }
+        curr = stack.pop();
+        if (--k == 0) return curr.val;
+        curr = curr.right;
+    }
+    return -1;
+}
+```
+
+```
+💡 Iterative inorder. BST inorder = sorted. Stop at kth.
+```
+
+**Complexity**: Time O(h + k). Space O(h).
+
+---
+
+### 36. Construct from Preorder and Inorder 🟡
+
+```java
+int preIdx = 0;
+Map<Integer,Integer> inMap = new HashMap<>();
+
+public TreeNode buildTree(int[] pre, int[] in) {
+    for (int i = 0; i < in.length; i++) inMap.put(in[i], i);
+    return build(pre, 0, in.length - 1);
+}
+
+TreeNode build(int[] pre, int lo, int hi) {
+    if (lo > hi) return null;
+    int val = pre[preIdx++];
+    TreeNode root = new TreeNode(val);
+    int idx = inMap.get(val);
+    root.left = build(pre, lo, idx - 1);
+    root.right = build(pre, idx + 1, hi);
+    return root;
+}
+```
+
+```
+pre=[3,9,20,15,7] in=[9,3,15,20,7]
+Root=3. In inorder: left=[9] right=[15,20,7]
+     3
+    / \    ✅
+   9   20
+      / \
+    15   7
+
+💡 Preorder → root. Inorder → split left/right subtrees.
+```
+
+**Complexity**: Time O(n). Space O(n).
+
+---
+
+### 37. Binary Tree Maximum Path Sum 🔴
+
+```java
+int maxSum = Integer.MIN_VALUE;
+public int maxPathSum(TreeNode root) { dfs(root); return maxSum; }
+
+int dfs(TreeNode node) {
+    if (node == null) return 0;
+    int l = Math.max(0, dfs(node.left));
+    int r = Math.max(0, dfs(node.right));
+    maxSum = Math.max(maxSum, l + r + node.val);
+    return Math.max(l, r) + node.val;
+}
+```
+
+```
+   -10
+   / \      dfs(20): l=15, r=7, maxSum=42, return 35
+  9   20    dfs(-10): l=9, r=35, through=34 < 42
+     / \    Answer: 42 (path 15→20→7) ✅
+    15   7
+
+💡 Update global max with through-path (l+r+val). Return best single-direction.
+```
+
+**Complexity**: Time O(n). Space O(h).
+
+---
+
+### 38. Serialize and Deserialize Binary Tree 🔴
+
+```java
+public String serialize(TreeNode root) {
+    if (root == null) return "null";
+    return root.val + "," + serialize(root.left) + "," + serialize(root.right);
+}
+
+public TreeNode deserialize(String data) {
+    Queue<String> q = new LinkedList<>(Arrays.asList(data.split(",")));
+    return build(q);
+}
+
+TreeNode build(Queue<String> q) {
+    String v = q.poll();
+    if (v.equals("null")) return null;
+    TreeNode n = new TreeNode(Integer.parseInt(v));
+    n.left = build(q); n.right = build(q);
+    return n;
+}
+```
+
+```
+💡 Preorder with null markers. Queue enables sequential reconstruction.
+```
+
+**Complexity**: Time O(n). Space O(n).
+
+---
+
+# 🔤 Tries
+
+### 39. Implement Trie 🟡
+
+```java
+class Trie {
+    Trie[] ch = new Trie[26];
+    boolean end;
+
+    public void insert(String w) {
+        Trie n = this;
+        for (char c : w.toCharArray()) {
+            int i = c - 'a';
+            if (n.ch[i] == null) n.ch[i] = new Trie();
+            n = n.ch[i];
+        }
+        n.end = true;
+    }
+
+    public boolean search(String w) { Trie n = find(w); return n != null && n.end; }
+    public boolean startsWith(String p) { return find(p) != null; }
+
+    Trie find(String w) {
+        Trie n = this;
+        for (char c : w.toCharArray()) {
+            if (n.ch[c-'a'] == null) return null;
+            n = n.ch[c-'a'];
+        }
+        return n;
+    }
+}
+```
+
+```
+insert("apple"): root→a→p→p→l→e(✓)
+search("app"): traverse a→p→p, end=true ✅
+startsWith("ap"): node exists ✅
+
+💡 Each node = 26 children. end marks complete words.
+```
+
+**Complexity**: Insert/Search O(L). Space O(N·L).
+
+---
+
+### 40. Add and Search Words 🟡
+
+```java
+class WordDictionary {
+    WordDictionary[] ch = new WordDictionary[26];
+    boolean end;
+
+    public void addWord(String w) {
+        WordDictionary n = this;
+        for (char c : w.toCharArray()) {
+            int i = c-'a';
+            if (n.ch[i] == null) n.ch[i] = new WordDictionary();
+            n = n.ch[i];
+        }
+        n.end = true;
+    }
+
+    public boolean search(String w) { return dfs(w, 0, this); }
+
+    boolean dfs(String w, int i, WordDictionary n) {
+        if (n == null) return false;
+        if (i == w.length()) return n.end;
+        if (w.charAt(i) == '.') {
+            for (var c : n.ch) if (dfs(w, i+1, c)) return true;
+            return false;
+        }
+        return dfs(w, i+1, n.ch[w.charAt(i)-'a']);
+    }
+}
+```
+
+```
+search("b.d") → b→(try all)→d → found ✅
+
+💡 '.' wildcard = try all 26 children (backtracking in trie).
+```
+
+**Complexity**: Search O(26^dots · L). Insert O(L).
+
+---
+
+### 41. Word Search II 🔴
+
+```java
+public List<String> findWords(char[][] board, String[] words) {
+    TrieNode root = buildTrie(words);
+    List<String> res = new ArrayList<>();
+    for (int i = 0; i < board.length; i++)
+        for (int j = 0; j < board[0].length; j++)
+            dfs(board, i, j, root, res);
+    return res;
+}
+
+void dfs(char[][] b, int r, int c, TrieNode n, List<String> res) {
+    if (r<0||r>=b.length||c<0||c>=b[0].length) return;
+    char ch = b[r][c];
+    if (ch=='#'||n.children[ch-'a']==null) return;
+    n = n.children[ch-'a'];
+    if (n.word != null) { res.add(n.word); n.word = null; }
+    b[r][c] = '#';
+    dfs(b,r+1,c,n,res); dfs(b,r-1,c,n,res);
+    dfs(b,r,c+1,n,res); dfs(b,r,c-1,n,res);
+    b[r][c] = ch;
+}
+```
+
+```
+💡 Build trie from words. DFS from each cell, follow trie paths. Trie prunes search space.
+```
+
+**Complexity**: Time O(m·n·4^L). Space O(total chars).
+
+---
+
+# ⛰️ Heap / Priority Queue
+
+> [Deep dive →](./09-heaps-priority-queues.md)
+
+### 42. Find Median from Data Stream 🔴
+
+```java
+PriorityQueue<Integer> small = new PriorityQueue<>(Collections.reverseOrder());
+PriorityQueue<Integer> large = new PriorityQueue<>();
+
+public void addNum(int num) {
+    small.offer(num);
+    large.offer(small.poll());
+    if (large.size() > small.size()) small.offer(large.poll());
+}
+
+public double findMedian() {
+    return small.size() > large.size() ? small.peek()
+        : (small.peek() + large.peek()) / 2.0;
+}
+```
+
+```
+Add [2,3,4]: small=[2]→[2],[3]→[3,2],[4] → median=3 ✅
+
+💡 Two heaps: max-heap (left half) + min-heap (right half).
+```
+
+**Complexity**: addNum O(log n). findMedian O(1).
+
+---
+
+# 🔙 Backtracking
+
+> [Deep dive →](./11-backtracking.md)
+
+### 43. Combination Sum 🟡
+
+```java
+public List<List<Integer>> combinationSum(int[] cands, int target) {
+    List<List<Integer>> res = new ArrayList<>();
+    bt(cands, target, 0, new ArrayList<>(), res);
+    return res;
+}
+
+void bt(int[] nums, int rem, int start, List<Integer> path, List<List<Integer>> res) {
+    if (rem == 0) { res.add(new ArrayList<>(path)); return; }
+    if (rem < 0) return;
+    for (int i = start; i < nums.length; i++) {
+        path.add(nums[i]);
+        bt(nums, rem-nums[i], i, path, res);  // i not i+1 (reuse)
+        path.remove(path.size()-1);
+    }
+}
+```
+
+```
+cands=[2,3,6,7], target=7
+[2,2,3]=7 ✅  [7]=7 ✅
+
+💡 Start from i (not i+1) for reuse. Prune when remain < 0.
+```
+
+**Complexity**: Time O(n^(T/M)). Space O(T/M).
+
+---
+
+### 44. Word Search 🟡
+
+```java
+public boolean exist(char[][] board, String word) {
+    for (int i = 0; i < board.length; i++)
+        for (int j = 0; j < board[0].length; j++)
+            if (dfs(board, word, i, j, 0)) return true;
+    return false;
+}
+
+boolean dfs(char[][] b, String w, int r, int c, int idx) {
+    if (idx == w.length()) return true;
+    if (r<0||r>=b.length||c<0||c>=b[0].length||b[r][c]!=w.charAt(idx)) return false;
+    char tmp = b[r][c]; b[r][c] = '#';
+    boolean found = dfs(b,w,r+1,c,idx+1)||dfs(b,w,r-1,c,idx+1)
+                  ||dfs(b,w,r,c+1,idx+1)||dfs(b,w,r,c-1,idx+1);
+    b[r][c] = tmp;
+    return found;
+}
+```
+
+```
+💡 DFS with backtracking. Mark visited with '#', restore after.
+```
+
+**Complexity**: Time O(m·n·4^L). Space O(L).
+
+---
+
+# 🌐 Graphs
+
+> [Deep dive →](./10-graphs.md)
+
+### 45. Number of Islands 🟡
+
+```java
+public int numIslands(char[][] grid) {
+    int count = 0;
+    for (int i = 0; i < grid.length; i++)
+        for (int j = 0; j < grid[0].length; j++)
+            if (grid[i][j] == '1') { dfs(grid, i, j); count++; }
+    return count;
+}
+
+void dfs(char[][] g, int r, int c) {
+    if (r<0||r>=g.length||c<0||c>=g[0].length||g[r][c]!='1') return;
+    g[r][c] = '0';
+    dfs(g,r+1,c); dfs(g,r-1,c); dfs(g,r,c+1); dfs(g,r,c-1);
+}
+```
+
+```
+1 1 0 0 0      0 0 0 0 0
+1 1 0 0 0  →   0 0 0 0 0   count=1
+0 0 1 0 0      0 0 0 0 0   count=2
+0 0 0 1 1      0 0 0 0 0   count=3
+
+💡 DFS flood-fill sinks visited land. Each trigger = new island.
+```
+
+**Complexity**: Time O(m·n). Space O(m·n).
+
+---
+
+### 46. Clone Graph 🟡
+
+```java
+Map<Node, Node> visited = new HashMap<>();
+public Node cloneGraph(Node node) {
+    if (node == null) return null;
+    if (visited.containsKey(node)) return visited.get(node);
+    Node clone = new Node(node.val);
+    visited.put(node, clone);
+    for (Node n : node.neighbors) clone.neighbors.add(cloneGraph(n));
+    return clone;
+}
+```
+
+```
+💡 DFS + HashMap to track cloned nodes. Prevents infinite loops in cycles.
+```
+
+**Complexity**: Time O(V+E). Space O(V).
+
+---
+
+### 47. Pacific Atlantic Water Flow 🟡
+
+```java
+public List<List<Integer>> pacificAtlantic(int[][] heights) {
+    int m = heights.length, n = heights[0].length;
+    boolean[][] pac = new boolean[m][n], atl = new boolean[m][n];
+    for (int i = 0; i < m; i++) { dfs(heights,pac,i,0); dfs(heights,atl,i,n-1); }
+    for (int j = 0; j < n; j++) { dfs(heights,pac,0,j); dfs(heights,atl,m-1,j); }
+    List<List<Integer>> res = new ArrayList<>();
+    for (int i = 0; i < m; i++)
+        for (int j = 0; j < n; j++)
+            if (pac[i][j] && atl[i][j]) res.add(Arrays.asList(i, j));
+    return res;
+}
+```
+
+```
+💡 Reverse thinking: DFS from ocean borders inward. Result = intersection of both reachable sets.
+```
+
+**Complexity**: Time O(m·n). Space O(m·n).
+
+---
+
+### 48. Course Schedule 🟡
+
+```java
+public boolean canFinish(int n, int[][] prereqs) {
+    List<List<Integer>> adj = new ArrayList<>();
+    int[] inDeg = new int[n];
+    for (int i = 0; i < n; i++) adj.add(new ArrayList<>());
+    for (int[] p : prereqs) { adj.get(p[1]).add(p[0]); inDeg[p[0]]++; }
+    Queue<Integer> q = new LinkedList<>();
+    for (int i = 0; i < n; i++) if (inDeg[i] == 0) q.offer(i);
+    int count = 0;
+    while (!q.isEmpty()) {
+        int c = q.poll(); count++;
+        for (int next : adj.get(c)) if (--inDeg[next] == 0) q.offer(next);
+    }
+    return count == n;
+}
+```
+
+```
+n=4, prereqs=[[1,0],[2,1],[3,2]]
+inDeg: [0,1,1,1] → start with 0
+Process 0→1(deg:0)→2(deg:0)→3(deg:0) → count=4=n ✅
+
+💡 Topological sort (Kahn's). If count < n, cycle exists.
+```
+
+**Complexity**: Time O(V+E). Space O(V+E).
+
+---
+
+### 49. Number of Connected Components 🟡
+
+```java
+public int countComponents(int n, int[][] edges) {
+    int[] parent = new int[n], rank = new int[n];
+    for (int i = 0; i < n; i++) parent[i] = i;
+    int components = n;
+    for (int[] e : edges)
+        if (union(parent, rank, e[0], e[1])) components--;
+    return components;
+}
+
+int find(int[] p, int x) { return p[x] == x ? x : (p[x] = find(p, p[x])); }
+
+boolean union(int[] p, int[] r, int a, int b) {
+    int pa = find(p, a), pb = find(p, b);
+    if (pa == pb) return false;
+    if (r[pa] < r[pb]) p[pa] = pb; else if (r[pa] > r[pb]) p[pb] = pa;
+    else { p[pb] = pa; r[pa]++; }
+    return true;
+}
+```
+
+```
+💡 Union-Find. Start with n components. Each successful union decrements by 1.
+```
+
+**Complexity**: Time O(E·α(n)) ≈ O(E). Space O(n).
+
+---
+
+### 50. Graph Valid Tree 🟡
+
+```java
+public boolean validTree(int n, int[][] edges) {
+    if (edges.length != n - 1) return false;  // Tree must have n-1 edges
+    int[] parent = new int[n];
+    for (int i = 0; i < n; i++) parent[i] = i;
+    for (int[] e : edges)
+        if (!union(parent, e[0], e[1])) return false;  // Cycle detected
+    return true;
+}
+```
+
+```
+💡 Tree = connected + no cycles. Check: exactly n-1 edges + Union-Find finds no cycle.
+```
+
+**Complexity**: Time O(E·α(n)). Space O(n).
+
+---
+
+# 📈 1-D Dynamic Programming
+
+> [Deep dive →](./12-dynamic-programming.md)
+
+### 51. Climbing Stairs 🟢
+
+```java
+public int climbStairs(int n) {
+    if (n <= 2) return n;
+    int a = 1, b = 2;
+    for (int i = 3; i <= n; i++) { int c = a + b; a = b; b = c; }
+    return b;
+}
+```
+
+```
+n=5: 1→2→3→5→8  (Fibonacci!)
+
+💡 dp[i] = dp[i-1] + dp[i-2]. Only need last two values.
+```
+
+**Complexity**: Time O(n). Space O(1).
+
+---
+
+### 52. House Robber 🟡
+
+```java
+public int rob(int[] nums) {
+    int prev2 = 0, prev1 = 0;
+    for (int n : nums) {
+        int curr = Math.max(prev1, prev2 + n);
+        prev2 = prev1; prev1 = curr;
+    }
+    return prev1;
+}
+```
+
+```
+nums = [2,7,9,3,1]
+prev2=0,prev1=0
+n=2: curr=max(0,0+2)=2, prev2=0,prev1=2
+n=7: curr=max(2,0+7)=7, prev2=2,prev1=7
+n=9: curr=max(7,2+9)=11, prev2=7,prev1=11
+n=3: curr=max(11,7+3)=11
+n=1: curr=max(11,11+1)=12 ✅
+
+💡 Rob or skip each house: dp[i] = max(dp[i-1], dp[i-2]+nums[i]).
+```
+
+**Complexity**: Time O(n). Space O(1).
+
+---
+
+### 53. House Robber II 🟡
+
+```java
+public int rob(int[] nums) {
+    if (nums.length == 1) return nums[0];
+    return Math.max(robRange(nums, 0, nums.length-2),
+                    robRange(nums, 1, nums.length-1));
+}
+
+int robRange(int[] nums, int lo, int hi) {
+    int p2 = 0, p1 = 0;
+    for (int i = lo; i <= hi; i++) { int c = Math.max(p1, p2+nums[i]); p2=p1; p1=c; }
+    return p1;
+}
+```
+
+```
+💡 Circular: can't rob both first and last. Run House Robber twice: [0..n-2] and [1..n-1].
+```
+
+**Complexity**: Time O(n). Space O(1).
+
+---
+
+### 54. Longest Palindromic Substring 🟡
+
+```java
+int start = 0, maxLen = 0;
+public String longestPalindrome(String s) {
+    for (int i = 0; i < s.length(); i++) {
+        expand(s, i, i);     // Odd length
+        expand(s, i, i + 1); // Even length
+    }
+    return s.substring(start, start + maxLen);
+}
+
+void expand(String s, int l, int r) {
+    while (l >= 0 && r < s.length() && s.charAt(l) == s.charAt(r)) { l--; r++; }
+    if (r - l - 1 > maxLen) { start = l + 1; maxLen = r - l - 1; }
+}
+```
+
+```
+s = "babad"
+Center at 'a'(1): expand → "bab" len=3 ✅
+Center at 'b'(2): expand → "aba" len=3
+Center at 'a'(3): expand → "bab"... but same length
+
+💡 Expand from each center (odd + even). O(n²) but simple and practical.
+```
+
+**Complexity**: Time O(n²). Space O(1).
+
+---
+
+### 55. Palindromic Substrings 🟡
+
+```java
+public int countSubstrings(String s) {
+    int count = 0;
+    for (int i = 0; i < s.length(); i++) {
+        count += expand(s, i, i);     // Odd
+        count += expand(s, i, i + 1); // Even
+    }
+    return count;
+}
+
+int expand(String s, int l, int r) {
+    int cnt = 0;
+    while (l >= 0 && r < s.length() && s.charAt(l) == s.charAt(r)) { cnt++; l--; r++; }
+    return cnt;
+}
+```
+
+```
+💡 Same expand technique. Count every palindrome found during expansion.
+```
+
+**Complexity**: Time O(n²). Space O(1).
+
+---
+
+### 56. Decode Ways 🟡
+
+```java
+public int numDecodings(String s) {
+    int n = s.length();
+    int[] dp = new int[n + 1];
+    dp[n] = 1;
+    for (int i = n - 1; i >= 0; i--) {
+        if (s.charAt(i) == '0') dp[i] = 0;
+        else {
+            dp[i] = dp[i + 1];
+            if (i + 1 < n && Integer.parseInt(s.substring(i, i + 2)) <= 26)
+                dp[i] += dp[i + 2];
+        }
+    }
+    return dp[0];
+}
+```
+
+```
+s = "226"
+dp[3]=1
+i=2: '6'→dp[2]=dp[3]=1
+i=1: '2'→dp[1]=dp[2]=1, "26"≤26→dp[1]+=dp[3]=2
+i=0: '2'→dp[0]=dp[1]=2, "22"≤26→dp[0]+=dp[2]=3
+
+3 ways: "2|2|6", "22|6", "2|26" ✅
+```
+
+**Complexity**: Time O(n). Space O(n).
+
+---
+
+### 57. Coin Change 🟡
+
+```java
+public int coinChange(int[] coins, int amount) {
+    int[] dp = new int[amount + 1];
+    Arrays.fill(dp, amount + 1);
+    dp[0] = 0;
+    for (int i = 1; i <= amount; i++)
+        for (int c : coins)
+            if (c <= i) dp[i] = Math.min(dp[i], dp[i - c] + 1);
+    return dp[amount] > amount ? -1 : dp[amount];
+}
+```
+
+```
+coins=[1,3,4], amount=6
+dp: [0,1,2,1,1,2,2]
+dp[6] = min(dp[5]+1, dp[3]+1, dp[2]+1) = min(3,2,3) = 2 → coins [3,3] ✅
+
+💡 dp[i] = min coins to make amount i. Try each coin.
+```
+
+**Complexity**: Time O(amount·coins). Space O(amount).
+
+---
+
+### 58. Maximum Product Subarray 🟡
+
+```java
+public int maxProduct(int[] nums) {
+    int max = nums[0], min = nums[0], result = nums[0];
+    for (int i = 1; i < nums.length; i++) {
+        if (nums[i] < 0) { int t = max; max = min; min = t; }
+        max = Math.max(nums[i], max * nums[i]);
+        min = Math.min(nums[i], min * nums[i]);
+        result = Math.max(result, max);
+    }
+    return result;
+}
+```
+
+```
+nums = [2,3,-2,4]
+i=0: max=2, min=2, res=2
+i=1: max=6, min=3, res=6
+i=2: neg→swap, max=max(-2,-12)=-2, min=min(-2,-6)=-6, res=6
+i=3: max=max(4,-8)=4, res=6 ✅
+
+💡 Track both max AND min (negative×negative = positive). Swap on negative.
+```
+
+**Complexity**: Time O(n). Space O(1).
+
+---
+
+### 59. Word Break 🟡
+
+```java
+public boolean wordBreak(String s, List<String> wordDict) {
+    Set<String> dict = new HashSet<>(wordDict);
+    boolean[] dp = new boolean[s.length() + 1];
+    dp[0] = true;
+    for (int i = 1; i <= s.length(); i++)
+        for (int j = 0; j < i; j++)
+            if (dp[j] && dict.contains(s.substring(j, i))) { dp[i] = true; break; }
+    return dp[s.length()];
+}
+```
+
+```
+s="leetcode", dict=["leet","code"]
+dp[4]=true ("leet"), dp[8]=true ("code") → true ✅
+
+💡 dp[i] = can s[0..i] be segmented? Try all split points j where dp[j]=true.
+```
+
+**Complexity**: Time O(n²·L). Space O(n).
+
+---
+
+### 60. Longest Increasing Subsequence 🟡
+
+```java
+public int lengthOfLIS(int[] nums) {
+    List<Integer> tails = new ArrayList<>();
+    for (int n : nums) {
+        int pos = Collections.binarySearch(tails, n);
+        if (pos < 0) pos = -(pos + 1);
+        if (pos == tails.size()) tails.add(n);
+        else tails.set(pos, n);
+    }
+    return tails.size();
+}
+```
+
+```
+nums = [10,9,2,5,3,7,101,18]
+tails: [10] → [9] → [2] → [2,5] → [2,3] → [2,3,7] → [2,3,7,101] → [2,3,7,18]
+Answer: 4 (LIS: [2,3,7,101] or [2,3,7,18]) ✅
+
+💡 Binary search on patience-sort tails. O(n log n) vs O(n²) DP.
+```
+
+**Complexity**: Time O(n log n). Space O(n).
+
+---
+
+# 📊 2-D Dynamic Programming
+
+### 61. Unique Paths 🟡
+
+```java
+public int uniquePaths(int m, int n) {
+    int[] dp = new int[n];
+    Arrays.fill(dp, 1);
+    for (int i = 1; i < m; i++)
+        for (int j = 1; j < n; j++)
+            dp[j] += dp[j - 1];
+    return dp[n - 1];
+}
+```
+
+```
+3×3 grid:
+1  1  1
+1  2  3
+1  3  6  → 6 paths ✅
+
+💡 dp[r][c] = dp[r-1][c] + dp[r][c-1]. Optimize to 1D row.
+```
+
+**Complexity**: Time O(m·n). Space O(n).
+
+---
+
+### 62. Longest Common Subsequence 🟡
+
+```java
+public int longestCommonSubsequence(String s1, String s2) {
+    int m = s1.length(), n = s2.length();
+    int[][] dp = new int[m + 1][n + 1];
+    for (int i = 1; i <= m; i++)
+        for (int j = 1; j <= n; j++)
+            dp[i][j] = s1.charAt(i-1) == s2.charAt(j-1)
+                ? dp[i-1][j-1] + 1
+                : Math.max(dp[i-1][j], dp[i][j-1]);
+    return dp[m][n];
+}
+```
+
+```
+s1="abcde", s2="ace"
+     ""  a  c  e
+"" [  0  0  0  0 ]
+a  [  0  1  1  1 ]
+b  [  0  1  1  1 ]
+c  [  0  1  2  2 ]
+d  [  0  1  2  2 ]
+e  [  0  1  2  3 ] → LCS = 3 ("ace") ✅
+
+💡 Match → diagonal+1. No match → max(up, left).
+```
+
+**Complexity**: Time O(m·n). Space O(m·n).
+
+---
+
+# 💰 Greedy
+
+> [Deep dive →](./13-greedy.md)
+
+### 63. Maximum Subarray 🟡
+
+```java
+public int maxSubArray(int[] nums) {
+    int curr = nums[0], max = nums[0];
+    for (int i = 1; i < nums.length; i++) {
+        curr = Math.max(nums[i], curr + nums[i]);
+        max = Math.max(max, curr);
+    }
+    return max;
+}
+```
+
+```
+nums = [-2,1,-3,4,-1,2,1,-5,4]
+curr: -2→1→-2→4→3→5→6→1→5
+max:  -2→1→ 1→4→4→5→6→6→6  ✅ (subarray [4,-1,2,1])
+
+💡 Kadane's: extend or restart at each element. curr = max(nums[i], curr+nums[i]).
+```
+
+**Complexity**: Time O(n). Space O(1).
+
+---
+
+### 64. Jump Game 🟡
+
+```java
+public boolean canJump(int[] nums) {
+    int farthest = 0;
+    for (int i = 0; i < nums.length; i++) {
+        if (i > farthest) return false;
+        farthest = Math.max(farthest, i + nums[i]);
+    }
+    return true;
+}
+```
+
+```
+nums = [2,3,1,1,4]
+i=0: farthest=2. i=1: farthest=4. 4≥4 → true ✅
+nums = [3,2,1,0,4]
+i=0: far=3. i=1: far=3. i=2: far=3. i=3: far=3. i=4: 4>3 → false ❌
+
+💡 Track farthest reachable. If current index > farthest, stuck.
+```
+
+**Complexity**: Time O(n). Space O(1).
+
+---
+
+# 📐 Intervals
+
+> [Deep dive →](./14-intervals.md)
+
+### 65. Merge Intervals 🟡
+
+```java
+public int[][] merge(int[][] intervals) {
+    Arrays.sort(intervals, (a,b) -> a[0] - b[0]);
+    List<int[]> res = new ArrayList<>();
+    res.add(intervals[0]);
+    for (int i = 1; i < intervals.length; i++) {
+        int[] last = res.get(res.size()-1);
+        if (intervals[i][0] <= last[1]) last[1] = Math.max(last[1], intervals[i][1]);
+        else res.add(intervals[i]);
+    }
+    return res.toArray(new int[0][]);
+}
+```
+
+```
+[[1,3],[2,6],[8,10],[15,18]]
+[1,3]+[2,6]→[1,6] (overlap). [8,10] no overlap. [15,18] no overlap.
+Result: [[1,6],[8,10],[15,18]] ✅
+
+💡 Sort by start. Merge if current start ≤ prev end.
+```
+
+**Complexity**: Time O(n log n). Space O(n).
+
+---
+
+### 66. Insert Interval 🟡
+
+```java
+public int[][] insert(int[][] intervals, int[] newInt) {
+    List<int[]> res = new ArrayList<>();
+    int i = 0;
+    while (i < intervals.length && intervals[i][1] < newInt[0])
+        res.add(intervals[i++]);
+    while (i < intervals.length && intervals[i][0] <= newInt[1]) {
+        newInt[0] = Math.min(newInt[0], intervals[i][0]);
+        newInt[1] = Math.max(newInt[1], intervals[i][1]);
+        i++;
+    }
+    res.add(newInt);
+    while (i < intervals.length) res.add(intervals[i++]);
+    return res.toArray(new int[0][]);
+}
+```
+
+```
+💡 Three phases: add before, merge overlapping, add after.
+```
+
+**Complexity**: Time O(n). Space O(n).
+
+---
+
+### 67. Non-overlapping Intervals 🟡
+
+```java
+public int eraseOverlapIntervals(int[][] intervals) {
+    Arrays.sort(intervals, (a,b) -> a[1] - b[1]);  // Sort by END
+    int count = 0, prevEnd = Integer.MIN_VALUE;
+    for (int[] i : intervals) {
+        if (i[0] >= prevEnd) prevEnd = i[1];
+        else count++;
+    }
+    return count;
+}
+```
+
+```
+[[1,2],[2,3],[3,4],[1,3]]  Sorted by end: [[1,2],[2,3],[1,3],[3,4]]
+Keep [1,2]✅, keep [2,3]✅, remove [1,3]❌(overlap), keep [3,4]✅ → remove 1
+
+💡 Sort by end time. Greedy: always keep interval ending earliest.
+```
+
+**Complexity**: Time O(n log n). Space O(1).
+
+---
+
+### 68. Meeting Rooms II 🔴
+
+```java
+public int minMeetingRooms(int[][] intervals) {
+    int[] starts = new int[intervals.length], ends = new int[intervals.length];
+    for (int i = 0; i < intervals.length; i++) {
+        starts[i] = intervals[i][0]; ends[i] = intervals[i][1];
+    }
+    Arrays.sort(starts); Arrays.sort(ends);
+    int rooms = 0, endPtr = 0;
+    for (int start : starts) {
+        if (start < ends[endPtr]) rooms++;
+        else endPtr++;
+    }
+    return rooms;
+}
+```
+
+```
+[[0,30],[5,10],[15,20]]
+starts: [0,5,15]  ends: [10,20,30]
+s=0 < e=10 → rooms=1. s=5 < e=10 → rooms=2. s=15 ≥ e=10 → endPtr++
+
+Answer: 2 ✅
+
+💡 Sort starts and ends separately. If next start < earliest end, need new room.
+```
+
+**Complexity**: Time O(n log n). Space O(n).
+
+---
+
+# 🔢 Math & Geometry
+
+### 69. Rotate Image 🟡
+
+```java
+public void rotate(int[][] matrix) {
+    int n = matrix.length;
+    // Transpose
+    for (int i = 0; i < n; i++)
+        for (int j = i + 1; j < n; j++) {
+            int t = matrix[i][j]; matrix[i][j] = matrix[j][i]; matrix[j][i] = t;
+        }
+    // Reverse each row
+    for (int[] row : matrix)
+        for (int l = 0, r = n-1; l < r; l++, r--) {
+            int t = row[l]; row[l] = row[r]; row[r] = t;
+        }
+}
+```
+
+```
+[1,2,3]    [1,4,7]    [7,4,1]
+[4,5,6] →  [2,5,8] →  [8,5,2]  ✅
+[7,8,9]    [3,6,9]    [9,6,3]
+ (orig)   (transpose) (reverse rows)
+
+💡 Rotate 90° CW = transpose + reverse each row. In-place, O(1) space.
+```
+
+**Complexity**: Time O(n²). Space O(1).
+
+---
+
+### 70. Spiral Matrix 🟡
+
+```java
+public List<Integer> spiralOrder(int[][] matrix) {
+    List<Integer> res = new ArrayList<>();
+    int top=0, bot=matrix.length-1, left=0, right=matrix[0].length-1;
+    while (top <= bot && left <= right) {
+        for (int j = left; j <= right; j++) res.add(matrix[top][j]); top++;
+        for (int i = top; i <= bot; i++) res.add(matrix[i][right]); right--;
+        if (top <= bot) { for (int j = right; j >= left; j--) res.add(matrix[bot][j]); bot--; }
+        if (left <= right) { for (int i = bot; i >= top; i--) res.add(matrix[i][left]); left++; }
+    }
+    return res;
+}
+```
+
+```
+[1,2,3]
+[4,5,6]  → [1,2,3,6,9,8,7,4,5] ✅
+[7,8,9]
+
+💡 Shrink boundaries: top++, right--, bot--, left++.
+```
+
+**Complexity**: Time O(m·n). Space O(1) extra.
+
+---
+
+# 🔧 Bit Manipulation
+
+> [Deep dive →](./15-bit-manipulation.md)
+
+### 71. Single Number 🟢
+
+```java
+public int singleNumber(int[] nums) {
+    int res = 0;
+    for (int n : nums) res ^= n;
+    return res;
+}
+```
+
+```
+[4,1,2,1,2] → 4^1^2^1^2 = 4^(1^1)^(2^2) = 4^0^0 = 4 ✅
+
+💡 XOR: a^a=0, a^0=a. Pairs cancel out, single remains.
+```
+
+**Complexity**: Time O(n). Space O(1).
+
+---
+
+### 72. Number of 1 Bits 🟢
+
+```java
+public int hammingWeight(int n) {
+    int count = 0;
+    while (n != 0) { count++; n &= (n - 1); }
+    return count;
+}
+```
+
+```
+n=11 (1011): 1011 & 1010 = 1010 (count=1)
+             1010 & 1001 = 1000 (count=2)
+             1000 & 0111 = 0000 (count=3) ✅
+
+💡 n & (n-1) flips the lowest set bit. Count iterations until 0.
+```
+
+**Complexity**: Time O(k) where k=number of 1 bits. Space O(1).
+
+---
+
+### 73. Counting Bits 🟡
+
+```java
+public int[] countBits(int n) {
+    int[] dp = new int[n + 1];
+    for (int i = 1; i <= n; i++) dp[i] = dp[i >> 1] + (i & 1);
+    return dp;
+}
+```
+
+```
+dp[0]=0, dp[1]=dp[0]+1=1, dp[2]=dp[1]+0=1, dp[3]=dp[1]+1=2
+dp[4]=dp[2]+0=1, dp[5]=dp[2]+1=2
+Result: [0,1,1,2,1,2] ✅
+
+💡 dp[i] = dp[i/2] + last bit. Right-shift reuses previous results.
+```
+
+**Complexity**: Time O(n). Space O(n).
+
+---
+
+### 74. Reverse Bits 🟢
+
+```java
+public int reverseBits(int n) {
+    int res = 0;
+    for (int i = 0; i < 32; i++) {
+        res = (res << 1) | (n & 1);
+        n >>= 1;
+    }
+    return res;
+}
+```
+
+```
+n = ...1011 → extract rightmost bit, shift into result left
+After 32 iterations: bits are reversed ✅
+
+💡 Extract LSB of n, push into result. 32 iterations for all bits.
+```
+
+**Complexity**: Time O(1). Space O(1).
+
+---
+
+### 75. Missing Number 🟡
+
+```java
+public int missingNumber(int[] nums) {
+    int xor = nums.length;
+    for (int i = 0; i < nums.length; i++) xor ^= i ^ nums[i];
+    return xor;
+}
+```
+
+```
+nums = [3,0,1], n=3
+xor = 3 ^ (0^3) ^ (1^0) ^ (2^1) = 3^3^0^1^0^2^1 = (3^3)^(1^1)^(0^0)^2 = 2 ✅
+
+💡 XOR all indices (0..n) with all values. Missing number survives.
+```
+
+**Complexity**: Time O(n). Space O(1).
+
+---
+
+# 🏁 Quick Reference — All 75 Problems
+
+| # | Problem | Pattern | Time | Space | Difficulty |
+|---|---------|---------|------|-------|------------|
+| 1 | Two Sum | HashMap | O(n) | O(n) | 🟢 |
+| 2 | Contains Duplicate | HashSet | O(n) | O(n) | 🟢 |
+| 3 | Valid Anagram | Counting | O(n) | O(1) | 🟢 |
+| 4 | Group Anagrams | Sort+Map | O(nk log k) | O(nk) | 🟡 |
+| 5 | Top K Frequent | Bucket Sort | O(n) | O(n) | 🟡 |
+| 6 | Product Except Self | Prefix | O(n) | O(1) | 🟡 |
+| 7 | Valid Sudoku | HashSet | O(1) | O(1) | 🟡 |
+| 8 | Encode/Decode | Length Prefix | O(n) | O(n) | 🟡 |
+| 9 | Longest Consecutive | HashSet | O(n) | O(n) | 🟡 |
+| 10 | Valid Palindrome | Two Pointers | O(n) | O(1) | 🟢 |
+| 11 | 3Sum | Sort+2P | O(n²) | O(1) | 🟡 |
+| 12 | Container Water | Two Pointers | O(n) | O(1) | 🟡 |
+| 13 | Trapping Rain Water | Two Pointers | O(n) | O(1) | 🔴 |
+| 14 | Two Sum II | Two Pointers | O(n) | O(1) | 🟡 |
+| 15 | Buy/Sell Stock | Sliding Window | O(n) | O(1) | 🟢 |
+| 16 | Longest No Repeat | Sliding Window | O(n) | O(1) | 🟡 |
+| 17 | Char Replacement | Sliding Window | O(n) | O(1) | 🟡 |
+| 18 | Min Window Substr | Sliding Window | O(n) | O(1) | 🔴 |
+| 19 | Valid Parentheses | Stack | O(n) | O(n) | 🟢 |
+| 20 | Search Rotated | Binary Search | O(log n) | O(1) | 🟡 |
+| 21 | Find Min Rotated | Binary Search | O(log n) | O(1) | 🟡 |
+| 22 | Reverse List | Iteration | O(n) | O(1) | 🟢 |
+| 23 | Merge Two Lists | Two Pointers | O(n+m) | O(1) | 🟢 |
+| 24 | Linked List Cycle | Floyd's | O(n) | O(1) | 🟢 |
+| 25 | Reorder List | Mid+Rev+Merge | O(n) | O(1) | 🟡 |
+| 26 | Remove Nth End | Two Pointers | O(n) | O(1) | 🟡 |
+| 27 | Merge K Lists | Heap | O(N log k) | O(k) | 🔴 |
+| 28 | Invert Tree | Recursion | O(n) | O(h) | 🟢 |
+| 29 | Max Depth | Recursion | O(n) | O(h) | 🟢 |
+| 30 | Same Tree | Recursion | O(n) | O(h) | 🟢 |
+| 31 | Subtree of Tree | Recursion | O(m·n) | O(h) | 🟢 |
+| 32 | LCA of BST | BST Property | O(h) | O(1) | 🟡 |
+| 33 | Level Order | BFS | O(n) | O(w) | 🟡 |
+| 34 | Validate BST | DFS+Range | O(n) | O(h) | 🟡 |
+| 35 | Kth Smallest BST | Inorder | O(h+k) | O(h) | 🟡 |
+| 36 | Build from Pre+In | Recursion | O(n) | O(n) | 🟡 |
+| 37 | Max Path Sum | DFS | O(n) | O(h) | 🔴 |
+| 38 | Serialize Tree | DFS | O(n) | O(n) | 🔴 |
+| 39 | Implement Trie | Trie | O(L) | O(N·L) | 🟡 |
+| 40 | Add/Search Words | Trie+DFS | O(26^d·L) | O(N·L) | 🟡 |
+| 41 | Word Search II | Trie+DFS | O(mn·4^L) | O(chars) | 🔴 |
+| 42 | Find Median | Two Heaps | O(log n) | O(n) | 🔴 |
+| 43 | Combination Sum | Backtracking | O(n^(T/M)) | O(T/M) | 🟡 |
+| 44 | Word Search | Backtracking | O(mn·4^L) | O(L) | 🟡 |
+| 45 | Number of Islands | DFS | O(m·n) | O(m·n) | 🟡 |
+| 46 | Clone Graph | DFS+Map | O(V+E) | O(V) | 🟡 |
+| 47 | Pacific Atlantic | Multi-source DFS | O(m·n) | O(m·n) | 🟡 |
+| 48 | Course Schedule | Topological Sort | O(V+E) | O(V+E) | 🟡 |
+| 49 | Connected Components | Union-Find | O(E·α) | O(n) | 🟡 |
+| 50 | Graph Valid Tree | Union-Find | O(E·α) | O(n) | 🟡 |
+| 51 | Climbing Stairs | DP | O(n) | O(1) | 🟢 |
+| 52 | House Robber | DP | O(n) | O(1) | 🟡 |
+| 53 | House Robber II | DP (circular) | O(n) | O(1) | 🟡 |
+| 54 | Longest Palindrome | Expand Center | O(n²) | O(1) | 🟡 |
+| 55 | Palindrome Count | Expand Center | O(n²) | O(1) | 🟡 |
+| 56 | Decode Ways | DP | O(n) | O(n) | 🟡 |
+| 57 | Coin Change | DP | O(n·c) | O(n) | 🟡 |
+| 58 | Max Product Sub | DP | O(n) | O(1) | 🟡 |
+| 59 | Word Break | DP | O(n²·L) | O(n) | 🟡 |
+| 60 | LIS | Binary Search | O(n log n) | O(n) | 🟡 |
+| 61 | Unique Paths | DP | O(m·n) | O(n) | 🟡 |
+| 62 | LCS | DP | O(m·n) | O(m·n) | 🟡 |
+| 63 | Max Subarray | Kadane's | O(n) | O(1) | 🟡 |
+| 64 | Jump Game | Greedy | O(n) | O(1) | 🟡 |
+| 65 | Merge Intervals | Sort+Sweep | O(n log n) | O(n) | 🟡 |
+| 66 | Insert Interval | Linear Scan | O(n) | O(n) | 🟡 |
+| 67 | Non-overlapping | Greedy | O(n log n) | O(1) | 🟡 |
+| 68 | Meeting Rooms II | Sort | O(n log n) | O(n) | 🔴 |
+| 69 | Rotate Image | Transpose+Rev | O(n²) | O(1) | 🟡 |
+| 70 | Spiral Matrix | Boundary | O(m·n) | O(1) | 🟡 |
+| 71 | Single Number | XOR | O(n) | O(1) | 🟢 |
+| 72 | Number of 1 Bits | Bit Trick | O(k) | O(1) | 🟢 |
+| 73 | Counting Bits | DP+Bits | O(n) | O(n) | 🟡 |
+| 74 | Reverse Bits | Bit Shift | O(1) | O(1) | 🟢 |
+| 75 | Missing Number | XOR | O(n) | O(1) | 🟡 |
+
+---
+
+*🎯 Master these 75 problems and you'll have the pattern vocabulary to tackle any coding interview. Good luck!*
