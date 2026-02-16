@@ -996,6 +996,18 @@ public boolean isSameTree(TreeNode p, TreeNode q) {
 }
 ```
 
+```
+    1         1
+   / \       / \
+  2   3     2   3     → same(1,1)→same(2,2)→same(3,3)→all match ✅
+
+  1         1
+   \       / 
+    2     2           → same(1,1)→right≠left → false ❌
+
+💡 Both null→true. One null or val≠→false. Recurse left+right.
+```
+
 **Complexity**: Time O(n). Space O(h).
 
 ---
@@ -1011,6 +1023,16 @@ public boolean isSubtree(TreeNode root, TreeNode subRoot) {
 ```
 
 ```
+    root:        sub:
+      3            4
+     / \          / \
+    4   5        1   2
+   / \
+  1   2
+
+isSame(root,sub)? 3≠4→no
+isSame(root.left,sub)? 4=4→check children→1=1,2=2 ✅ subtree found!
+
 💡 At each node check isSameTree. Reuses same-tree logic.
 ```
 
@@ -1094,6 +1116,18 @@ private boolean validate(TreeNode n, long min, long max) {
 ```
 
 ```
+      5  [−∞, +∞]
+     / \
+    1    4  ← 4 not in (5, +∞) → INVALID ❌
+   / \
+  3   6
+
+      5  [−∞, +∞]
+     / \
+    1    6  [5, +∞] ← 6 in range ✅
+   / \   / \
+  0   3 5   7  ← 5 not in (5,6) strict → INVALID ❌
+
 💡 Pass valid [min,max] range down. Each node tightens the range.
 ```
 
@@ -1118,6 +1152,14 @@ public int kthSmallest(TreeNode root, int k) {
 ```
 
 ```
+      5         Inorder traversal: 1, 2, 3, 4, 5, 6
+     / \        k=3 → answer = 3
+    3   6
+   / \
+  2   4       Push 5→3→2→1. Pop 1(k=3→2). Pop 2(k=2→1).
+  /            Pop 3(k=1→0) → return 3 ✅
+ 1
+
 💡 Iterative inorder. BST inorder = sorted. Stop at kth.
 ```
 
@@ -1215,6 +1257,16 @@ TreeNode build(Queue<String> q) {
 ```
 
 ```
+      1
+     / \         serialize → "1,2,null,null,3,4,null,null,5,null,null"
+    2   3
+       / \
+      4   5
+
+Deserialize: queue = [1,2,null,null,3,4,null,null,5,null,null]
+  poll 1→root. Left=poll 2→left. poll null,null→leaves.
+  Right=poll 3. poll 4→left of 3. poll 5→right of 3. ✅
+
 💡 Preorder with null markers. Queue enables sequential reconstruction.
 ```
 
@@ -1334,6 +1386,16 @@ void dfs(char[][] b, int r, int c, TrieNode n, List<String> res) {
 ```
 
 ```
+board:      words: ["oath","pea","eat","rain"]
+o a a n
+e t a e     Trie:  root→o→a→t→h(✓)
+i h k r            root→e→a→t(✓)
+                   root→p→e→a(✓)
+
+DFS from (0,0)='o': trie has o→follow. (1,0)='e'? no 'e' child of 'o'.
+  But (0,1)='a': o→a→match! (1,1)='t': o→a→t→match! (1,2)='h'? no.
+  But (0,2)='a': no. Try (2,1)='h': o→a→t→h→"oath" found! ✅
+
 💡 Build trie from words. DFS from each cell, follow trie paths. Trie prunes search space.
 ```
 
@@ -1364,9 +1426,17 @@ public double findMedian() {
 ```
 
 ```
-Add [2,3,4]: small=[2]→[2],[3]→[3,2],[4] → median=3 ✅
+Stream: 5, 2, 8, 1, 4
 
-💡 Two heaps: max-heap (left half) + min-heap (right half).
+       max-heap (small)   |   min-heap (large)
+       ← left half        |   right half →
+Add 5: [5]                |   []               median = 5
+Add 2: [2]                |   [5]              median = (2+5)/2 = 3.5
+Add 8: [5,2]              |   [8]              median = 5
+Add 1: [2,1]              |   [5,8]            median = (2+5)/2 = 3.5
+Add 4: [4,2,1]            |   [5,8]            median = 4 ✅
+
+💡 Two heaps: max-heap (left half) ≤ min-heap (right half). Balance sizes.
 ```
 
 **Complexity**: addNum O(log n). findMedian O(1).
@@ -1399,7 +1469,17 @@ void bt(int[] nums, int rem, int start, List<Integer> path, List<List<Integer>> 
 
 ```
 cands=[2,3,6,7], target=7
-[2,2,3]=7 ✅  [7]=7 ✅
+
+                     bt(7, [])          rem=7
+              /          |        \         \
+      bt(5,[2])    bt(4,[3])  bt(1,[6])  bt(0,[7])✅
+       /    |         |            ❌
+ bt(3,[2,2]) bt(2,[2,3]) bt(1,[3,3])
+   /    |       ❌           ❌
+bt(1,[2,2,2]) bt(0,[2,2,3])✅
+   ❌
+
+Result: [[2,2,3], [7]] ✅
 
 💡 Start from i (not i+1) for reuse. Prune when remain < 0.
 ```
@@ -1430,6 +1510,18 @@ boolean dfs(char[][] b, String w, int r, int c, int idx) {
 ```
 
 ```
+board:         word = "ABCCED"
+A B C E
+S F C S
+A D E E
+
+Start (0,0)='A' matches w[0].
+  (0,1)='B' matches w[1]. (0,2)='C' matches w[2].
+    (1,2)='C' matches w[3]. (2,2)='E' matches w[4].
+      (2,1)='D' matches w[5] → found! ✅
+
+Path: A(0,0)→B(0,1)→C(0,2)→C(1,2)→E(2,2)→D(2,1)
+
 💡 DFS with backtracking. Mark visited with '#', restore after.
 ```
 
@@ -1487,6 +1579,16 @@ public Node cloneGraph(Node node) {
 ```
 
 ```
+  1 ── 2          clone(1): create 1', visit neighbors
+  |    |            clone(2): create 2', visit neighbors
+  4 ── 3            clone(3)→clone(4)→ all cloned. Wire neighbors.
+
+original:                 cloned:
+  1'→[2',4']              1'→[2',4']    (deep copy) ✅
+  2'→[1',3']              2'→[1',3']
+  3'→[2',4']              3'→[2',4']
+  4'→[1',3']              4'→[1',3']
+
 💡 DFS + HashMap to track cloned nodes. Prevents infinite loops in cycles.
 ```
 
@@ -1511,6 +1613,17 @@ public List<List<Integer>> pacificAtlantic(int[][] heights) {
 ```
 
 ```
+heights:           Pacific (top+left)   Atlantic (right+bot)
+ 1 2 2 3 5        P P P P P             . . . . A
+ 3 2 3 4 4        P . . . .             . . . A A
+ 2 4 5 3 1        P . . . .             . . A A A
+ 6 7 1 4 5        P . . . .             . A A A A
+ 5 1 1 2 4        P . . . .             A A A A A
+
+DFS from Pacific border inward (↑ or →), mark reachable.
+DFS from Atlantic border inward (↑ or ←), mark reachable.
+Intersection = cells that flow to BOTH oceans ✅
+
 💡 Reverse thinking: DFS from ocean borders inward. Result = intersection of both reachable sets.
 ```
 
@@ -1573,6 +1686,15 @@ boolean union(int[] p, int[] r, int a, int b) {
 ```
 
 ```
+n=5, edges=[[0,1],[1,2],[3,4]]
+
+parent: [0,1,2,3,4]  components=5
+union(0,1): parent[1]=0  components=4
+union(1,2): find(1)=0, parent[2]=0  components=3
+union(3,4): parent[4]=3  components=2
+
+Answer: 2  (groups: {0,1,2} and {3,4}) ✅
+
 💡 Union-Find. Start with n components. Each successful union decrements by 1.
 ```
 
@@ -1594,6 +1716,14 @@ public boolean validTree(int n, int[][] edges) {
 ```
 
 ```
+n=5, edges=[[0,1],[0,2],[0,3],[1,4]]
+Edge count = 4 = n-1 ✅ (first check passes)
+
+union(0,1)✅ union(0,2)✅ union(0,3)✅ union(1,4)✅ → no cycle → valid tree ✅
+
+n=5, edges=[[0,1],[1,2],[2,3],[1,3],[1,4]]
+Edge count = 5 ≠ 4 → NOT a tree ❌ (rejected immediately)
+
 💡 Tree = connected + no cycles. Check: exactly n-1 edges + Union-Find finds no cycle.
 ```
 
@@ -1672,6 +1802,15 @@ int robRange(int[] nums, int lo, int hi) {
 ```
 
 ```
+nums = [2, 3, 2] (circular: house 0 and house 2 are adjacent)
+
+Split into two linear problems:
+  Case 1: rob [0..1] = [2, 3] → max = 3
+  Case 2: rob [1..2] = [3, 2] → max = 3
+  Answer: max(3, 3) = 3 ✅
+
+nums = [1, 2, 3, 1] → rob [0..2]=[1,2,3]→4, rob [1..3]=[2,3,1]→3 → answer=4 ✅
+
 💡 Circular: can't rob both first and last. Run House Robber twice: [0..n-2] and [1..n-1].
 ```
 
@@ -1730,6 +1869,15 @@ int expand(String s, int l, int r) {
 ```
 
 ```
+s = "aaa"
+Center 0 (a):   "a" ✅                    count=1
+Center 0-1 (a,a): "aa" ✅                  count=2
+Center 1 (a):   "a" ✅, expand→ "aaa" ✅   count=4
+Center 1-2 (a,a): "aa" ✅                  count=5
+Center 2 (a):   "a" ✅                     count=6
+
+Answer: 6 ✅
+
 💡 Same expand technique. Count every palindrome found during expansion.
 ```
 
@@ -2044,6 +2192,18 @@ public int[][] insert(int[][] intervals, int[] newInt) {
 ```
 
 ```
+intervals = [[1,3],[6,9]], newInterval = [2,5]
+
+Phase 1 — Before: none (1 < 2? no, [1,3] overlaps)
+Phase 2 — Merge:  [1,3] overlaps [2,5] → merge to [1,5]. [6,9] no overlap.
+Phase 3 — After:  add [6,9]
+
+Result: [[1,5],[6,9]] ✅
+
+intervals = [[1,2],[3,5],[6,7],[8,10],[12,16]], newInterval = [4,8]
+Before: [1,2]. Merge: [3,5]+[6,7]+[8,10] → [3,10]. After: [12,16]
+Result: [[1,2],[3,10],[12,16]] ✅
+
 💡 Three phases: add before, merge overlapping, add after.
 ```
 
