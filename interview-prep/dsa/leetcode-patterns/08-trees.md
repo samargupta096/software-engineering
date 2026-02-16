@@ -426,7 +426,7 @@ int dfs(TreeNode node) {
 
 ---
 
-## 📝 Practice Problems
+## 📝 Practice Problems — Detailed Solutions
 
 | # | Problem | Difficulty | Link | Key Insight |
 |---|---------|------------|------|-------------|
@@ -438,6 +438,376 @@ int dfs(TreeNode node) {
 | 6 | LCA | 🟡 Medium | [LeetCode](https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/) | Split point |
 | 7 | Kth Smallest BST | 🟡 Medium | [LeetCode](https://leetcode.com/problems/kth-smallest-element-in-a-bst/) | Inorder |
 | 8 | Binary Tree Max Path | 🔴 Hard | [LeetCode](https://leetcode.com/problems/binary-tree-maximum-path-sum/) | Global max |
+
+---
+
+### Problem 1: Maximum Depth of Binary Tree 🟢
+
+> **Given** a binary tree, find its maximum depth.
+
+#### ✅ Optimal: DFS Recursion — O(n) Time, O(h) Space
+
+```java
+public int maxDepth(TreeNode root) {
+    if (root == null) return 0;
+    return 1 + Math.max(maxDepth(root.left), maxDepth(root.right));
+}
+```
+
+```
+Example:
+        3
+       / \
+      9   20
+         / \
+        15   7
+
+maxDepth(3) = 1 + max(maxDepth(9), maxDepth(20))
+  maxDepth(9) = 1 + max(0, 0) = 1
+  maxDepth(20) = 1 + max(maxDepth(15), maxDepth(7))
+    maxDepth(15) = 1, maxDepth(7) = 1
+  maxDepth(20) = 1 + max(1, 1) = 2
+maxDepth(3) = 1 + max(1, 2) = 3 ✅
+
+💡 BASE CASE: null → 0 depth. Each call adds 1.
+```
+
+---
+
+### Problem 2: Invert Binary Tree 🟢
+
+> **Given** a binary tree, invert it (mirror image).
+
+#### ✅ Optimal — O(n) Time, O(h) Space
+
+```java
+public TreeNode invertTree(TreeNode root) {
+    if (root == null) return null;
+    
+    TreeNode temp = root.left;
+    root.left = invertTree(root.right);
+    root.right = invertTree(temp);
+    return root;
+}
+```
+
+```
+Example:
+     4              4
+    / \    →       / \
+   2   7          7   2
+  / \ / \        / \ / \
+ 1  3 6  9      9  6 3  1
+
+💡 SWAP left and right children recursively at every node.
+   Postorder or preorder both work — just swap + recurse.
+```
+
+---
+
+### Problem 3: Same Tree 🟢
+
+> **Given** two binary trees, check if they are structurally identical.
+
+#### ✅ Optimal — O(n) Time, O(h) Space
+
+```java
+public boolean isSameTree(TreeNode p, TreeNode q) {
+    if (p == null && q == null) return true;
+    if (p == null || q == null) return false;
+    
+    return p.val == q.val && 
+           isSameTree(p.left, q.left) && 
+           isSameTree(p.right, q.right);
+}
+```
+
+```
+Check three things at each node:
+1. Both null → true (bases match)
+2. One null → false (structure differs)
+3. Values equal AND left subtrees match AND right subtrees match
+
+💡 SHORT-CIRCUIT: If values differ, don't recurse further.
+```
+
+---
+
+### Problem 4: Binary Tree Level Order Traversal 🟡
+
+> **Given** a binary tree, return level-by-level values (BFS).
+
+#### 🧠 Approach Diagram
+
+```mermaid
+flowchart LR
+    A["Queue: [root]"] --> B["Process Level 0\nsize=1"]
+    B --> C["Queue: [9, 20]"]
+    C --> D["Process Level 1\nsize=2"]
+    D --> E["Queue: [15, 7]"]
+    E --> F["Process Level 2\nsize=2"]
+```
+
+#### ✅ Optimal: BFS — O(n) Time, O(w) Space
+
+```java
+public List<List<Integer>> levelOrder(TreeNode root) {
+    List<List<Integer>> result = new ArrayList<>();
+    if (root == null) return result;
+    
+    Queue<TreeNode> queue = new LinkedList<>();
+    queue.offer(root);
+    
+    while (!queue.isEmpty()) {
+        int size = queue.size();  // nodes at current level
+        List<Integer> level = new ArrayList<>();
+        
+        for (int i = 0; i < size; i++) {
+            TreeNode node = queue.poll();
+            level.add(node.val);
+            if (node.left != null) queue.offer(node.left);
+            if (node.right != null) queue.offer(node.right);
+        }
+        result.add(level);
+    }
+    return result;
+}
+```
+
+```
+Example:
+        3
+       / \
+      9   20
+         / \
+        15   7
+
+Level 0: queue=[3], size=1 → [3]
+Level 1: queue=[9,20], size=2 → [9, 20]
+Level 2: queue=[15,7], size=2 → [15, 7]
+
+Result: [[3], [9, 20], [15, 7]] ✅
+
+💡 KEY: Snapshot queue.size() BEFORE processing.
+   This separates nodes by level — without it, levels blur together.
+```
+
+---
+
+### Problem 5: Validate Binary Search Tree 🟡
+
+> **Given** a binary tree, determine if it is a valid BST.
+
+#### 🧠 Approach Diagram
+
+```mermaid
+flowchart TD
+    A["Root: (-∞, ∞)"] --> B["Left child:\n(-∞, root.val)"]
+    A --> C["Right child:\n(root.val, ∞)"]
+    B --> D["Each node must be\nwithin its range"]
+```
+
+#### ✅ Optimal: Range Checking — O(n) Time, O(h) Space
+
+```java
+public boolean isValidBST(TreeNode root) {
+    return validate(root, Long.MIN_VALUE, Long.MAX_VALUE);
+}
+
+private boolean validate(TreeNode node, long min, long max) {
+    if (node == null) return true;
+    if (node.val <= min || node.val >= max) return false;
+    
+    return validate(node.left, min, node.val) &&   // left < node
+           validate(node.right, node.val, max);     // right > node
+}
+```
+
+```
+Example:
+      5
+     / \
+    1   4     ← INVALID! 4 < 5 but is right child
+       / \
+      3   6
+
+validate(5, -∞, ∞): 5 in range ✅
+  validate(1, -∞, 5): 1 in range ✅
+  validate(4, 5, ∞): 4 NOT in (5, ∞) → return false ❌
+
+💡 COMMON MISTAKE: Only checking node vs parent.
+   Must check against ENTIRE range!
+   Example: [5, 1, 6, null, null, 3, 7]
+   Node 3 is right-left child. It's < 6 ✅ but also must be > 5!
+```
+
+---
+
+### Problem 6: Lowest Common Ancestor 🟡
+
+> **Given** a binary tree and two nodes p, q, find their LCA.
+
+#### ✅ Optimal — O(n) Time, O(h) Space
+
+```java
+public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+    if (root == null || root == p || root == q) return root;
+    
+    TreeNode left = lowestCommonAncestor(root.left, p, q);
+    TreeNode right = lowestCommonAncestor(root.right, p, q);
+    
+    if (left != null && right != null) return root;  // split point!
+    return left != null ? left : right;
+}
+```
+
+```
+Example: Find LCA of 5 and 1
+         3
+        / \
+       5   1
+      / \ / \
+     6  2 0  8
+
+LCA(3, 5, 1):
+  Left: LCA(5, 5, 1) → returns 5 (root == p)
+  Right: LCA(1, 5, 1) → returns 1 (root == q)
+  Both non-null → root=3 is the split point!
+
+Return 3 ✅
+
+💡 THREE CASES:
+   1. Both found in left subtree → LCA is in left
+   2. Both found in right subtree → LCA is in right
+   3. One in each → current root IS the LCA (split point)
+```
+
+---
+
+### Problem 7: Kth Smallest Element in BST 🟡
+
+> **Given** a BST, find the kth smallest element.
+
+#### ✅ Optimal: Inorder Traversal — O(h+k) Time, O(h) Space
+
+```java
+public int kthSmallest(TreeNode root, int k) {
+    Deque<TreeNode> stack = new ArrayDeque<>();
+    TreeNode curr = root;
+    
+    while (curr != null || !stack.isEmpty()) {
+        while (curr != null) {
+            stack.push(curr);
+            curr = curr.left;     // go left first
+        }
+        
+        curr = stack.pop();
+        k--;
+        if (k == 0) return curr.val;  // found kth!
+        
+        curr = curr.right;        // then go right
+    }
+    return -1;
+}
+```
+
+```
+Example: k=3
+        5
+       / \
+      3   6
+     / \
+    2   4
+   /
+  1
+
+Inorder traversal: 1, 2, 3, 4, 5, 6
+k=3 → pop 1 (k=2), pop 2 (k=1), pop 3 (k=0) → return 3 ✅
+
+💡 BST PROPERTY: Inorder traversal gives sorted order!
+   So kth smallest = kth element in inorder.
+   Iterative avoids traversing the entire tree — stop at k.
+```
+
+---
+
+### Problem 8: Binary Tree Maximum Path Sum 🔴
+
+> **Given** a binary tree, find the maximum path sum (any node to any node).
+
+#### 🧠 Approach Diagram
+
+```mermaid
+flowchart TD
+    A["At each node:\n1. left gain\n2. right gain"] --> B["Path THROUGH node =\nleft + right + node.val"]
+    B --> C["Update global max"]
+    A --> D["Return to parent:\nnode.val + max(left, right)\n(can only go one way up)"]
+```
+
+#### ✅ Optimal: DFS with Global Max — O(n) Time, O(h) Space
+
+```java
+int maxSum = Integer.MIN_VALUE;
+
+public int maxPathSum(TreeNode root) {
+    dfs(root);
+    return maxSum;
+}
+
+private int dfs(TreeNode node) {
+    if (node == null) return 0;
+    
+    int left = Math.max(0, dfs(node.left));   // ignore negative paths
+    int right = Math.max(0, dfs(node.right));
+    
+    maxSum = Math.max(maxSum, left + right + node.val);  // path through node
+    return node.val + Math.max(left, right);  // return best single path
+}
+```
+
+```
+Example:
+       -10
+       / \
+      9   20
+         / \
+        15   7
+
+dfs(-10):
+  left = max(0, dfs(9)) = max(0, 9) = 9
+  right = max(0, dfs(20)):
+    dfs(20): left=15, right=7
+             maxSum = max(maxSum, 15+7+20) = 42 ✅
+             return 20+max(15,7) = 35
+  right = 35
+  maxSum = max(42, 9+35+(-10)) = max(42, 34) = 42
+  return -10 + max(9, 35) = 25
+
+maxSum = 42 ✅ (path: 15 → 20 → 7)
+
+💡 TWO DIFFERENT VALUES:
+   - Global max: best path THROUGH any node (left + right + node)
+   - Return value: best path going UP from node (can only pick one direction)
+   
+   max(0, ...) ensures we IGNORE negative subtrees.
+```
+
+---
+
+## 📊 Complexity Comparison
+
+| # | Problem | Time | Space | Traversal |
+|---|---------|------|-------|-----------|
+| 1 | Max Depth | O(n) | O(h) | DFS |
+| 2 | Invert Tree | O(n) | O(h) | DFS |
+| 3 | Same Tree | O(n) | O(h) | DFS |
+| 4 | Level Order | O(n) | O(w) | BFS |
+| 5 | Validate BST | O(n) | O(h) | DFS + range |
+| 6 | LCA | O(n) | O(h) | DFS |
+| 7 | Kth Smallest | O(h+k) | O(h) | Inorder |
+| 8 | Max Path Sum | O(n) | O(h) | DFS + global |
+
+*h = height, w = max width*
 
 ---
 
