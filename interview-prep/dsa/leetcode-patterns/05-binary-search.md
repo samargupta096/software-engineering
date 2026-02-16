@@ -421,7 +421,7 @@ private boolean canFinish(int[] piles, int h, int speed) {
 
 ---
 
-## 📝 Practice Problems
+## 📝 Practice Problems — Detailed Solutions
 
 | # | Problem | Difficulty | Link | Key Insight |
 |---|---------|------------|------|-------------|
@@ -431,6 +431,390 @@ private boolean canFinish(int[] piles, int h, int speed) {
 | 4 | Search 2D Matrix | 🟡 Medium | [LeetCode](https://leetcode.com/problems/search-a-2d-matrix/) | 2D → 1D |
 | 5 | Koko Eating Bananas | 🟡 Medium | [LeetCode](https://leetcode.com/problems/koko-eating-bananas/) | Search on answer |
 | 6 | Median of Two Sorted | 🔴 Hard | [LeetCode](https://leetcode.com/problems/median-of-two-sorted-arrays/) | Binary partition |
+
+---
+
+### Problem 1: Binary Search 🟢
+
+> **Given** a sorted array of integers and a target, return its index or `-1`.
+
+#### 🧠 Approach Diagram
+
+```mermaid
+flowchart TD
+    A["left=0, right=n-1"] --> B["mid = left+(right-left)/2"]
+    B --> C{"arr[mid] vs\ntarget?"}
+    C -->|"< target"| D["left = mid + 1"]
+    C -->|"> target"| E["right = mid - 1"]
+    C -->|"== target"| F["Return mid ✅"]
+    D --> B
+    E --> B
+```
+
+#### ✅ Optimal — O(log n) Time, O(1) Space
+
+```java
+public int search(int[] nums, int target) {
+    int left = 0, right = nums.length - 1;
+    
+    while (left <= right) {
+        int mid = left + (right - left) / 2;  // avoid overflow!
+        
+        if (nums[mid] == target) return mid;
+        else if (nums[mid] < target) left = mid + 1;
+        else right = mid - 1;
+    }
+    return -1;
+}
+```
+
+```
+Example: nums = [-1, 0, 3, 5, 9, 12], target = 9
+
+Step 1: left=0, right=5, mid=2 → nums[2]=3 < 9 → left=3
+Step 2: left=3, right=5, mid=4 → nums[4]=9 == 9 → return 4 ✅
+
+💡 OVERFLOW PREVENTION:
+   BAD:  mid = (left + right) / 2   → can overflow if left+right > INT_MAX
+   GOOD: mid = left + (right - left) / 2  → always safe
+```
+
+---
+
+### Problem 2: Search in Rotated Sorted Array 🟡
+
+> **Given** a rotated sorted array (no duplicates), find the target.
+
+#### 🧠 Approach Diagram
+
+```mermaid
+flowchart TD
+    A["Find mid"] --> B{"Which half\nis sorted?"}
+    B -->|"nums[left] ≤ nums[mid]\n(left half sorted)"| C{"target in\nleft half?"}
+    B -->|"nums[mid] < nums[right]\n(right half sorted)"| D{"target in\nright half?"}
+    C -->|Yes| E["right = mid - 1"]
+    C -->|No| F["left = mid + 1"]
+    D -->|Yes| G["left = mid + 1"]
+    D -->|No| H["right = mid - 1"]
+```
+
+#### ✅ Optimal — O(log n) Time, O(1) Space
+
+```java
+public int search(int[] nums, int target) {
+    int left = 0, right = nums.length - 1;
+    
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+        
+        if (nums[mid] == target) return mid;
+        
+        // Left half is sorted
+        if (nums[left] <= nums[mid]) {
+            if (target >= nums[left] && target < nums[mid])
+                right = mid - 1;  // target in left sorted half
+            else
+                left = mid + 1;   // target in right half
+        }
+        // Right half is sorted
+        else {
+            if (target > nums[mid] && target <= nums[right])
+                left = mid + 1;   // target in right sorted half
+            else
+                right = mid - 1;  // target in left half
+        }
+    }
+    return -1;
+}
+```
+
+```
+Example: nums = [4, 5, 6, 7, 0, 1, 2], target = 0
+
+Step 1: left=0, right=6, mid=3 → nums[3]=7
+        nums[0]=4 ≤ 7 → left half [4,5,6,7] sorted
+        target=0 NOT in [4,7] → left=4
+
+Step 2: left=4, right=6, mid=5 → nums[5]=1
+        nums[4]=0 ≤ 1 → left half [0,1] sorted
+        target=0 in [0,1) → right=4
+
+Step 3: left=4, right=4, mid=4 → nums[4]=0 == 0 → return 4 ✅
+
+💡 KEY INSIGHT: In a rotated array, at least ONE half is always sorted.
+   Determine which half is sorted, then check if target is in that range.
+```
+
+---
+
+### Problem 3: Find Minimum in Rotated Sorted Array 🟡
+
+> **Given** a rotated sorted array, find the minimum element.
+
+#### 🧠 Approach Diagram
+
+```mermaid
+flowchart TD
+    A["left=0, right=n-1"] --> B["mid = (left+right)/2"]
+    B --> C{"nums[mid] >\nnums[right]?"}
+    C -->|Yes| D["Min is in RIGHT half\nleft = mid + 1"]
+    C -->|No| E["Min is in LEFT half\n(including mid)\nright = mid"]
+    D --> B
+    E --> B
+```
+
+#### ✅ Optimal — O(log n) Time, O(1) Space
+
+```java
+public int findMin(int[] nums) {
+    int left = 0, right = nums.length - 1;
+    
+    while (left < right) {  // Note: < not <=
+        int mid = left + (right - left) / 2;
+        
+        if (nums[mid] > nums[right]) {
+            left = mid + 1;    // min is to the right of mid
+        } else {
+            right = mid;       // mid might be the min
+        }
+    }
+    return nums[left];  // left == right, pointing at min
+}
+```
+
+```
+Example: nums = [3, 4, 5, 1, 2]
+
+Step 1: left=0, right=4, mid=2 → nums[2]=5 > nums[4]=2
+        Min is RIGHT → left=3
+
+Step 2: left=3, right=4, mid=3 → nums[3]=1 ≤ nums[4]=2
+        Min could be mid → right=3
+
+left==right==3 → return nums[3] = 1 ✅
+
+💡 WHY compare with RIGHT (not left)?
+   If nums[mid] > nums[right] → rotation point is to the right
+   If nums[mid] ≤ nums[right] → this half is sorted, min is at or before mid
+   
+   Comparing with LEFT doesn't work because left could equal mid!
+```
+
+---
+
+### Problem 4: Search a 2D Matrix 🟡
+
+> **Given** an m×n matrix where each row is sorted and the first element of each row is greater than the last element of the previous row, search for a target.
+
+#### 🧠 Approach Diagram
+
+```mermaid
+flowchart LR
+    A["Treat 2D as 1D\nindex 0 to m×n-1"] --> B["Binary search\non virtual 1D"]
+    B --> C["Convert index:\nrow = idx / n\ncol = idx % n"]
+    C --> D["Compare with target"]
+```
+
+#### ✅ Optimal — O(log(m·n)) Time, O(1) Space
+
+```java
+public boolean searchMatrix(int[][] matrix, int target) {
+    int m = matrix.length, n = matrix[0].length;
+    int left = 0, right = m * n - 1;
+    
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+        int val = matrix[mid / n][mid % n];  // 1D → 2D conversion!
+        
+        if (val == target) return true;
+        else if (val < target) left = mid + 1;
+        else right = mid - 1;
+    }
+    return false;
+}
+```
+
+```
+Example: matrix = [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target = 3
+         m=3, n=4 → virtual array of 12 elements
+
+Step 1: left=0, right=11, mid=5
+        row=5/4=1, col=5%4=1 → matrix[1][1]=11 > 3 → right=4
+
+Step 2: left=0, right=4, mid=2
+        row=2/4=0, col=2%4=2 → matrix[0][2]=5 > 3 → right=1
+
+Step 3: left=0, right=1, mid=0
+        row=0/4=0, col=0%4=0 → matrix[0][0]=1 < 3 → left=1
+
+Step 4: left=1, right=1, mid=1
+        row=1/4=0, col=1%4=1 → matrix[0][1]=3 == 3 → return true ✅
+
+💡 THE TRICK: row = index / numCols, col = index % numCols
+   This converts any 1D index back to 2D coordinates!
+```
+
+---
+
+### Problem 5: Koko Eating Bananas 🟡
+
+> **Given** piles of bananas and `h` hours, find the minimum eating speed `k` to finish all bananas.
+
+#### 🧠 Approach Diagram
+
+```mermaid
+flowchart TD
+    A["Binary search on\nspeed k: 1 to max(piles)"] --> B["For each k,\ncalculate hours needed"]
+    B --> C{"hours ≤ h?"}
+    C -->|Yes| D["k works! Try smaller\nright = mid"]
+    C -->|No| E["Too slow!\nleft = mid + 1"]
+    D --> A
+    E --> A
+    
+    style A fill:#8b5cf6,color:#fff
+```
+
+#### ✅ Optimal: Binary Search on Answer — O(n·log(max)) Time
+
+```java
+public int minEatingSpeed(int[] piles, int h) {
+    int left = 1, right = Arrays.stream(piles).max().getAsInt();
+    
+    while (left < right) {
+        int mid = left + (right - left) / 2;
+        
+        if (canFinish(piles, mid, h)) {
+            right = mid;      // speed works, try slower
+        } else {
+            left = mid + 1;   // too slow, need faster
+        }
+    }
+    return left;
+}
+
+private boolean canFinish(int[] piles, int speed, int h) {
+    int hours = 0;
+    for (int pile : piles) {
+        hours += (pile + speed - 1) / speed;  // ceiling division
+    }
+    return hours <= h;
+}
+```
+
+```
+Example: piles = [3, 6, 7, 11], h = 8
+
+Binary search on speed: left=1, right=11
+
+mid=6: hours = ceil(3/6)+ceil(6/6)+ceil(7/6)+ceil(11/6) = 1+1+2+2 = 6 ≤ 8 ✅
+       right=6
+
+mid=3: hours = ceil(3/3)+ceil(6/3)+ceil(7/3)+ceil(11/3) = 1+2+3+4 = 10 > 8 ❌
+       left=4
+
+mid=5: hours = 1+2+2+3 = 8 ≤ 8 ✅ → right=5
+
+mid=4: hours = 1+2+2+3 = 8 ≤ 8 ✅ → right=4
+
+left==right==4 → return 4 ✅
+
+💡 "BINARY SEARCH ON ANSWER" PATTERN:
+   Instead of searching IN an array, search the ANSWER SPACE.
+   Answer space: [1, max(piles)] — monotonic!
+   If speed k works, all speeds > k also work.
+```
+
+---
+
+### Problem 6: Median of Two Sorted Arrays 🔴
+
+> **Given** two sorted arrays, find the median of the merged array in O(log(m+n)) time.
+
+#### 🧠 Approach Diagram
+
+```mermaid
+flowchart TD
+    A["Binary search on\nsmaller array"] --> B["Partition both arrays\nso left half has\n(m+n+1)/2 elements"]
+    B --> C{"Left maxes ≤\nRight mins?"}
+    C -->|Yes| D["Valid partition!\nCalculate median ✅"]
+    C -->|"maxLeft1 > minRight2"| E["i too big\nright = mid - 1"]
+    C -->|"maxLeft2 > minRight1"| F["i too small\nleft = mid + 1"]
+```
+
+#### ✅ Optimal — O(log(min(m,n))) Time, O(1) Space
+
+```java
+public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+    // Always binary search on the SMALLER array
+    if (nums1.length > nums2.length) 
+        return findMedianSortedArrays(nums2, nums1);
+    
+    int m = nums1.length, n = nums2.length;
+    int left = 0, right = m;
+    
+    while (left <= right) {
+        int i = left + (right - left) / 2;  // partition in nums1
+        int j = (m + n + 1) / 2 - i;        // partition in nums2
+        
+        int maxLeft1 = (i == 0) ? Integer.MIN_VALUE : nums1[i - 1];
+        int minRight1 = (i == m) ? Integer.MAX_VALUE : nums1[i];
+        int maxLeft2 = (j == 0) ? Integer.MIN_VALUE : nums2[j - 1];
+        int minRight2 = (j == n) ? Integer.MAX_VALUE : nums2[j];
+        
+        if (maxLeft1 <= minRight2 && maxLeft2 <= minRight1) {
+            // Valid partition found!
+            if ((m + n) % 2 == 0) {
+                return (Math.max(maxLeft1, maxLeft2) + 
+                        Math.min(minRight1, minRight2)) / 2.0;
+            } else {
+                return Math.max(maxLeft1, maxLeft2);
+            }
+        } else if (maxLeft1 > minRight2) {
+            right = i - 1;  // too many from nums1 on left
+        } else {
+            left = i + 1;   // too few from nums1 on left
+        }
+    }
+    return 0;
+}
+```
+
+```
+Example: nums1 = [1, 3], nums2 = [2]
+
+m=2, n=1, total=3 (odd), need (3+1)/2 = 2 elements on left
+
+i=1, j=2-1=1:
+  maxLeft1=nums1[0]=1,  minRight1=nums1[1]=3
+  maxLeft2=nums2[0]=2,  minRight2=∞
+  
+  1 ≤ ∞ ✅ and 2 ≤ 3 ✅ → VALID!
+  
+  Odd total → median = max(1, 2) = 2.0 ✅
+
+Partition visualization:
+  nums1: [1 | 3]      left: {1, 2}
+  nums2: [2 | ]        right: {3}
+  
+  All left ≤ all right: {1,2} ≤ {3} ✅
+
+💡 KEY INSIGHT: We're partitioning BOTH arrays simultaneously.
+   If we take i elements from nums1, we need (total/2 - i) from nums2.
+   Valid when: maxLeft1 ≤ minRight2 AND maxLeft2 ≤ minRight1
+```
+
+---
+
+## 📊 Complexity Comparison
+
+| # | Problem | Time | Space | Pattern |
+|---|---------|------|-------|---------|
+| 1 | Binary Search | O(log n) | O(1) | Classic |
+| 2 | Search in Rotated | O(log n) | O(1) | Modified BS |
+| 3 | Find Min in Rotated | O(log n) | O(1) | Modified BS |
+| 4 | Search 2D Matrix | O(log(m·n)) | O(1) | Index mapping |
+| 5 | Koko Eating Bananas | O(n·log(max)) | O(1) | BS on answer |
+| 6 | Median of Two Sorted | O(log(min(m,n))) | O(1) | Binary partition |
 
 ---
 

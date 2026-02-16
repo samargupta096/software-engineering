@@ -294,7 +294,7 @@ void printReverse(int[] arr, int i) {
 
 ---
 
-## 📝 Practice Problems
+## 📝 Practice Problems — Detailed Complexity Analysis
 
 | Problem | Analyze Time | Analyze Space |
 |---------|--------------|---------------|
@@ -304,6 +304,414 @@ void printReverse(int[] arr, int i) {
 | Merge Sort | O(n log n) | O(n) |
 | DFS on Tree | O(n) | O(h) |
 | BFS on Graph | O(V + E) | O(V) |
+
+---
+
+### Problem 1: Two Sum — HashMap vs Brute Force
+
+> **Problem:** Given an array and a target, find two numbers that add up to the target.
+
+#### 🧠 Complexity Comparison Diagram
+
+```mermaid
+flowchart LR
+    subgraph BF["❌ Brute Force"]
+        A["For each element i"] --> B["Check every j > i"]
+        B --> C["n × (n-1)/2 pairs"]
+        C --> D["O(n²) Time\nO(1) Space"]
+    end
+
+    subgraph HM["✅ HashMap"]
+        E["For each element"] --> F["Check map for\ncomplement"]
+        F --> G["n lookups × O(1)"]
+        G --> H["O(n) Time\nO(n) Space"]
+    end
+
+    style BF fill:#fecaca,stroke:#ef4444
+    style HM fill:#d1fae5,stroke:#22c55e
+```
+
+#### ❌ Brute Force: O(n²) Time, O(1) Space
+
+```java
+public int[] twoSum(int[] nums, int target) {
+    for (int i = 0; i < nums.length; i++) {         // n iterations
+        for (int j = i + 1; j < nums.length; j++) { // n-1, n-2, ... 1
+            if (nums[i] + nums[j] == target) {
+                return new int[]{i, j};
+            }
+        }
+    }
+    return new int[]{};
+}
+```
+
+```
+Time Analysis:
+  Outer loop: n iterations
+  Inner loop: (n-1) + (n-2) + ... + 1 = n(n-1)/2
+  Total: O(n²)
+
+Space Analysis:
+  Only using two loop variables: O(1)
+
+Example: nums = [2, 7, 11, 15], target = 9
+  i=0: check (2,7)✅ → found!
+  Worst case: check ALL pairs before finding answer
+```
+
+#### ✅ HashMap: O(n) Time, O(n) Space
+
+```java
+public int[] twoSum(int[] nums, int target) {
+    Map<Integer, Integer> map = new HashMap<>();  // O(n) space
+    
+    for (int i = 0; i < nums.length; i++) {       // O(n) iterations
+        int complement = target - nums[i];
+        if (map.containsKey(complement)) {         // O(1) lookup
+            return new int[]{map.get(complement), i};
+        }
+        map.put(nums[i], i);                       // O(1) insert
+    }
+    return new int[]{};
+}
+```
+
+```
+Time Analysis:
+  Loop: n iterations
+  Each iteration: O(1) map lookup + O(1) map insert
+  Total: n × O(1) = O(n)
+
+Space Analysis:
+  HashMap stores up to n entries: O(n)
+
+💡 TRADEOFF: We traded O(n) space for O(n) time improvement!
+   Time went from O(n²) → O(n) by using O(n) → O(n) space
+```
+
+---
+
+### Problem 2: Binary Search — O(log n) Time
+
+> **Problem:** Find target in a sorted array.
+
+#### 🧠 Why O(log n)?
+
+```mermaid
+flowchart TD
+    A["Array: 16 elements"] --> B["Split in half → 8"]
+    B --> C["Split in half → 4"]
+    C --> D["Split in half → 2"]
+    D --> E["Split in half → 1 ✅"]
+
+    style A fill:#3b82f6,color:#fff
+    style E fill:#22c55e,color:#fff
+```
+
+#### ✅ Code + Analysis
+
+```java
+public int binarySearch(int[] arr, int target) {
+    int left = 0, right = arr.length - 1;
+    
+    while (left <= right) {          // How many times?
+        int mid = left + (right - left) / 2;
+        
+        if (arr[mid] == target) return mid;
+        else if (arr[mid] < target) left = mid + 1;
+        else right = mid - 1;
+    }
+    return -1;
+}
+```
+
+```
+Time Analysis — Step by Step:
+  Array size: n = 16
+
+  Iteration 1: search space = 16  (n)
+  Iteration 2: search space = 8   (n/2)
+  Iteration 3: search space = 4   (n/4)
+  Iteration 4: search space = 2   (n/8)
+  Iteration 5: search space = 1   (n/16) → found or not found
+
+  How many times can we halve n until we reach 1?
+  n / 2^k = 1  →  k = log₂(n)
+
+  For n = 16: log₂(16) = 4 iterations
+  For n = 1,000,000: log₂(1,000,000) ≈ 20 iterations! 🤯
+
+Space Analysis:
+  Only 3 variables (left, right, mid): O(1)
+  Note: Recursive version would be O(log n) space (call stack)
+```
+
+| Array Size | Linear Search | Binary Search | Speedup |
+|-----------|---------------|---------------|---------|
+| 100 | 100 ops | 7 ops | 14x |
+| 10,000 | 10,000 ops | 14 ops | 714x |
+| 1,000,000 | 1,000,000 ops | 20 ops | 50,000x |
+
+---
+
+### Problem 3: Merge Sort — O(n log n) Time, O(n) Space
+
+> **Problem:** Sort an array using divide-and-conquer.
+
+#### 🧠 Why O(n log n)?
+
+```mermaid
+flowchart TD
+    A["[38, 27, 43, 3, 9, 82, 10]<br/>Level 0: n work to merge"] --> B["[38, 27, 43, 3]"]
+    A --> C["[9, 82, 10]"]
+    B --> D["[38, 27]"]
+    B --> E["[43, 3]"]
+    C --> F["[9, 82]"]
+    C --> G["[10]"]
+    D --> H["[38] [27]<br/>Level log(n): n work to merge"]
+    E --> I["[43] [3]"]
+    F --> J["[9] [82]"]
+
+    style A fill:#3b82f6,color:#fff
+    style H fill:#22c55e,color:#fff
+```
+
+#### ✅ Code + Analysis
+
+```java
+public void mergeSort(int[] arr, int l, int r) {
+    if (l >= r) return;                    // Base case
+    
+    int mid = l + (r - l) / 2;
+    mergeSort(arr, l, mid);                // T(n/2)
+    mergeSort(arr, mid + 1, r);            // T(n/2)
+    merge(arr, l, mid, r);                 // O(n) work
+}
+
+private void merge(int[] arr, int l, int mid, int r) {
+    int[] temp = new int[r - l + 1];       // O(n) extra space
+    int i = l, j = mid + 1, k = 0;
+    
+    while (i <= mid && j <= r) {
+        if (arr[i] <= arr[j]) temp[k++] = arr[i++];
+        else temp[k++] = arr[j++];
+    }
+    while (i <= mid) temp[k++] = arr[i++];
+    while (j <= r) temp[k++] = arr[j++];
+    
+    System.arraycopy(temp, 0, arr, l, temp.length);
+}
+```
+
+```
+Time Analysis — Recurrence Relation:
+  T(n) = 2·T(n/2) + O(n)
+  
+  Level 0: 1 problem of size n     → n work
+  Level 1: 2 problems of size n/2  → n work  
+  Level 2: 4 problems of size n/4  → n work
+  ...
+  Level k: 2^k problems of size n/2^k → n work
+
+  Number of levels = log₂(n)
+  Work per level = O(n)
+  Total = O(n) × log(n) = O(n log n)
+
+Space Analysis:
+  Temp array in merge: O(n)
+  Recursion call stack depth: O(log n)
+  Total: O(n) + O(log n) = O(n)
+```
+
+| Level | Subproblems | Size Each | Total Work |
+|-------|------------|-----------|------------|
+| 0 | 1 | n | n |
+| 1 | 2 | n/2 | n |
+| 2 | 4 | n/4 | n |
+| 3 | 8 | n/8 | n |
+| ... | ... | ... | n |
+| log n | n | 1 | n |
+| **Total** | | | **n × log n** |
+
+---
+
+### Problem 4: DFS on Tree — O(n) Time, O(h) Space
+
+> **Problem:** Visit every node in a binary tree using depth-first traversal.
+
+#### 🧠 Call Stack Visualization
+
+```mermaid
+flowchart TD
+    A["1"] --> B["2"]
+    A --> C["3"]
+    B --> D["4"]
+    B --> E["5"]
+    C --> F["6"]
+    C --> G["7"]
+
+    style A fill:#3b82f6,color:#fff
+    style D fill:#22c55e,color:#fff
+    style E fill:#22c55e,color:#fff
+    style F fill:#22c55e,color:#fff
+    style G fill:#22c55e,color:#fff
+```
+
+#### ✅ Code + Analysis
+
+```java
+public void dfs(TreeNode node) {
+    if (node == null) return;       // Base case
+    
+    System.out.println(node.val);   // Process: O(1)
+    dfs(node.left);                 // Visit left subtree
+    dfs(node.right);                // Visit right subtree
+}
+```
+
+```
+Time Analysis:
+  Each node is visited exactly ONCE
+  Work per node: O(1)
+  Total: O(n) where n = number of nodes
+
+Space Analysis (Call Stack):
+  
+  Balanced tree (h = log n):        Skewed tree (h = n):
+       1                             1
+      / \                             \
+     2   3          Stack depth:        2
+    / \ / \         = height h           \
+   4  5 6  7       = O(log n)            3    Stack depth:
+                                           \   = O(n)
+                                            4
+
+  Call stack at deepest point visiting node 4:
+  ┌─────────────┐
+  │ dfs(node=4)  │ ← current
+  │ dfs(node=2)  │
+  │ dfs(node=1)  │ ← root
+  └─────────────┘
+  Depth = h (height of tree)
+  
+  Space: O(h) where h = height
+    Balanced: O(log n)
+    Worst case (skewed): O(n)
+```
+
+---
+
+### Problem 5: BFS on Graph — O(V + E) Time, O(V) Space
+
+> **Problem:** Visit every node in a graph using breadth-first traversal.
+
+#### 🧠 BFS Traversal Diagram
+
+```mermaid
+flowchart LR
+    subgraph Graph
+        A((0)) --> B((1))
+        A --> C((2))
+        B --> D((3))
+        C --> D
+        D --> E((4))
+    end
+
+    subgraph Queue["Queue State"]
+        Q1["[0]"] --> Q2["[1, 2]"]
+        Q2 --> Q3["[2, 3]"]
+        Q3 --> Q4["[3]"]
+        Q4 --> Q5["[4]"]
+        Q5 --> Q6["[ ] done"]
+    end
+```
+
+#### ✅ Code + Analysis
+
+```java
+public void bfs(int start, List<List<Integer>> graph) {
+    boolean[] visited = new boolean[graph.size()];  // O(V) space
+    Queue<Integer> queue = new LinkedList<>();       // O(V) space worst
+    
+    queue.offer(start);
+    visited[start] = true;
+    
+    while (!queue.isEmpty()) {            // Runs V times total
+        int node = queue.poll();
+        System.out.println(node);
+        
+        for (int neighbor : graph.get(node)) {  // Sum = E total
+            if (!visited[neighbor]) {
+                visited[neighbor] = true;
+                queue.offer(neighbor);
+            }
+        }
+    }
+}
+```
+
+```
+Time Analysis:
+  Outer while loop: each vertex dequeued ONCE → V iterations
+  Inner for loop: each edge checked ONCE across all iterations
+    
+    Vertex 0: 2 neighbors (edges to 1, 2)
+    Vertex 1: 1 neighbor  (edge to 3)
+    Vertex 2: 1 neighbor  (edge to 3)
+    Vertex 3: 1 neighbor  (edge to 4)
+    Vertex 4: 0 neighbors
+    Total inner iterations = 2+1+1+1+0 = 5 = E (total edges)
+    
+  Total: V (outer) + E (inner across all) = O(V + E)
+
+Space Analysis:
+  visited[] array: O(V)
+  Queue: at most O(V) nodes (in a star graph, all at once)
+  Total: O(V)
+
+💡 KEY INSIGHT: V + E, NOT V × E!
+   Each vertex processed once, each edge examined once.
+```
+
+#### Step-by-Step BFS Example
+
+```
+Graph: 0→1, 0→2, 1→3, 2→3, 3→4
+
+Step 1: Start at 0
+        Queue: [0]      Visited: {0}
+
+Step 2: Process 0, add neighbors 1, 2
+        Queue: [1, 2]   Visited: {0, 1, 2}
+
+Step 3: Process 1, add neighbor 3
+        Queue: [2, 3]   Visited: {0, 1, 2, 3}
+
+Step 4: Process 2, neighbor 3 already visited
+        Queue: [3]      Visited: {0, 1, 2, 3}
+
+Step 5: Process 3, add neighbor 4
+        Queue: [4]      Visited: {0, 1, 2, 3, 4}
+
+Step 6: Process 4, no neighbors
+        Queue: []       Done!
+
+Operations: 5 vertex processings + 5 edge checks = V + E ✅
+```
+
+---
+
+## 📊 Master Complexity Comparison
+
+| Algorithm | Time | Space | Why? |
+|-----------|------|-------|------|
+| Two Sum (Brute) | O(n²) | O(1) | Every pair checked |
+| Two Sum (HashMap) | O(n) | O(n) | Trade space for time |
+| Binary Search | O(log n) | O(1) | Halving each step |
+| Merge Sort | O(n log n) | O(n) | log n levels × n work |
+| DFS on Tree | O(n) | O(h) | Visit each node once |
+| BFS on Graph | O(V+E) | O(V) | Each vertex+edge once |
 
 ---
 
