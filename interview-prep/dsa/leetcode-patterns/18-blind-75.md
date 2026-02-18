@@ -46,7 +46,13 @@
 
 > [Deep dive →](./02-arrays-hashing.md)
 
-### 1. Two Sum 🟢
+### 1. Two Sum (LC #1) 🟢
+
+> 🧠 **Thought Process**
+> 1. **Brute force**: Check every pair → O(n²)
+> 2. **Insight**: For each number, we need `target - num` — a **lookup** problem
+> 3. **Optimization**: HashMap gives O(1) lookups → single pass
+> 4. **Pattern**: "Find pair with property X" → HashMap complement check
 
 ```java
 // HashMap: O(n) time, O(n) space
@@ -76,7 +82,13 @@ i=1: comp=9-7=2, map={2:0} → HIT! return [0,1] ✅
 
 ---
 
-### 2. Contains Duplicate 🟢
+### 2. Contains Duplicate (LC #217) 🟢
+
+> 🧠 **Thought Process**
+> 1. **Brute force**: Compare all pairs → O(n²)
+> 2. **Sort first**: Adjacent duplicates → O(n log n)
+> 3. **Best**: HashSet for O(1) existence check → O(n)
+> 4. **Pattern**: "Any duplicates?" → HashSet
 
 ```java
 public boolean containsDuplicate(int[] nums) {
@@ -99,7 +111,13 @@ add(1) → true, add(2) → true, add(3) → true, add(1) → FALSE → duplicat
 
 ---
 
-### 3. Valid Anagram 🟢
+### 3. Valid Anagram (LC #242) 🟢
+
+> 🧠 **Thought Process**
+> 1. **Sort both strings**: Compare → O(n log n)
+> 2. **Better**: Count characters — anagrams have identical char frequencies
+> 3. **Key trick**: Single array, increment for `s`, decrement for `t` — all zeros = anagram
+> 4. **Pattern**: "Same characters?" → frequency counting
 
 ```java
 public boolean isAnagram(String s, String t) {
@@ -125,7 +143,13 @@ Count: a:3-3=0, n:1-1=0, g:1-1=0, r:1-1=0, m:1-1=0 → all zero ✅
 
 ---
 
-### 4. Group Anagrams 🟡
+### 4. Group Anagrams (LC #49) 🟡
+
+> 🧠 **Thought Process**
+> 1. **Key insight**: All anagrams produce the same sorted string
+> 2. **Approach**: Sort each word → use as HashMap key → group by key
+> 3. **Alternative**: Use char frequency array as key (avoids sorting)
+> 4. **Pattern**: "Group by equivalence" → canonical form as HashMap key
 
 ```java
 public List<List<String>> groupAnagrams(String[] strs) {
@@ -157,7 +181,29 @@ Map: {"aet":["eat","tea","ate"], "ant":["tan","nat"], "abt":["bat"]} ✅
 
 ---
 
-### 5. Top K Frequent Elements 🟡
+### 5. Top K Frequent Elements (LC #347) 🟡
+
+> 🧠 **Thought Process**
+> 1. **Step 1**: Count frequencies with HashMap → O(n)
+> 2. **Heap approach**: Min-heap of size k → O(n log k)
+> 3. **Better — Bucket sort**: Index = frequency, max freq ≤ n → O(n)
+> 4. **Pattern**: "Top K" → Heap or Bucket Sort
+
+```
+Bucket Sort Visualization:
+
+nums = [1,1,1,2,2,3]
+
+freq map: {1:3, 2:2, 3:1}
+
+buckets (index = frequency):
+  idx:  0    1    2    3    4    5    6
+      [ _ , {3}, {2}, {1},  _,   _,  _ ]
+                  ↑     ↑
+          freq=2      freq=3
+
+Scan right→left: pick k elements
+```
 
 ```java
 public int[] topKFrequent(int[] nums, int k) {
@@ -196,7 +242,23 @@ Scan from right: bucket[3]={1} → bucket[2]={2} → result=[1,2] ✅
 
 ---
 
-### 6. Product of Array Except Self 🟡
+### 6. Product of Array Except Self (LC #238) 🟡
+
+> 🧠 **Thought Process**
+> 1. **Brute force**: For each index, multiply all others → O(n²)
+> 2. **Division trick**: Total product / nums[i] — but division is banned!
+> 3. **Key insight**: result[i] = (product of left) × (product of right)
+> 4. **Two-pass**: Build left prefix, then multiply by right suffix in-place
+> 5. **Pattern**: Prefix/suffix decomposition
+
+```
+Visualization:
+nums = [1, 2, 3, 4]
+
+Left prefix:   [1,   1,   1×2, 1×2×3] = [1, 1, 2, 6]
+Right suffix:  [2×3×4, 3×4, 4,   1  ] = [24,12, 4, 1]
+Result:        [1×24, 1×12, 2×4, 6×1] = [24,12, 8, 6]
+```
 
 ```java
 public int[] productExceptSelf(int[] nums) {
@@ -234,7 +296,25 @@ Result: [24, 12, 8, 6] ✅
 
 ---
 
-### 7. Valid Sudoku 🟡
+### 7. Valid Sudoku (LC #36) 🟡
+
+> 🧠 **Thought Process**
+> 1. **Three constraints**: Each row, column, and 3×3 box must have unique digits
+> 2. **Naive**: 3 separate checks with 3 sets each → verbose
+> 3. **Elegant**: Encode all constraints as unique strings in ONE set
+> 4. **Box index trick**: `i/3` and `j/3` maps any cell to its 3×3 box
+> 5. **Pattern**: Constraint encoding with HashSet
+
+```
+Box Index Mapping:
+┌─────┬─────┬─────┐
+│ 0,0 │ 0,1 │ 0,2 │  ← i/3, j/3
+├─────┼─────┼─────┤
+│ 1,0 │ 1,1 │ 1,2 │
+├─────┼─────┼─────┤
+│ 2,0 │ 2,1 │ 2,2 │
+└─────┴─────┴─────┘
+```
 
 ```java
 public boolean isValidSudoku(char[][] board) {
@@ -268,7 +348,21 @@ If any already exists → invalid ✅
 
 ---
 
-### 8. Encode and Decode Strings 🟡
+### 8. Encode and Decode Strings (LC #271) 🟡
+
+> 🧠 **Thought Process**
+> 1. **Problem**: Strings can contain ANY character — no safe delimiter
+> 2. **Delimiter approach fails**: `"a,b"` vs `["a","b"]` vs `["a,b"]`
+> 3. **Key insight**: Length prefix `len#string` — we know exactly how many chars to read
+> 4. **Pattern**: Self-describing format / length-prefixed encoding
+
+```
+Encode/Decode Flow:
+["leet", "co#de"] → "4#leet5#co#de"
+                     │ │    │ │
+                     │ └─4chars─┘ └─5chars──┘
+                     len       len
+```
 
 ```java
 // Encode: "4#leet6#coding" for ["leet","coding"]
@@ -306,7 +400,25 @@ Decode:
 
 ---
 
-### 9. Longest Consecutive Sequence 🟡
+### 9. Longest Consecutive Sequence (LC #128) 🟡
+
+> 🧠 **Thought Process**
+> 1. **Sort first**: Scan for consecutive runs → O(n log n)
+> 2. **Can we do O(n)?** Need O(1) lookups → HashSet
+> 3. **Key insight**: Only start counting from sequence **beginnings** (no `n-1` in set)
+> 4. **Why O(n)?**: Each element is visited at most twice (once in loop, once in while)
+> 5. **Pattern**: HashSet + smart iteration starting point
+
+```
+Visualization:
+nums = [100, 4, 200, 1, 3, 2]
+Set  = {1, 2, 3, 4, 100, 200}
+
+  100: has 99? NO → start! → 100→101? NO → len=1
+    4: has  3? YES → skip (not a start)
+    1: has  0? NO → start! → 1→2→3→4→5? NO → len=4 ✅
+  200: has 199? NO → start! → 200→201? NO → len=1
+```
 
 ```java
 public int longestConsecutive(int[] nums) {
@@ -344,7 +456,13 @@ Set = {1, 2, 3, 4, 100, 200}
 
 > [Deep dive →](./03-two-pointers.md)
 
-### 10. Valid Palindrome 🟢
+### 10. Valid Palindrome (LC #125) 🟢
+
+> 🧠 **Thought Process**
+> 1. **Reverse string**: Compare with original → O(n) space
+> 2. **Better**: Two pointers from both ends, skip non-alphanumeric
+> 3. **Key**: Case-insensitive comparison + filter junk chars
+> 4. **Pattern**: Symmetry check → two pointers converging inward
 
 ```java
 public boolean isPalindrome(String s) {
@@ -374,7 +492,25 @@ l→m  r→m → match
 
 ---
 
-### 11. 3Sum 🟡
+### 11. 3Sum (LC #15) 🟡
+
+> 🧠 **Thought Process**
+> 1. **Brute force**: Three nested loops → O(n³)
+> 2. **Reduce to 2Sum**: Fix one element, find pair summing to `-fixed`
+> 3. **Sort first**: Enables two-pointer on remaining subarray → O(n²)
+> 4. **Dedup trick**: Skip consecutive equal values for both `i` and pointers
+> 5. **Pattern**: Sort + fix one + two-pointer sweep
+
+```
+Diagram:
+sorted: [-4, -1, -1, 0, 1, 2]
+          i    l            r
+          │    │            │
+          fix  ├──narrow──┘
+                  sum < 0 → l++
+                  sum > 0 → r--
+                  sum = 0 → record!
+```
 
 ```java
 public List<List<Integer>> threeSum(int[] nums) {
@@ -414,7 +550,27 @@ i=1 (-1): l=2,r=5 → sum=-1+(-1)+2=0 ✅ → [-1,-1,2]
 
 ---
 
-### 12. Container With Most Water 🟡
+### 12. Container With Most Water (LC #11) 🟡
+
+> 🧠 **Thought Process**
+> 1. **Brute force**: Check all pairs → O(n²)
+> 2. **Greedy insight**: Start with widest container (l=0, r=end)
+> 3. **Move shorter side**: Shorter side limits height — moving taller can only lose width
+> 4. **Proof**: We never skip a potentially better pair
+> 5. **Pattern**: Two pointers greedy narrowing
+
+```
+  8 |  █         █
+  7 |  █───────────█   area = 7 × 7 = 49
+  6 |  █  █       █
+  5 |  █  █  █    █
+  4 |  █  █  █ █  █
+  3 |  █  █  █ █  █ █
+  2 |  █  █  █ █  █ █
+  1 |█ █  █  █ █  █ █ █
+    ─────────────────
+     l                 r
+```
 
 ```java
 public int maxArea(int[] height) {
@@ -444,7 +600,24 @@ l=1(8),r=7(3): area=3*6=18
 
 ---
 
-### 13. Trapping Rain Water 🔴
+### 13. Trapping Rain Water (LC #42) 🔴
+
+> 🧠 **Thought Process**
+> 1. **Per-column**: Water at `i` = `min(leftMax, rightMax) - height[i]`
+> 2. **Prefix arrays**: Precompute leftMax[] and rightMax[] → O(n) space
+> 3. **Optimize to O(1) space**: Two pointers — process from the smaller side
+> 4. **Why it works**: If `height[l] < height[r]`, water at `l` depends only on `leftMax`
+> 5. **Pattern**: Two-pointer with running max from both sides
+
+```
+Water Visualization:
+height = [0,1,0,2,1,0,1,3,2,1,2,1]
+
+  3 |         █
+  2 |      █▒▒▒▒█▒█
+  1 |   █▒█▒▒███▒██
+  0 | █  █  █  ███ ██  (▒ = trapped water = 6)
+```
 
 ```java
 public int trap(int[] height) {
@@ -482,7 +655,14 @@ l=5(0): leftMax=2, water+=2, l++ → total=6 ✅
 
 ---
 
-### 14. Two Sum II (Sorted) 🟡
+### 14. Two Sum II — Sorted (LC #167) 🟡
+
+> 🧠 **Thought Process**
+> 1. **HashMap**: Works but doesn't use the sorted property
+> 2. **Binary search per element**: O(n log n) — better but not optimal
+> 3. **Two pointers**: Sum too small → l++, too big → r--. O(n)
+> 4. **Why it works**: Sorted array → narrowing window guarantees finding the pair
+> 5. **Pattern**: Sorted array + target sum → two pointers
 
 ```java
 public int[] twoSum(int[] numbers, int target) {
@@ -514,7 +694,13 @@ l=0(2), r=1(7):  sum=9 == 9 → [1,2] ✅
 
 > [Deep dive →](./04-sliding-window.md)
 
-### 15. Best Time to Buy and Sell Stock 🟢
+### 15. Best Time to Buy and Sell Stock (LC #121) 🟢
+
+> 🧠 **Thought Process**
+> 1. **Brute force**: Check all buy/sell pairs → O(n²)
+> 2. **Insight**: Best profit ending at day `i` = `price[i] - minSoFar`
+> 3. **One pass**: Track running minimum, compute profit at each step
+> 4. **Pattern**: Sliding window / running min-max
 
 ```java
 public int maxProfit(int[] prices) {
@@ -542,7 +728,20 @@ i=4: min=1, profit=5 ✅ (buy at 1, sell at 6)
 
 ---
 
-### 16. Longest Substring Without Repeating Characters 🟡
+### 16. Longest Substring Without Repeating Characters (LC #3) 🟡
+
+> 🧠 **Thought Process**
+> 1. **Brute force**: Check all substrings for uniqueness → O(n³)
+> 2. **Sliding window**: Expand right, shrink left on duplicate
+> 3. **Optimization**: HashMap stores last index — jump `left` past duplicate directly
+> 4. **Pattern**: Variable-size sliding window with HashMap
+
+```
+Window Sliding:
+s = "a b c a b c b b"
+     [       ]         window="abc", max=3
+         [     ]       'a' seen → jump left past old 'a'
+```
 
 ```java
 public int lengthOfLongestSubstring(String s) {
@@ -578,7 +777,14 @@ Answer: 3 ("abc") ✅
 
 ---
 
-### 17. Longest Repeating Character Replacement 🟡
+### 17. Longest Repeating Character Replacement (LC #424) 🟡
+
+> 🧠 **Thought Process**
+> 1. **Key formula**: `windowSize - maxFreq = replacements needed`
+> 2. **If replacements ≤ k**: Window is valid (all same char after k changes)
+> 3. **If replacements > k**: Shrink from left
+> 4. **Trick**: `maxFreq` never needs to decrease — we only care about growing the window
+> 5. **Pattern**: Sliding window with character frequency count
 
 ```java
 public int characterReplacement(String s, int k) {
@@ -615,7 +821,22 @@ Answer: 4 ✅
 
 ---
 
-### 18. Minimum Window Substring 🔴
+### 18. Minimum Window Substring (LC #76) 🔴
+
+> 🧠 **Thought Process**
+> 1. **Need**: Smallest window in `s` containing all chars of `t`
+> 2. **Expand right** until window satisfies requirement
+> 3. **Shrink left** to minimize while still valid
+> 4. **Track**: Count of unique characters fully satisfied (`formed == required`)
+> 5. **Pattern**: Variable sliding window with two frequency maps
+
+```
+Sliding Window:
+s = "A D O B E C O D E B A N C",  t = "ABC"
+     [==========]                   expand until A,B,C found
+       [========]                   shrink left
+                     [=======]      final: "BANC" (len=4) ✅
+```
 
 ```java
 public String minWindow(String s, String t) {
@@ -667,7 +888,13 @@ Window "BANC" (9-12): has B,A,N,C → valid, len=4 ✅
 
 > [Deep dive →](./07-stacks-queues.md)
 
-### 19. Valid Parentheses 🟢
+### 19. Valid Parentheses (LC #20) 🟢
+
+> 🧠 **Thought Process**
+> 1. **Matching pairs**: Each opener needs its closer in correct order → LIFO = Stack
+> 2. **Elegant trick**: Push expected closer instead of opener → simpler comparison
+> 3. **End check**: Stack must be empty (no unmatched openers)
+> 4. **Pattern**: Bracket matching → Stack
 
 ```java
 public boolean isValid(String s) {
