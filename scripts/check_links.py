@@ -2,6 +2,7 @@ import os
 import re
 from pathlib import Path
 import json
+import difflib
 
 def find_links(content):
     # Match [label](path)
@@ -37,11 +38,13 @@ def resolve_path(current_file_path, link_path):
         return Path(link_path[1:])
     current_dir = Path(current_file_path).parent
     try:
-        resolved_str = os.path.normpath(os.path.join(current_dir, link_path))
-        resolved = Path(resolved_str)
         repo_root = Path(os.getcwd()).resolve()
-        if resolved.is_relative_to(repo_root):
-            return resolved.relative_to(repo_root)
+        # Purely lexical join
+        resolved_str = os.path.normpath(os.path.join(current_dir, link_path))
+        # Make it absolute to ensure is_relative_to works
+        full_resolved = (repo_root / resolved_str).resolve()
+        if full_resolved.is_relative_to(repo_root):
+            return full_resolved.relative_to(repo_root)
         else:
             return None 
     except Exception:

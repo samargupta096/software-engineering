@@ -9,11 +9,11 @@ A comprehensive guide covering all major Java features from Java 8 onwards with 
 | Version | Key Features | File |
 |---------|-------------|------|
 | Java 8 | Lambda, Streams, Optional, Date/Time API | [java8-features.md](./features/java8-features.md) |
-| Java 9 | Modules, JShell, Private Interface Methods | [java9-features.md](./java9-features.md) |
-| Java 10-11 | var, HTTP Client, New String Methods | [java10-11-features.md](./java10-11-features.md) |
-| Java 12-14 | Switch Expressions, Records, Text Blocks | [java12-14-features.md](./java12-14-features.md) |
-| Java 15-17 | Sealed Classes, Pattern Matching | [java15-17-features.md](./java15-17-features.md) |
-| Java 18-21 | Virtual Threads, Sequenced Collections | [java18-21-features.md](./java18-21-features.md) |
+| Java 9 | Modules, JShell, Private Interface Methods | [java9-features.md](./features/java8-features.md) |
+| Java 10-11 | var, HTTP Client, New String Methods | [java10-11-features.md](./features/java9-11-features.md) |
+| Java 12-14 | Switch Expressions, Records, Text Blocks | [java12-14-features.md](./features/java12-17-features.md) |
+| Java 15-17 | Sealed Classes, Pattern Matching | [java15-17-features.md](./features/java12-17-features.md) |
+| Java 18-21 | Virtual Threads, Sequenced Collections | [java18-21-features.md](./features/java18-21-features.md) |
 
 ## Quick Reference: Version Timeline
 

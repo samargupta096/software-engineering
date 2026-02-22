@@ -1,4 +1,4 @@
-[🏠 Home](../../README.md) | [⬅️ Spring Ecosystem](./spring-ecosystem-deep-dive.md) | [➡️ Spring AI](./spring-ai-deep-dive.md)
+[🏠 Home](../../README.md) | [⬅️ Spring Ecosystem](./ecosystem-deep-dive.md) | [➡️ Spring AI](./ai-deep-dive.md)
 
 # ⚡ Spring WebFlux & Reactive Stack Deep Dive
 

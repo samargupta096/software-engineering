@@ -1,4 +1,4 @@
-[🏠 Home](../../README.md) | [⬅️ Spring Boot Guide](./spring-boot-guide.md) | [Java Index](./java-modern-features-guide.md)
+[🏠 Home](../../README.md) | [⬅️ Spring Boot Guide](./spring-boot-guide.md) | [Java Index](../modern-features-guide.md)
 
 # Spring Boot 3.x: Testing, Migrations & Future Roadmap
 

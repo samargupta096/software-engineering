@@ -1,4 +1,4 @@
-[🏠 Home](../../README.md) | [⬅️ Spring Ecosystem](./spring-ecosystem-deep-dive.md) | [➡️ Kafka Deep Dive](./kafka-deep-dive.md)
+[🏠 Home](../../README.md) | [⬅️ Spring Ecosystem](./ecosystem-deep-dive.md) | [➡️ Kafka Deep Dive](../../kafka/kafka-deep-dive.md)
 
 # 🤖 Spring AI Deep Dive (2026 Edition)
 

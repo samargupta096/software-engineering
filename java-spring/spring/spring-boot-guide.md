@@ -1,4 +1,4 @@
-[🏠 Home](../../README.md) | [⬅️ Java Index](./java/java-modern-features-guide.md)
+[🏠 Home](../../README.md) | [⬅️ Java Index](../modern-features-guide.md)
 
 # Spring Boot 3.x Comprehensive Guide (v3.4 - v3.5)
 

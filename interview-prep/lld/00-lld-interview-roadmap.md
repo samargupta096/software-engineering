@@ -74,8 +74,8 @@ flowchart LR
    - [Library Management](./04-common-designs/07-library-management.md)
    - [Car Rental](./04-common-designs/08-car-rental.md)
    - [Tic-Tac-Toe](./04-common-designs/09-tic-tac-toe.md)
-   - [ATM Machine](./04-common-designs/10-atm-machine.md)
-   - [Snake & Ladder](./04-common-designs/11-snake-ladder.md)
+   - [ATM Machine](./04-common-designs/08-atm-machine.md)
+   - [Snake & Ladder](./04-common-designs/10-snake-ladder.md)
 5. **[Interview Q&A](./05-interview-qa.md)** - Common questions and answers
 
 ---

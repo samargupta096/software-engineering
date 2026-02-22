@@ -1,4 +1,4 @@
-[🏠 Home](../../../README.md) | [⬅️ PostgreSQL Guide](./04-postgresql-guide.md) | [➡️ Components](../components/00-components-overview.md)
+[🏠 Home](../../../README.md) | [⬅️ PostgreSQL Guide](./04-postgresql-guide.md) | [➡️ Components](../../companies/australia/anz/01-company-overview.md)
 
 # MySQL Deep Dive: Indexing, Sharding & Partitioning
 
@@ -991,4 +991,4 @@ Is it spatial/geographic data?
 
 ---
 
-[🏠 Home](../../../README.md) | [⬅️ PostgreSQL Guide](./04-postgresql-guide.md) | [➡️ Components](../components/00-components-overview.md)
+[🏠 Home](../../../README.md) | [⬅️ PostgreSQL Guide](./04-postgresql-guide.md) | [➡️ Components](../../companies/australia/anz/01-company-overview.md)

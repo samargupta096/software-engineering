@@ -620,7 +620,7 @@ Example: points = [[1,3],[-2,2],[5,8],[0,1]], k = 2
 Distances: [1,3]=10, [-2,2]=8, [5,8]=89, [0,1]=1
 Add [1,3](10): heap=[[1,3]]
 Add [-2,2](8): heap=[[-2,2],[1,3]]  (max-heap: farthest on top)
-Add [5,8](89): poll [1,3](10): heap=[[5,8],[-2,2]]... 
+Add [5,8](../../../projects/kafka-learning-project/.gradle/8.9): poll [1,3](10): heap=[[5,8],[-2,2]]... 
   Wait — poll removes farthest! heap=[[-2,2],[5,8]] → poll [5,8]
   heap=[[-2,2]]... then re-add: heap=[[-2,2],[1,3]]
   

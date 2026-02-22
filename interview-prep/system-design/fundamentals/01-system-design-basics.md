@@ -492,7 +492,7 @@ With 2x for redundancy = 300 servers
 
 1. [CAP Theorem Deep Dive](./02-cap-theorem.md) - Understand trade-offs
 2. [Scalability Patterns](./03-scalability-patterns.md) - Practical techniques
-3. [Components Overview](../components/00-components-overview.md) - Building blocks
+3. [Components Overview](../../companies/australia/anz/01-company-overview.md) - Building blocks
 
 ---
 

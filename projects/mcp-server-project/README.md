@@ -128,4 +128,4 @@ python src/server.py
 
 ---
 
-*Part of the [GenAI Learning Curriculum](../../components/genai/)*
+*Part of the [GenAI Learning Curriculum](../../assets/animations/genai.png)*

@@ -1,4 +1,4 @@
-[🏠 Home](../../../../README.md) | [⬅️ Components Overview](./00-components-overview.md)
+[🏠 Home](../../../../README.md) | [⬅️ Components Overview](../../../companies/australia/anz/01-company-overview.md)
 
 # 🚀 Apache Kafka In-Depth Guide
 

@@ -131,4 +131,4 @@ python scripts/train_sagemaker.py \
 
 ---
 
-*Part of the [GenAI Learning Curriculum](../../components/genai/)*
+*Part of the [GenAI Learning Curriculum](../../assets/animations/genai.png)*

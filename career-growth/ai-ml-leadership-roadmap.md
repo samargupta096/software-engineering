@@ -181,13 +181,13 @@ gantt
 | 1-2 | Bot Framework Basics | External: MS Docs | Build Teams bot |
 | 3-4 | Teams AI Library | External: MS Docs | Add AI to bot |
 | 5-6 | Copilot Studio | External: MS Learn | Build custom copilot |
-| 7 | Enterprise AI Integration Patterns | [System Design Examples](../interview-prep/system-design-examples/) | Architecture doc |
+| 7 | Enterprise AI Integration Patterns | [System Design Examples](../interview-prep/system-design/fundamentals/01-system-design-basics.md) | Architecture doc |
 
 #### Week 12: Interview & Leadership Prep
 
 | Day | Topic | Resources | Practice |
 |-----|-------|-----------|----------|
-| 1-2 | System Design for AI | [System Design Examples](../interview-prep/system-design-examples/) | Design AI system |
+| 1-2 | System Design for AI | [System Design Examples](../interview-prep/system-design/fundamentals/01-system-design-basics.md) | Design AI system |
 | 3-4 | Technical Leadership Scenarios | [Technical Architect Roadmap](./technical-architect-roadmap.md) | Mock interviews |
 | 5-6 | AI Ethics & Governance | External research | Ethics framework |
 | 7 | Final Mock Interview | All resources | Complete mock |
@@ -625,7 +625,7 @@ Build an enterprise Teams bot:
    - Code understanding, LLM integration, CI/CD
 
 📚 **Resources**:
-- [System Design Examples](../interview-prep/system-design-examples/)
+- [System Design Examples](../interview-prep/system-design/fundamentals/01-system-design-basics.md)
 - [Technical Architect Roadmap](./technical-architect-roadmap.md)
 
 ### Leadership Questions
@@ -687,7 +687,7 @@ Build an enterprise Teams bot:
 | Resource | Description | Link |
 |----------|-------------|------|
 | **Technical Architect Roadmap** | Career growth to architect | [View](./technical-architect-roadmap.md) |
-| **System Design Examples** | Real-world architectures | [View](../interview-prep/system-design-examples/) |
+| **System Design Examples** | Real-world architectures | [View](../interview-prep/system-design/fundamentals/01-system-design-basics.md) |
 
 ---
 

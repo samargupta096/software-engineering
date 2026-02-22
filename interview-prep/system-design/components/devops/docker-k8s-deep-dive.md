@@ -1017,7 +1017,7 @@ kubectl logs <pod> -c <container>  # Specific container
 
 ## Navigation
 
-Previous: [CI/CD Deep Dive](./cicd-deep-dive.md) | Next: [System Design Overview](./00-components-overview.md)
+Previous: [CI/CD Deep Dive](./cicd-deep-dive.md) | Next: [System Design Overview](../../../companies/australia/anz/01-company-overview.md)
 
 ---
 

@@ -1,4 +1,4 @@
-[🏠 Home](../../README.md) | [⬅️ DSA Cheatsheet](./DSA-CHEATSHEET.md)
+[🏠 Home](../../README.md) | [⬅️ DSA Cheatsheet](../../interview-prep/dsa/00-cheatsheet.md)
 
 # 🌿 Spring Interview Mastery Guide (2026)
 

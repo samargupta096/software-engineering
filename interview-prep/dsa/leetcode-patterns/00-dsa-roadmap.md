@@ -226,13 +226,13 @@ E - Evaluate complexity
 
 | Category | Overview | Problems |
 |----------|----------|----------|
-| Arrays & Hashing | [Overview](../../system-design/components/overview.md) | [Problems](./02-arrays-hashing/problems.md) |
-| Two Pointers | [Overview](../../system-design/components/overview.md) | [Problems](./03-two-pointers/problems.md) |
-| Sliding Window | [Overview](../../system-design/components/overview.md) | [Problems](./04-sliding-window/problems.md) |
-| Binary Search | [Overview](../../system-design/components/overview.md) | [Problems](./05-binary-search/problems.md) |
-| Linked Lists | [Overview](../../system-design/components/overview.md) | [Problems](./06-linked-lists/problems.md) |
-| Trees | [Overview](../../system-design/components/overview.md) | [Problems](./08-trees/problems.md) |
-| Dynamic Programming | [Overview](../../system-design/components/overview.md) | [Problems](./12-dynamic-programming/problems.md) |
+| Arrays & Hashing | [Overview](../../system-design/components/overview.md) | [Problems](../04-company-problems.md) |
+| Two Pointers | [Overview](../../system-design/components/overview.md) | [Problems](../04-company-problems.md) |
+| Sliding Window | [Overview](../../system-design/components/overview.md) | [Problems](../04-company-problems.md) |
+| Binary Search | [Overview](../../system-design/components/overview.md) | [Problems](../04-company-problems.md) |
+| Linked Lists | [Overview](../../system-design/components/overview.md) | [Problems](../04-company-problems.md) |
+| Trees | [Overview](../../system-design/components/overview.md) | [Problems](../04-company-problems.md) |
+| Dynamic Programming | [Overview](../../system-design/components/overview.md) | [Problems](../04-company-problems.md) |
 
 ---
 

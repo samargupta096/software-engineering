@@ -26,8 +26,8 @@
 1. **[Company Overview](./01-company-overview.md)** - REA Group's business and PropTech focus
 2. **[Technical Stack](./02-technical-stack.md)** - AWS, AI/ML, polyglot architecture
 3. **[Interview Process](./03-interview-process.md)** - What to expect in each round
-4. **[Technical Questions](./04-technical-questions.md)** - Coding, system design, AI/ML
-5. **[Behavioral Questions](./05-behavioral-questions.md)** - STAR method examples
+4. **[Technical Questions](./02-technical-stack.md)** - Coding, system design, AI/ML
+5. **[Behavioral Questions](../../../lld/03-design-patterns/03-behavioral-patterns.md)** - STAR method examples
 
 ---
 

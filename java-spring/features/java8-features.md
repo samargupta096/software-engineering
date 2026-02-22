@@ -1,4 +1,4 @@
-[🏠 Home](../../README.md) | [⬅️ Java Index](./java-modern-features-guide.md) | [➡️ Java 9-11](./java9-11-features.md)
+[🏠 Home](../../README.md) | [⬅️ Java Index](../modern-features-guide.md) | [➡️ Java 9-11](./java9-11-features.md)
 
 # Java 8 Features - The Game Changer Release (2014)
 

@@ -25,8 +25,8 @@
 1. **[Company Overview](./01-company-overview.md)** - ANZ's business and digital transformation
 2. **[Technical Stack](../nab/02-technical-stack.md)** - Multi-cloud, ANZ Plus, Fabric platform
 3. **[Interview Process](../nab/03-interview-process.md)** - Assessment stages and preparation
-4. **[Technical Questions](./04-technical-questions.md)** - Java, cloud, system design
-5. **[Behavioral Questions](./05-behavioral-questions.md)** - Competency-based interviews
+4. **[Technical Questions](../nab/02-technical-stack.md)** - Java, cloud, system design
+5. **[Behavioral Questions](../../../lld/03-design-patterns/03-behavioral-patterns.md)** - Competency-based interviews
 
 ---
 

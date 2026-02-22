@@ -190,4 +190,4 @@ See [AWS Deployment Guide](docs/aws-deployment.md) for:
 
 ---
 
-*Part of the [GenAI Learning Curriculum](../../components/genai/)*
+*Part of the [GenAI Learning Curriculum](../../assets/animations/genai.png)*
