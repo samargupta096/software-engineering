@@ -28,6 +28,7 @@
 4. **[Java & Microservices Questions](./04-java-microservices.md)** - Technical interview questions
 5. **[Data Engineering & AWS Questions](./05-data-engineering-aws.md)** - Big Data & Cloud questions
 6. **[Behavioral & HR Questions](./06-behavioral-hr.md)** - Culture fit and soft skills
+7. **[Managerial Round](./07-managerial-round.md)** ⭐ - Leadership, delivery, people management
 
 ---
 

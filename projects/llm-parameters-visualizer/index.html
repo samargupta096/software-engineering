@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LLM Generation Parameters — Interactive Visualizer</title>
+    <meta
+      name="description"
+      content="Explore and understand the 7 key LLM generation parameters through interactive visualizations. Learn how temperature, top_p, top_k, and more shape AI responses."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <body>
+    <!-- ═══════════════════════ HERO ═══════════════════════ -->
+    <header class="hero" id="hero">
+      <div class="hero__bg-orbs">
+        <div class="orb orb--1"></div>
+        <div class="orb orb--2"></div>
+        <div class="orb orb--3"></div>
+      </div>
+      <div class="hero__content">
+        <span class="hero__badge">Interactive Playground</span>
+        <h1 class="hero__title">
+          7 <span class="gradient-text">LLM Generation</span> Parameters
+        </h1>
+        <p class="hero__subtitle">
+          Understand how each parameter shapes AI output — with live,
+          interactive visualizations.
+        </p>
+        <a href="#parameters" class="hero__cta">
+          <span>Explore Parameters</span>
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M12 5v14M5 12l7 7 7-7" />
+          </svg>
+        </a>
+      </div>
+    </header>
+
+    <!-- ═══════════════ PARAMETERS SECTION ═══════════════ -->
+    <main id="parameters">
+      <!-- ────────── 1. max_tokens ────────── -->
+      <section class="param-section" id="max-tokens" data-param="max_tokens">
+        <div class="param-section__inner">
+          <div class="param-header">
+            <span class="param-number">01</span>
+            <div>
+              <h2 class="param-name">max_tokens</h2>
+              <p class="param-range">Range: <code>1</code> to <code>∞</code></p>
+            </div>
+          </div>
+          <p class="param-desc">
+            Limits the <strong>number of tokens</strong> the model generates.
+            The response will be cut off once this limit is reached, even
+            mid-sentence.
+          </p>
+
+          <div class="viz-card" id="viz-max-tokens">
+            <div class="viz-controls">
+              <label for="slider-max-tokens">max_tokens</label>
+              <input
+                type="range"
+                id="slider-max-tokens"
+                min="1"
+                max="60"
+                value="30"
+              />
+              <span class="viz-value" id="val-max-tokens">30</span>
+            </div>
+            <div class="viz-canvas">
+              <div class="token-stream" id="token-stream"></div>
+            </div>
+            <p class="viz-hint">
+              Drag the slider to see how many tokens appear in the output.
+            </p>
+          </div>
+
+          <div class="param-note">
+            <strong>💡 Tip:</strong> <code>max_tokens</code> is now deprecated
+            in favor of <code>max_completion_tokens</code> and is not compatible
+            with o1-series models.
+          </div>
+        </div>
+      </section>
+
+      <!-- ────────── 2. temperature ────────── -->
+      <section class="param-section" id="temperature" data-param="temperature">
+        <div class="param-section__inner">
+          <div class="param-header">
+            <span class="param-number">02</span>
+            <div>
+              <h2 class="param-name">temperature</h2>
+              <p class="param-range">Range: <code>0</code> to <code>2</code></p>
+            </div>
+          </div>
+          <p class="param-desc">
+            Controls <strong>creativity</strong>. Lower values make the output
+            more focused and deterministic; higher values produce more creative
+            and diverse responses.
+          </p>
+
+          <div class="viz-card" id="viz-temperature">
+            <div class="viz-controls">
+              <label for="slider-temperature">temperature</label>
+              <input
+                type="range"
+                id="slider-temperature"
+                min="0"
+                max="200"
+                value="70"
+              />
+              <span class="viz-value" id="val-temperature">0.70</span>
+            </div>
+            <div class="viz-canvas">
+              <div class="temp-bars" id="temp-bars"></div>
+            </div>
+            <p class="viz-hint">
+              See how probability distribution flattens as temperature rises.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ────────── 3. top_p ────────── -->
+      <section class="param-section" id="top-p" data-param="top_p">
+        <div class="param-section__inner">
+          <div class="param-header">
+            <span class="param-number">03</span>
+            <div>
+              <h2 class="param-name">top_p</h2>
+              <p class="param-range">Range: <code>0</code> to <code>1</code></p>
+            </div>
+          </div>
+          <p class="param-desc">
+            <strong>Nucleus sampling</strong>. Considers only the smallest set
+            of tokens whose cumulative probability exceeds <em>top_p</em>.
+            Higher = more diverse; lower = more focused.
+          </p>
+
+          <div class="viz-card" id="viz-top-p">
+            <div class="viz-controls">
+              <label for="slider-top-p">top_p</label>
+              <input
+                type="range"
+                id="slider-top-p"
+                min="0"
+                max="100"
+                value="90"
+              />
+              <span class="viz-value" id="val-top-p">0.90</span>
+            </div>
+            <div class="viz-canvas">
+              <div class="topp-bars" id="topp-bars"></div>
+            </div>
+            <p class="viz-hint">
+              Move the slider to see which tokens fall inside the nucleus.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ────────── 4. top_k ────────── -->
+      <section class="param-section" id="top-k" data-param="top_k">
+        <div class="param-section__inner">
+          <div class="param-header">
+            <span class="param-number">04</span>
+            <div>
+              <h2 class="param-name">top_k</h2>
+              <p class="param-range">Range: <code>1</code> to <code>∞</code></p>
+            </div>
+          </div>
+          <p class="param-desc">
+            Limits the number of <strong>top probable tokens</strong> considered
+            when predicting the next token. Lower = more predictable; higher =
+            more variable.
+          </p>
+
+          <div class="viz-card" id="viz-top-k">
+            <div class="viz-controls">
+              <label for="slider-top-k">top_k</label>
+              <input
+                type="range"
+                id="slider-top-k"
+                min="1"
+                max="10"
+                value="3"
+              />
+              <span class="viz-value" id="val-top-k">3</span>
+            </div>
+            <div class="viz-canvas">
+              <div class="topk-bars" id="topk-bars"></div>
+            </div>
+            <p class="viz-hint">
+              Only the top-K tokens are considered; the rest are discarded.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ────────── 5. frequency_penalty ────────── -->
+      <section
+        class="param-section"
+        id="frequency-penalty"
+        data-param="frequency_penalty"
+      >
+        <div class="param-section__inner">
+          <div class="param-header">
+            <span class="param-number">05</span>
+            <div>
+              <h2 class="param-name">frequency_penalty</h2>
+              <p class="param-range">
+                Range: <code>-2</code> to <code>2</code>
+              </p>
+            </div>
+          </div>
+          <p class="param-desc">
+            Reduces <strong>repeated tokens</strong> based on
+            <em>how often</em> they've appeared so far, encouraging more unique
+            and diverse tokens in the response.
+          </p>
+
+          <div class="viz-card" id="viz-freq">
+            <div class="viz-controls">
+              <label for="slider-freq">frequency_penalty</label>
+              <input
+                type="range"
+                id="slider-freq"
+                min="-200"
+                max="200"
+                value="0"
+              />
+              <span class="viz-value" id="val-freq">0.00</span>
+            </div>
+            <div class="viz-canvas">
+              <div class="freq-demo" id="freq-demo"></div>
+            </div>
+            <p class="viz-hint">
+              Higher penalty → less repetition. Negative values encourage
+              repetition.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ────────── 6. presence_penalty ────────── -->
+      <section
+        class="param-section"
+        id="presence-penalty"
+        data-param="presence_penalty"
+      >
+        <div class="param-section__inner">
+          <div class="param-header">
+            <span class="param-number">06</span>
+            <div>
+              <h2 class="param-name">presence_penalty</h2>
+              <p class="param-range">
+                Range: <code>-2</code> to <code>2</code>
+              </p>
+            </div>
+          </div>
+          <p class="param-desc">
+            Discourages reuse of
+            <strong>already-present tokens</strong> (regardless of frequency),
+            forcing the model to introduce new topics and vocabulary.
+          </p>
+
+          <div class="viz-card" id="viz-pres">
+            <div class="viz-controls">
+              <label for="slider-pres">presence_penalty</label>
+              <input
+                type="range"
+                id="slider-pres"
+                min="-200"
+                max="200"
+                value="0"
+              />
+              <span class="viz-value" id="val-pres">0.00</span>
+            </div>
+            <div class="viz-canvas">
+              <div class="pres-demo" id="pres-demo"></div>
+            </div>
+            <p class="viz-hint">
+              Higher values push the model to talk about new topics.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ────────── 7. stop ────────── -->
+      <section class="param-section" id="stop" data-param="stop">
+        <div class="param-section__inner">
+          <div class="param-header">
+            <span class="param-number">07</span>
+            <div>
+              <h2 class="param-name">stop</h2>
+              <p class="param-range">
+                Value: <code>Custom list of token identifiers</code>
+              </p>
+            </div>
+          </div>
+          <p class="param-desc">
+            Specifies one or more <strong>stop sequences</strong>. When the
+            model generates any of these sequences, it immediately stops
+            producing further content.
+          </p>
+
+          <div class="viz-card" id="viz-stop">
+            <div class="viz-controls stop-controls">
+              <label for="input-stop">stop sequences (comma separated)</label>
+              <input
+                type="text"
+                id="input-stop"
+                placeholder="e.g.  .  ,  \n"
+                value="."
+              />
+              <button id="btn-stop-run" class="btn-run">Generate</button>
+            </div>
+            <div class="viz-canvas">
+              <div class="stop-demo" id="stop-demo"></div>
+            </div>
+            <p class="viz-hint">
+              The model halts when it hits a stop sequence.
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ═══════════════════ FOOTER ═══════════════════ -->
+    <footer class="footer">
+      <p>Built for learning — inspired by <strong>Analytics Vidhya</strong></p>
+    </footer>
+
+    <script src="index.js"></script>
+  </body>
+</html>
