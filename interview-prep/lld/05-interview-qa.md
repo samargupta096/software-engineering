@@ -1,4 +1,4 @@
-[🏠 Home](../README.md) | [⬅️ Common Designs](./04-common-designs/10-snake-ladder.md)
+[🏠 Home](../../README.md) | [⬅️ Common Designs](./04-common-designs/10-snake-ladder.md)
 
 # 📝 LLD Interview Questions & Answers
 

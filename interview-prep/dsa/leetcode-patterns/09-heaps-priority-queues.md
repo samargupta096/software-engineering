@@ -1,4 +1,4 @@
-[🏠 Home](../../README.md) | [⬅️ Trees](../08-trees/00-overview.md) | [➡️ Graphs](../10-graphs/00-overview.md)
+[🏠 Home](../../../README.md) | [⬅️ Trees](../../system-design/components/overview.md) | [➡️ Graphs](../../system-design/components/overview.md)
 
 # ⛰️ Heaps & Priority Queues
 
@@ -867,4 +867,4 @@ Result: 1→1→2→3→4→4→5→6 ✅
 
 ---
 
-*Next: [Graphs →](../10-graphs/00-overview.md)*
+*Next: [Graphs →](../../system-design/components/overview.md)*

@@ -1,4 +1,4 @@
-[🏠 Home](../../README.md) | [⬅️ Greedy](../13-greedy/00-overview.md) | [➡️ Bit Manipulation](../15-bit-manipulation/00-overview.md)
+[🏠 Home](../../../README.md) | [⬅️ Greedy](../../system-design/components/overview.md) | [➡️ Bit Manipulation](../../system-design/components/overview.md)
 
 # 🕒 Interval Patterns
 
@@ -486,4 +486,4 @@ Result: 2 ✅
 
 ---
 
-*Next: [Bit Manipulation →](../15-bit-manipulation/00-overview.md)*
+*Next: [Bit Manipulation →](../../system-design/components/overview.md)*

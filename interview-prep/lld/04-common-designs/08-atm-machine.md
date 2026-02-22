@@ -1,4 +1,4 @@
-[🏠 Home](../../README.md) | [⬅️ Library Management](./07-library-management.md) | [➡️ Tic-Tac-Toe](./09-tic-tac-toe.md)
+[🏠 Home](../../../README.md) | [⬅️ Library Management](./07-library-management.md) | [➡️ Tic-Tac-Toe](./09-tic-tac-toe.md)
 
 # 🏧 ATM Machine Design
 

@@ -1,4 +1,4 @@
-[🏠 Home](../../README.md) | [⬅️ Stacks](../07-stacks-queues/00-overview.md) | [➡️ Heaps](../09-heaps-priority-queues/00-overview.md)
+[🏠 Home](../../../README.md) | [⬅️ Stacks](../../system-design/components/overview.md) | [➡️ Heaps](../../system-design/components/overview.md)
 
 # 🌳 Tree Patterns
 
@@ -946,4 +946,4 @@ maxSum = 42 ✅ (path: 15 → 20 → 7)
 
 ---
 
-*Next: [Heaps & Priority Queues →](../09-heaps-priority-queues/00-overview.md)*
+*Next: [Heaps & Priority Queues →](../../system-design/components/overview.md)*

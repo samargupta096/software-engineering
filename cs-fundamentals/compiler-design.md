@@ -1,4 +1,4 @@
-[🏠 Home](../README.md) | [📚 CS Fundamentals](./README.md)
+[🏠 Home](../README.md) | [📚 CS Fundamentals](../README.md)
 
 # 🛠️ How to Design & Implement a Compiler
 

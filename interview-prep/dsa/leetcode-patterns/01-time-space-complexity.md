@@ -1,4 +1,4 @@
-[🏠 Home](../README.md) | [⬅️ Roadmap](./00-dsa-roadmap.md) | [➡️ Arrays & Hashing](./02-arrays-hashing/00-overview.md)
+[🏠 Home](../../../README.md) | [⬅️ Roadmap](./00-dsa-roadmap.md) | [➡️ Arrays & Hashing](../../system-design/components/overview.md)
 
 # ⏱️ Time & Space Complexity
 
@@ -715,4 +715,4 @@ Operations: 5 vertex processings + 5 edge checks = V + E ✅
 
 ---
 
-*Next: [Arrays & Hashing →](./02-arrays-hashing/00-overview.md)*
+*Next: [Arrays & Hashing →](../../system-design/components/overview.md)*

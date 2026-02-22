@@ -1,4 +1,4 @@
-[🏠 Home](../../README.md) | [⬅️ Vending Machine](./04-vending-machine.md) | [➡️ Expense Splitter](./06-expense-splitter.md)
+[🏠 Home](../../../README.md) | [⬅️ Vending Machine](./04-vending-machine.md) | [➡️ Expense Splitter](./06-expense-splitter.md)
 
 # ♟️ Chess Game Design
 

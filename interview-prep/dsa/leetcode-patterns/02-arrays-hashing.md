@@ -1,4 +1,4 @@
-[🏠 Home](../../README.md) | [⬅️ Time Complexity](../01-time-space-complexity.md) | [➡️ Two Pointers](../03-two-pointers/00-overview.md)
+[🏠 Home](../../../README.md) | [⬅️ Time Complexity](./01-time-space-complexity.md) | [➡️ Two Pointers](../../system-design/components/overview.md)
 
 # 📦 Arrays & Hashing
 
@@ -757,4 +757,4 @@ Decode: "5#hello5#world"
 
 ---
 
-*Next: [Two Pointers →](../03-two-pointers/00-overview.md)*
+*Next: [Two Pointers →](../../system-design/components/overview.md)*

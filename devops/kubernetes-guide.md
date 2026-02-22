@@ -1,4 +1,4 @@
-[🏠 Home](../README.md) | [⬅️ Docker Guide](../docker-guide.md) | [➡️ Terraform Hub](../terraform/README.md)
+[🏠 Home](../README.md) | [⬅️ Docker Guide](./docker-guide.md) | [➡️ Terraform Hub](../README.md)
 
 # ☸️ Kubernetes Deep Dive
 

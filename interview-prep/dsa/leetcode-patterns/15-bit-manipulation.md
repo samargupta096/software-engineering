@@ -1,4 +1,4 @@
-[🏠 Home](../../README.md) | [⬅️ Intervals](../14-intervals/00-overview.md) | [➡️ Interview Q&A](../16-interview-qa.md)
+[🏠 Home](../../../README.md) | [⬅️ Intervals](../../system-design/components/overview.md) | [➡️ Interview Q&A](./16-interview-qa.md)
 
 # 0101 Bit Manipulation
 
@@ -474,4 +474,4 @@ Result: 8 ✅ (5 + 3 = 8)
 
 ---
 
-*Next: [Interview Q&A →](../16-interview-qa.md)*
+*Next: [Interview Q&A →](./16-interview-qa.md)*

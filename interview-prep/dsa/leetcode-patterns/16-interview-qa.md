@@ -1,4 +1,4 @@
-[🏠 Home](../README.md) | [⬅️ Bit Manipulation](./15-bit-manipulation/00-overview.md)
+[🏠 Home](../../../README.md) | [⬅️ Bit Manipulation](../../system-design/components/overview.md)
 
 # 📝 Technical Interview Q&A
 

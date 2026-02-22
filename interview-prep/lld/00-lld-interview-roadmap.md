@@ -1,4 +1,4 @@
-[🏠 Home](../README.md) | [➡️ OOD Fundamentals](./01-ood-fundamentals.md)
+[🏠 Home](../../README.md) | [➡️ OOD Fundamentals](./01-ood-fundamentals.md)
 
 # 🎯 LLD Interview Roadmap
 

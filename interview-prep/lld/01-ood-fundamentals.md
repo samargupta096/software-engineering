@@ -1,4 +1,4 @@
-[🏠 Home](../README.md) | [⬅️ LLD Roadmap](./00-lld-interview-roadmap.md) | [➡️ SOLID Principles](./02-solid-principles.md)
+[🏠 Home](../../README.md) | [⬅️ LLD Roadmap](./00-lld-interview-roadmap.md) | [➡️ SOLID Principles](./02-solid-principles.md)
 
 # 🧱 Object-Oriented Design Fundamentals
 

@@ -1,4 +1,4 @@
-[🏠 Home](../../README.md) | [⬅️ SOLID Principles](../02-solid-principles.md) | [➡️ Creational Patterns](./01-creational-patterns.md)
+[🏠 Home](../../../README.md) | [⬅️ SOLID Principles](../02-solid-principles.md) | [➡️ Creational Patterns](./01-creational-patterns.md)
 
 # 🎨 Design Patterns Overview
 

@@ -1,4 +1,4 @@
-[🏠 Home](../README.md) | [🌍 Terraform Hub](./README.md) | [⬅️ Terraform Guide](./terraform-guide.md) | [➡️ AWS Services](../aws/aws-services-guide.md)
+[🏠 Home](../../README.md) | [🌍 Terraform Hub](./README.md) | [⬅️ Terraform Guide](./terraform-guide.md) | [➡️ AWS Services](../../aws/aws-services-guide.md)
 
 # 🏭 Real-World Project: AWS Production Architecture
 

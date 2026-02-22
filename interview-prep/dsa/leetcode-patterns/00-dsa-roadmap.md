@@ -1,4 +1,4 @@
-[🏠 Home](../README.md) | [➡️ Time Complexity](./01-time-space-complexity.md)
+[🏠 Home](../../../README.md) | [➡️ Time Complexity](./01-time-space-complexity.md)
 
 # 🎯 DSA & LeetCode Patterns Roadmap
 
@@ -123,32 +123,32 @@ flowchart TB
 ### Week 1-2: Foundation
 | Day | Pattern | Problems | Time |
 |-----|---------|----------|------|
-| 1-2 | [Arrays & Hashing](./02-arrays-hashing/00-overview.md) | 8 | 3h |
-| 3-4 | [Two Pointers](./03-two-pointers/00-overview.md) | 6 | 2h |
-| 5-6 | [Sliding Window](./04-sliding-window/00-overview.md) | 6 | 2h |
+| 1-2 | [Arrays & Hashing](../../system-design/components/overview.md) | 8 | 3h |
+| 3-4 | [Two Pointers](../../system-design/components/overview.md) | 6 | 2h |
+| 5-6 | [Sliding Window](../../system-design/components/overview.md) | 6 | 2h |
 | 7 | Review & Practice | - | 2h |
 
 ### Week 3-4: Core Data Structures
 | Day | Pattern | Problems | Time |
 |-----|---------|----------|------|
-| 8-9 | [Binary Search](./05-binary-search/00-overview.md) | 6 | 2h |
-| 10-11 | [Linked Lists](./06-linked-lists/00-overview.md) | 8 | 3h |
-| 12-13 | [Stacks & Queues](./07-stacks-queues/00-overview.md) | 6 | 2h |
+| 8-9 | [Binary Search](../../system-design/components/overview.md) | 6 | 2h |
+| 10-11 | [Linked Lists](../../system-design/components/overview.md) | 8 | 3h |
+| 12-13 | [Stacks & Queues](../../system-design/components/overview.md) | 6 | 2h |
 | 14 | Review & Practice | - | 2h |
 
 ### Week 5-6: Trees & Graphs
 | Day | Pattern | Problems | Time |
 |-----|---------|----------|------|
-| 15-17 | [Trees](./08-trees/00-overview.md) | 12 | 4h |
-| 18-19 | [Heaps](./09-heaps-priority-queues/00-overview.md) | 5 | 2h |
-| 20-22 | [Graphs](./10-graphs/00-overview.md) | 10 | 4h |
+| 15-17 | [Trees](../../system-design/components/overview.md) | 12 | 4h |
+| 18-19 | [Heaps](../../system-design/components/overview.md) | 5 | 2h |
+| 20-22 | [Graphs](../../system-design/components/overview.md) | 10 | 4h |
 
 ### Week 7-8: Advanced Patterns
 | Day | Pattern | Problems | Time |
 |-----|---------|----------|------|
-| 23-24 | [Backtracking](./11-backtracking/00-overview.md) | 8 | 3h |
-| 25-28 | [Dynamic Programming](./12-dynamic-programming/00-overview.md) | 12 | 5h |
-| 29-30 | [Greedy](./13-greedy/00-overview.md) + [Intervals](./14-intervals/00-overview.md) | 10 | 3h |
+| 23-24 | [Backtracking](../../system-design/components/overview.md) | 8 | 3h |
+| 25-28 | [Dynamic Programming](../../system-design/components/overview.md) | 12 | 5h |
+| 29-30 | [Greedy](../../system-design/components/overview.md) + [Intervals](../../system-design/components/overview.md) | 10 | 3h |
 
 ---
 
@@ -226,13 +226,13 @@ E - Evaluate complexity
 
 | Category | Overview | Problems |
 |----------|----------|----------|
-| Arrays & Hashing | [Overview](./02-arrays-hashing/00-overview.md) | [Problems](./02-arrays-hashing/problems.md) |
-| Two Pointers | [Overview](./03-two-pointers/00-overview.md) | [Problems](./03-two-pointers/problems.md) |
-| Sliding Window | [Overview](./04-sliding-window/00-overview.md) | [Problems](./04-sliding-window/problems.md) |
-| Binary Search | [Overview](./05-binary-search/00-overview.md) | [Problems](./05-binary-search/problems.md) |
-| Linked Lists | [Overview](./06-linked-lists/00-overview.md) | [Problems](./06-linked-lists/problems.md) |
-| Trees | [Overview](./08-trees/00-overview.md) | [Problems](./08-trees/problems.md) |
-| Dynamic Programming | [Overview](./12-dynamic-programming/00-overview.md) | [Problems](./12-dynamic-programming/problems.md) |
+| Arrays & Hashing | [Overview](../../system-design/components/overview.md) | [Problems](./02-arrays-hashing/problems.md) |
+| Two Pointers | [Overview](../../system-design/components/overview.md) | [Problems](./03-two-pointers/problems.md) |
+| Sliding Window | [Overview](../../system-design/components/overview.md) | [Problems](./04-sliding-window/problems.md) |
+| Binary Search | [Overview](../../system-design/components/overview.md) | [Problems](./05-binary-search/problems.md) |
+| Linked Lists | [Overview](../../system-design/components/overview.md) | [Problems](./06-linked-lists/problems.md) |
+| Trees | [Overview](../../system-design/components/overview.md) | [Problems](./08-trees/problems.md) |
+| Dynamic Programming | [Overview](../../system-design/components/overview.md) | [Problems](./12-dynamic-programming/problems.md) |
 
 ---
 

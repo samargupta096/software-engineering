@@ -1,4 +1,4 @@
-[🏠 Home](../README.md) | [🌍 Terraform Hub](./README.md) | [➡️ Real World Project](./terraform-real-world-project.md)
+[🏠 Home](../../README.md) | [🌍 Terraform Hub](./README.md) | [➡️ Real World Project](./terraform-real-world-project.md)
 
 # 🌍 Terraform Deep Dive
 

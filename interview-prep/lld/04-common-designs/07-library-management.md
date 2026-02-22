@@ -1,4 +1,4 @@
-[🏠 Home](../../README.md) | [⬅️ Expense Splitter](./06-expense-splitter.md) | [➡️ Tic-Tac-Toe](./09-tic-tac-toe.md)
+[🏠 Home](../../../README.md) | [⬅️ Expense Splitter](./06-expense-splitter.md) | [➡️ Tic-Tac-Toe](./09-tic-tac-toe.md)
 
 # 📚 Library Management System
 

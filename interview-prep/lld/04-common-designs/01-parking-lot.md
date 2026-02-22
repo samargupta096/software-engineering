@@ -1,4 +1,4 @@
-[🏠 Home](../../README.md) | [⬅️ Behavioral Patterns](../03-design-patterns/03-behavioral-patterns.md) | [➡️ Elevator System](./02-elevator-system.md)
+[🏠 Home](../../../README.md) | [⬅️ Behavioral Patterns](../03-design-patterns/03-behavioral-patterns.md) | [➡️ Elevator System](./02-elevator-system.md)
 
 # 🅿️ Parking Lot System Design
 

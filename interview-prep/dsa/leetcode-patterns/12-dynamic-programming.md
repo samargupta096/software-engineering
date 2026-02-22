@@ -1,4 +1,4 @@
-[🏠 Home](../../README.md) | [⬅️ Backtracking](../11-backtracking/00-overview.md) | [➡️ Greedy](../13-greedy/00-overview.md)
+[🏠 Home](../../../README.md) | [⬅️ Backtracking](../../system-design/components/overview.md) | [➡️ Greedy](../../system-design/components/overview.md)
 
 # 💡 Dynamic Programming
 
@@ -785,4 +785,4 @@ Operations: horse → rorse (replace h→r) → rose (delete r) → ros (delete 
 
 ---
 
-*Next: [Greedy →](../13-greedy/00-overview.md)*
+*Next: [Greedy →](../../system-design/components/overview.md)*

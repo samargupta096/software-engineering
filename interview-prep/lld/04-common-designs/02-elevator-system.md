@@ -1,4 +1,4 @@
-[🏠 Home](../../README.md) | [⬅️ Parking Lot](./01-parking-lot.md) | [➡️ Movie Ticket Booking](./03-movie-ticket-booking.md)
+[🏠 Home](../../../README.md) | [⬅️ Parking Lot](./01-parking-lot.md) | [➡️ Movie Ticket Booking](./03-movie-ticket-booking.md)
 
 # 🛗 Elevator System Design
 

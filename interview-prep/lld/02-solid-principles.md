@@ -1,4 +1,4 @@
-[🏠 Home](../README.md) | [⬅️ OOD Fundamentals](./01-ood-fundamentals.md) | [➡️ Design Patterns](./03-design-patterns/00-patterns-overview.md)
+[🏠 Home](../../README.md) | [⬅️ OOD Fundamentals](./01-ood-fundamentals.md) | [➡️ Design Patterns](./03-design-patterns/00-patterns-overview.md)
 
 # 🏛️ SOLID Principles
 

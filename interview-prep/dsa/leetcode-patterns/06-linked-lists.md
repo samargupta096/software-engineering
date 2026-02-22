@@ -1,4 +1,4 @@
-[🏠 Home](../../README.md) | [⬅️ Binary Search](../05-binary-search/00-overview.md) | [➡️ Stacks](../07-stacks-queues/00-overview.md)
+[🏠 Home](../../../README.md) | [⬅️ Binary Search](../../system-design/components/overview.md) | [➡️ Stacks](../../system-design/components/overview.md)
 
 # 🔗 Linked List Patterns
 
@@ -1096,4 +1096,4 @@ Result: 1→1→2→3→4→4→5→6 ✅
 
 ---
 
-*Next: [Stacks & Queues →](../07-stacks-queues/00-overview.md)*
+*Next: [Stacks & Queues →](../../system-design/components/overview.md)*

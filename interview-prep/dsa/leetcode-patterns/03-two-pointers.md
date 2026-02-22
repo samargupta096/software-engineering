@@ -1,4 +1,4 @@
-[🏠 Home](../../README.md) | [⬅️ Arrays & Hashing](../02-arrays-hashing/00-overview.md) | [➡️ Sliding Window](../04-sliding-window/00-overview.md)
+[🏠 Home](../../../README.md) | [⬅️ Arrays & Hashing](../../system-design/components/overview.md) | [➡️ Sliding Window](../../system-design/components/overview.md)
 
 # 👆👆 Two Pointers Pattern
 
@@ -795,4 +795,4 @@ Return slow+1 = 5, first 5 elements: [0, 1, 2, 3, 4] ✅
 
 ---
 
-*Next: [Sliding Window →](../04-sliding-window/00-overview.md)*
+*Next: [Sliding Window →](../../system-design/components/overview.md)*

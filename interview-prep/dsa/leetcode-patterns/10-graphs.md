@@ -1,4 +1,4 @@
-[🏠 Home](../../README.md) | [⬅️ Heaps](../09-heaps-priority-queues/00-overview.md) | [➡️ Backtracking](../11-backtracking/00-overview.md)
+[🏠 Home](../../../README.md) | [⬅️ Heaps](../../system-design/components/overview.md) | [➡️ Backtracking](../../system-design/components/overview.md)
 
 # 🕸️ Graph Patterns
 
@@ -913,4 +913,4 @@ Return 5 ✅
 
 ---
 
-*Next: [Backtracking →](../11-backtracking/00-overview.md)*
+*Next: [Backtracking →](../../system-design/components/overview.md)*

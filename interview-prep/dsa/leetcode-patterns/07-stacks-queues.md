@@ -1,4 +1,4 @@
-[🏠 Home](../../README.md) | [⬅️ Linked Lists](../06-linked-lists/00-overview.md) | [➡️ Trees](../08-trees/00-overview.md)
+[🏠 Home](../../../README.md) | [⬅️ Linked Lists](../../system-design/components/overview.md) | [➡️ Trees](../../system-design/components/overview.md)
 
 # 📚 Stacks & Queues
 
@@ -898,4 +898,4 @@ maxArea = 10 ✅ (height 5, width 2: indices 2-3)
 
 ---
 
-*Next: [Trees →](../08-trees/00-overview.md)*
+*Next: [Trees →](../../system-design/components/overview.md)*

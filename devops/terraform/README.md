@@ -1,8 +1,8 @@
-[🏠 Home](../README.md) | [⬅️ Kubernetes](../kubernetes/kubernetes-guide.md) | [➡️ Terraform Guide](./terraform-guide.md)
+[🏠 Home](../../README.md) | [⬅️ Kubernetes](../kubernetes-guide.md) | [➡️ Terraform Guide](./terraform-guide.md)
 
 # Terraform Learning Hub
 
-<img src="../assets/animations/infrastructure-devops.gif" width="250" alt="Terraform">
+<img src="../../assets/animations/infrastructure-devops.gif" width="250" alt="Terraform">
 
 Welcome to your Terraform learning path.
 

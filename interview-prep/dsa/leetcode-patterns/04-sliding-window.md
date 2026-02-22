@@ -1,4 +1,4 @@
-[🏠 Home](../../README.md) | [⬅️ Two Pointers](../03-two-pointers/00-overview.md) | [➡️ Binary Search](../05-binary-search/00-overview.md)
+[🏠 Home](../../../README.md) | [⬅️ Two Pointers](../../system-design/components/overview.md) | [➡️ Binary Search](../../system-design/components/overview.md)
 
 # 🪟 Sliding Window Pattern
 
@@ -1620,4 +1620,4 @@ Visual:
 
 ---
 
-*Next: [Binary Search →](../05-binary-search/00-overview.md)*
+*Next: [Binary Search →](../../system-design/components/overview.md)*

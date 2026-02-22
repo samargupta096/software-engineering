@@ -1,4 +1,4 @@
-[🏠 Home](../../README.md) | [⬅️ Creational Patterns](./01-creational-patterns.md) | [➡️ Behavioral Patterns](./03-behavioral-patterns.md)
+[🏠 Home](../../../README.md) | [⬅️ Creational Patterns](./01-creational-patterns.md) | [➡️ Behavioral Patterns](./03-behavioral-patterns.md)
 
 # 🏗️ Structural Design Patterns
 

@@ -1,4 +1,4 @@
-[🏠 Home](../README.md) | [⬅️ Blind 75](./18-blind-75.md) | [📋 Roadmap](./00-dsa-roadmap.md)
+[🏠 Home](../../../README.md) | [⬅️ Blind 75](./18-blind-75.md) | [📋 Roadmap](./00-dsa-roadmap.md)
 
 # 🔥 NEETCODE 150 — Complete Study Guide
 

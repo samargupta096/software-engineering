@@ -1,4 +1,4 @@
-[🏠 Home](../README.md) | [⬅️ Pattern Selector](./17-pattern-selector.md) | [📋 Roadmap](./00-dsa-roadmap.md)
+[🏠 Home](../../../README.md) | [⬅️ Pattern Selector](./17-pattern-selector.md) | [📋 Roadmap](./00-dsa-roadmap.md)
 
 # 🎯 BLIND 75 — Complete Study Guide
 

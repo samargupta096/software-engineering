@@ -1,4 +1,4 @@
-[🏠 Home](../../README.md) | [⬅️ Elevator System](./02-elevator-system.md) | [➡️ Vending Machine](./04-vending-machine.md)
+[🏠 Home](../../../README.md) | [⬅️ Elevator System](./02-elevator-system.md) | [➡️ Vending Machine](./04-vending-machine.md)
 
 # 🎬 Movie Ticket Booking System (BookMyShow)
 

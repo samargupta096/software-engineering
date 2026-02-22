@@ -1,4 +1,4 @@
-[🏠 Home](../../README.md) | [⬅️ Movie Ticket Booking](./03-movie-ticket-booking.md) | [➡️ Chess Game](./05-chess-game.md)
+[🏠 Home](../../../README.md) | [⬅️ Movie Ticket Booking](./03-movie-ticket-booking.md) | [➡️ Chess Game](./05-chess-game.md)
 
 # 🥤 Vending Machine Design
 

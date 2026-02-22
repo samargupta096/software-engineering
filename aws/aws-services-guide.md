@@ -1,4 +1,4 @@
-[🏠 Home](../README.md) | [⬅️ Terraform Project](../terraform/terraform-real-world-project.md) | [➡️ AWS CDK](./aws-cdk-guide.md)
+[🏠 Home](../README.md) | [⬅️ Terraform Project](../devops/terraform/terraform-real-world-project.md) | [➡️ AWS CDK](./aws-cdk-guide.md)
 
 # ☁️ AWS Services Deep Dive
 

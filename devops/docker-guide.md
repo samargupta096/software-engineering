@@ -1,4 +1,4 @@
-[🏠 Home](./README.md) | [➡️ Kubernetes](./kubernetes/kubernetes-guide.md)
+[🏠 Home](./terraform/README.md) | [➡️ Kubernetes](./kubernetes-guide.md)
 
 # Ultimate Docker Learning Guide
 

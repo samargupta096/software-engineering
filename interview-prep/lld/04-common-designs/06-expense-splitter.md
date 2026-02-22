@@ -1,4 +1,4 @@
-[🏠 Home](../../README.md) | [⬅️ Chess Game](./05-chess-game.md) | [➡️ Library Management](./07-library-management.md)
+[🏠 Home](../../../README.md) | [⬅️ Chess Game](./05-chess-game.md) | [➡️ Library Management](./07-library-management.md)
 
 # 💰 Expense Splitter (Splitwise) Design
 

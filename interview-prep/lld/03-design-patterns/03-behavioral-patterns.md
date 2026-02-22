@@ -1,4 +1,4 @@
-[🏠 Home](../../README.md) | [⬅️ Structural Patterns](./02-structural-patterns.md) | [➡️ Common Designs](../04-common-designs/01-parking-lot.md)
+[🏠 Home](../../../README.md) | [⬅️ Structural Patterns](./02-structural-patterns.md) | [➡️ Common Designs](../04-common-designs/01-parking-lot.md)
 
 # 🎭 Behavioral Design Patterns
 

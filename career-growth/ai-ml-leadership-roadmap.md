@@ -78,19 +78,19 @@ gantt
 |-----|-------|-----------|----------|
 | 1-2 | Python for AI (OOP, Decorators, Generators) | [Python AI/ML Guide](../python/README.md) | Build a reusable `Agent` class |
 | 3-4 | NumPy, Pandas, Data Manipulation | [Python AI/ML Guide](../python/README.md) § Data Processing | EDA on a dataset |
-| 5-7 | ML Fundamentals (Regression, Classification) | [ML Fundamentals](../interview-prep/system-design-components/genai/ml-fundamentals.md) | Implement from scratch |
-| 8-10 | Sklearn (Models, Pipelines, Feature Eng) | [ML Fundamentals](../interview-prep/system-design-components/genai/ml-fundamentals.md) | Kaggle competition |
-| 11-14 | Evaluation Metrics, Cross-Validation | [ML Fundamentals](../interview-prep/system-design-components/genai/ml-fundamentals.md) | Model comparison project |
+| 5-7 | ML Fundamentals (Regression, Classification) | [ML Fundamentals](../interview-prep/system-design/components/genai/ml-fundamentals.md) | Implement from scratch |
+| 8-10 | Sklearn (Models, Pipelines, Feature Eng) | [ML Fundamentals](../interview-prep/system-design/components/genai/ml-fundamentals.md) | Kaggle competition |
+| 11-14 | Evaluation Metrics, Cross-Validation | [ML Fundamentals](../interview-prep/system-design/components/genai/ml-fundamentals.md) | Model comparison project |
 
 #### Week 3-4: Deep Learning & Frameworks
 
 | Day | Topic | Resources | Practice |
 |-----|-------|-----------|----------|
-| 1-3 | Neural Networks Fundamentals | [DL Fundamentals](../interview-prep/system-design-components/genai/deep-learning-fundamentals.md) | Build MLP from scratch |
-| 4-6 | PyTorch Basics (Tensors, Autograd, Training Loop) | [DL Fundamentals](../interview-prep/system-design-components/genai/deep-learning-fundamentals.md) | Custom dataset + model |
-| 7-9 | CNNs, Transfer Learning | [DL Fundamentals](../interview-prep/system-design-components/genai/deep-learning-fundamentals.md) | Image classifier |
-| 10-12 | Transformers Architecture | [GenAI Fundamentals](../interview-prep/system-design-components/genai/genai-fundamentals.md) | Attention from scratch |
-| 13-14 | Hugging Face Ecosystem | [Fine-tuning Guide](../interview-prep/system-design-components/genai/fine-tuning-guide.md) | Fine-tune BERT |
+| 1-3 | Neural Networks Fundamentals | [DL Fundamentals](../interview-prep/system-design/components/genai/deep-learning-fundamentals.md) | Build MLP from scratch |
+| 4-6 | PyTorch Basics (Tensors, Autograd, Training Loop) | [DL Fundamentals](../interview-prep/system-design/components/genai/deep-learning-fundamentals.md) | Custom dataset + model |
+| 7-9 | CNNs, Transfer Learning | [DL Fundamentals](../interview-prep/system-design/components/genai/deep-learning-fundamentals.md) | Image classifier |
+| 10-12 | Transformers Architecture | [GenAI Fundamentals](../interview-prep/system-design/components/genai/genai-fundamentals.md) | Attention from scratch |
+| 13-14 | Hugging Face Ecosystem | [Fine-tuning Guide](../interview-prep/system-design/components/genai/fine-tuning-guide.md) | Fine-tune BERT |
 
 ---
 
@@ -112,21 +112,21 @@ gantt
 
 | Day | Topic | Resources | Practice |
 |-----|-------|-----------|----------|
-| 1-3 | LLM Architecture (GPT, Claude, Llama) | [GenAI Fundamentals](../interview-prep/system-design-components/genai/genai-fundamentals.md) | Compare model outputs |
-| 4-6 | Prompt Engineering Techniques | [GenAI Fundamentals](../interview-prep/system-design-components/genai/genai-fundamentals.md) | Build prompt library |
-| 7-9 | Fine-tuning LLMs (LoRA, QLoRA) | [Fine-tuning Guide](../interview-prep/system-design-components/genai/fine-tuning-guide.md) | Fine-tune Llama 2 |
+| 1-3 | LLM Architecture (GPT, Claude, Llama) | [GenAI Fundamentals](../interview-prep/system-design/components/genai/genai-fundamentals.md) | Compare model outputs |
+| 4-6 | Prompt Engineering Techniques | [GenAI Fundamentals](../interview-prep/system-design/components/genai/genai-fundamentals.md) | Build prompt library |
+| 7-9 | Fine-tuning LLMs (LoRA, QLoRA) | [Fine-tuning Guide](../interview-prep/system-design/components/genai/fine-tuning-guide.md) | Fine-tune Llama 2 |
 | 10-12 | LangChain Basics | External: LangChain docs | Build a chain |
-| 13-14 | OpenAI/Claude API Integration | [Agentic AI Guide](../interview-prep/system-design-components/genai/agentic-ai-guide.md) | Build chatbot |
+| 13-14 | OpenAI/Claude API Integration | [Agentic AI Guide](../interview-prep/system-design/components/genai/agentic-ai-guide.md) | Build chatbot |
 
 #### Week 7-8: RAG & Agentic AI
 
 | Day | Topic | Resources | Practice |
 |-----|-------|-----------|----------|
-| 1-4 | RAG Architecture & Implementation | [RAG Deep Dive](../interview-prep/system-design-components/genai/rag-deep-dive.md) | Build RAG system |
-| 5-7 | Vector Databases (Chroma, Pinecone) | [RAG Deep Dive](../interview-prep/system-design-components/genai/rag-deep-dive.md) | Compare vector DBs |
-| 8-10 | Advanced RAG (Hybrid, Reranking) | [RAG Deep Dive](../interview-prep/system-design-components/genai/rag-deep-dive.md) | Production RAG API |
-| 11-12 | Agentic AI Patterns | [Agentic AI Guide](../interview-prep/system-design-components/genai/agentic-ai-guide.md) | Build ReAct agent |
-| 13-14 | MCP (Model Context Protocol) | [Agentic AI Guide](../interview-prep/system-design-components/genai/agentic-ai-guide.md) + [MCP Project](../projects/mcp-server-project/README.md) | Build MCP server |
+| 1-4 | RAG Architecture & Implementation | [RAG Deep Dive](../interview-prep/system-design/components/genai/rag-deep-dive.md) | Build RAG system |
+| 5-7 | Vector Databases (Chroma, Pinecone) | [RAG Deep Dive](../interview-prep/system-design/components/genai/rag-deep-dive.md) | Compare vector DBs |
+| 8-10 | Advanced RAG (Hybrid, Reranking) | [RAG Deep Dive](../interview-prep/system-design/components/genai/rag-deep-dive.md) | Production RAG API |
+| 11-12 | Agentic AI Patterns | [Agentic AI Guide](../interview-prep/system-design/components/genai/agentic-ai-guide.md) | Build ReAct agent |
+| 13-14 | MCP (Model Context Protocol) | [Agentic AI Guide](../interview-prep/system-design/components/genai/agentic-ai-guide.md) + [MCP Project](../projects/mcp-server-project/README.md) | Build MCP server |
 
 ---
 
@@ -146,19 +146,19 @@ gantt
 
 | Day | Topic | Resources | Practice |
 |-----|-------|-----------|----------|
-| 1-2 | FastAPI for ML APIs | [FastAPI Guide](../interview-prep/system-design-components/genai/fastapi-guide.md) | Build inference API |
+| 1-2 | FastAPI for ML APIs | [FastAPI Guide](../interview-prep/system-design/components/genai/fastapi-guide.md) | Build inference API |
 | 3-4 | Docker & Containerization | [Docker Guide](../devops/docker-guide.md) | Containerize ML app |
 | 5-6 | Kubernetes for ML | [Kubernetes Guide](../devops/kubernetes-guide.md) | Deploy to K8s |
-| 7 | Model Monitoring & Observability | [AWS GenAI/MLOps](../interview-prep/system-design-components/genai/aws-genai-mlops.md) | Set up monitoring |
+| 7 | Model Monitoring & Observability | [AWS GenAI/MLOps](../interview-prep/system-design/components/genai/aws-genai-mlops.md) | Set up monitoring |
 
 #### Week 10: Cloud ML Platforms
 
 | Day | Topic | Resources | Practice |
 |-----|-------|-----------|----------|
-| 1-2 | AWS SageMaker | [AWS GenAI/MLOps](../interview-prep/system-design-components/genai/aws-genai-mlops.md) | Train model on SageMaker |
-| 3-4 | AWS Bedrock & Lambda | [AWS GenAI/MLOps](../interview-prep/system-design-components/genai/aws-genai-mlops.md) | Deploy LLM endpoint |
+| 1-2 | AWS SageMaker | [AWS GenAI/MLOps](../interview-prep/system-design/components/genai/aws-genai-mlops.md) | Train model on SageMaker |
+| 3-4 | AWS Bedrock & Lambda | [AWS GenAI/MLOps](../interview-prep/system-design/components/genai/aws-genai-mlops.md) | Deploy LLM endpoint |
 | 5-6 | CI/CD for ML (MLflow, DVC) | [CI/CD GitOps DevOps MLOps](../devops/cicd-gitops-devops-mlops.md) | Build ML pipeline |
-| 7 | Model Registry & Governance | [AWS GenAI/MLOps](../interview-prep/system-design-components/genai/aws-genai-mlops.md) | Set up registry |
+| 7 | Model Registry & Governance | [AWS GenAI/MLOps](../interview-prep/system-design/components/genai/aws-genai-mlops.md) | Set up registry |
 
 ---
 
@@ -265,8 +265,8 @@ flowchart TB
 - [ ] Training: Optimizers, Regularization, Batch Norm
 
 📚 **Resources**: 
-- [ML Fundamentals](../interview-prep/system-design-components/genai/ml-fundamentals.md)
-- [Deep Learning Fundamentals](../interview-prep/system-design-components/genai/deep-learning-fundamentals.md)
+- [ML Fundamentals](../interview-prep/system-design/components/genai/ml-fundamentals.md)
+- [Deep Learning Fundamentals](../interview-prep/system-design/components/genai/deep-learning-fundamentals.md)
 
 ---
 
@@ -309,8 +309,8 @@ flowchart LR
 - [ ] Evaluation metrics (perplexity, BLEU, ROUGE)
 
 📚 **Resources**:
-- [GenAI Fundamentals](../interview-prep/system-design-components/genai/genai-fundamentals.md)
-- [Fine-tuning Guide](../interview-prep/system-design-components/genai/fine-tuning-guide.md)
+- [GenAI Fundamentals](../interview-prep/system-design/components/genai/genai-fundamentals.md)
+- [Fine-tuning Guide](../interview-prep/system-design/components/genai/fine-tuning-guide.md)
 
 ---
 
@@ -343,7 +343,7 @@ flowchart LR
 - [ ] Evaluation (context relevance, faithfulness)
 
 📚 **Resources**:
-- [RAG Deep Dive](../interview-prep/system-design-components/genai/rag-deep-dive.md)
+- [RAG Deep Dive](../interview-prep/system-design/components/genai/rag-deep-dive.md)
 - [RAG API Project](../projects/rag-api-project/README.md)
 
 ---
@@ -375,7 +375,7 @@ flowchart TB
 - [ ] Safety & guardrails
 
 📚 **Resources**:
-- [Agentic AI Guide](../interview-prep/system-design-components/genai/agentic-ai-guide.md)
+- [Agentic AI Guide](../interview-prep/system-design/components/genai/agentic-ai-guide.md)
 - [MCP Server Project](../projects/mcp-server-project/README.md)
 
 ---
@@ -419,8 +419,8 @@ flowchart LR
 - [ ] Data & model drift detection
 
 📚 **Resources**:
-- [AWS GenAI/MLOps](../interview-prep/system-design-components/genai/aws-genai-mlops.md)
-- [FastAPI Guide](../interview-prep/system-design-components/genai/fastapi-guide.md)
+- [AWS GenAI/MLOps](../interview-prep/system-design/components/genai/aws-genai-mlops.md)
+- [FastAPI Guide](../interview-prep/system-design/components/genai/fastapi-guide.md)
 - [Docker Guide](../devops/docker-guide.md)
 - [Kubernetes Guide](../devops/kubernetes-guide.md)
 
@@ -650,14 +650,14 @@ Build an enterprise Teams bot:
 
 | Resource | Description | Link |
 |----------|-------------|------|
-| **ML Fundamentals** | Math, algorithms, sklearn | [View](../interview-prep/system-design-components/genai/ml-fundamentals.md) |
-| **Deep Learning Fundamentals** | Neural networks, PyTorch | [View](../interview-prep/system-design-components/genai/deep-learning-fundamentals.md) |
-| **GenAI Fundamentals** | LLMs, Transformers, prompting | [View](../interview-prep/system-design-components/genai/genai-fundamentals.md) |
-| **RAG Deep Dive** | Embeddings, vector DBs, retrieval | [View](../interview-prep/system-design-components/genai/rag-deep-dive.md) |
-| **Agentic AI Guide** | Agents, tools, MCP | [View](../interview-prep/system-design-components/genai/agentic-ai-guide.md) |
-| **Fine-tuning Guide** | LoRA, PEFT, training | [View](../interview-prep/system-design-components/genai/fine-tuning-guide.md) |
-| **AWS GenAI/MLOps** | SageMaker, Bedrock, deployment | [View](../interview-prep/system-design-components/genai/aws-genai-mlops.md) |
-| **FastAPI Guide** | API development for AI | [View](../interview-prep/system-design-components/genai/fastapi-guide.md) |
+| **ML Fundamentals** | Math, algorithms, sklearn | [View](../interview-prep/system-design/components/genai/ml-fundamentals.md) |
+| **Deep Learning Fundamentals** | Neural networks, PyTorch | [View](../interview-prep/system-design/components/genai/deep-learning-fundamentals.md) |
+| **GenAI Fundamentals** | LLMs, Transformers, prompting | [View](../interview-prep/system-design/components/genai/genai-fundamentals.md) |
+| **RAG Deep Dive** | Embeddings, vector DBs, retrieval | [View](../interview-prep/system-design/components/genai/rag-deep-dive.md) |
+| **Agentic AI Guide** | Agents, tools, MCP | [View](../interview-prep/system-design/components/genai/agentic-ai-guide.md) |
+| **Fine-tuning Guide** | LoRA, PEFT, training | [View](../interview-prep/system-design/components/genai/fine-tuning-guide.md) |
+| **AWS GenAI/MLOps** | SageMaker, Bedrock, deployment | [View](../interview-prep/system-design/components/genai/aws-genai-mlops.md) |
+| **FastAPI Guide** | API development for AI | [View](../interview-prep/system-design/components/genai/fastapi-guide.md) |
 
 ### Python & Programming
 

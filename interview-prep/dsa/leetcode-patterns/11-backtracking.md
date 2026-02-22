@@ -1,4 +1,4 @@
-[🏠 Home](../../README.md) | [⬅️ Graphs](../10-graphs/00-overview.md) | [➡️ Dynamic Programming](../12-dynamic-programming/00-overview.md)
+[🏠 Home](../../../README.md) | [⬅️ Graphs](../../system-design/components/overview.md) | [➡️ Dynamic Programming](../../system-design/components/overview.md)
 
 # 🔙 Backtracking Pattern
 
@@ -759,4 +759,4 @@ Q . . .           . . . Q
 
 ---
 
-*Next: [Dynamic Programming →](../12-dynamic-programming/00-overview.md)*
+*Next: [Dynamic Programming →](../../system-design/components/overview.md)*

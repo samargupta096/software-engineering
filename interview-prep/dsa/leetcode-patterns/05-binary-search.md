@@ -1,4 +1,4 @@
-[🏠 Home](../../README.md) | [⬅️ Sliding Window](../04-sliding-window/00-overview.md) | [➡️ Linked Lists](../06-linked-lists/00-overview.md)
+[🏠 Home](../../../README.md) | [⬅️ Sliding Window](../../system-design/components/overview.md) | [➡️ Linked Lists](../../system-design/components/overview.md)
 
 # 🔍 Binary Search Pattern
 
@@ -917,4 +917,4 @@ Partition visualization:
 
 ---
 
-*Next: [Linked Lists →](../06-linked-lists/00-overview.md)*
+*Next: [Linked Lists →](../../system-design/components/overview.md)*

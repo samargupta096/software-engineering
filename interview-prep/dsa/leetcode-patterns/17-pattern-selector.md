@@ -108,4 +108,4 @@ flowchart TD
 
 ---
 
-*[⬅️ Back to Patterns Index](./README.md)*
+*[⬅️ Back to Patterns Index](../../companies/barclays-interview-prep/README.md)*

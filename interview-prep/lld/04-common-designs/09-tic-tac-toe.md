@@ -1,4 +1,4 @@
-[🏠 Home](../../README.md) | [⬅️ ATM Machine](./08-atm-machine.md) | [➡️ Snake & Ladder](./10-snake-ladder.md)
+[🏠 Home](../../../README.md) | [⬅️ ATM Machine](./08-atm-machine.md) | [➡️ Snake & Ladder](./10-snake-ladder.md)
 
 # ⭕ Tic-Tac-Toe Design
 

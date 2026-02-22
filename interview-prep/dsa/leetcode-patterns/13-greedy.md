@@ -1,4 +1,4 @@
-[🏠 Home](../../README.md) | [⬅️ Dynamic Programming](../12-dynamic-programming/00-overview.md) | [➡️ Intervals](../14-intervals/00-overview.md)
+[🏠 Home](../../../README.md) | [⬅️ Dynamic Programming](../../system-design/components/overview.md) | [➡️ Intervals](../../system-design/components/overview.md)
 
 # 🤑 Greedy Pattern
 
@@ -536,4 +536,4 @@ Group 3: [6,7,8] → Map: {} → true ✅
 
 ---
 
-*Next: [Intervals →](../14-intervals/00-overview.md)*
+*Next: [Intervals →](../../system-design/components/overview.md)*

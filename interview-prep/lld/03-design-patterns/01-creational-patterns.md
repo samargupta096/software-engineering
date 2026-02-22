@@ -1,4 +1,4 @@
-[🏠 Home](../../README.md) | [⬅️ Patterns Overview](./00-patterns-overview.md) | [➡️ Structural Patterns](./02-structural-patterns.md)
+[🏠 Home](../../../README.md) | [⬅️ Patterns Overview](./00-patterns-overview.md) | [➡️ Structural Patterns](./02-structural-patterns.md)
 
 # 🏭 Creational Design Patterns
 

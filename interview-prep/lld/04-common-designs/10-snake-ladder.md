@@ -1,4 +1,4 @@
-[🏠 Home](../../README.md) | [⬅️ Tic-Tac-Toe](./09-tic-tac-toe.md) | [➡️ Interview Q&A](../05-interview-qa.md)
+[🏠 Home](../../../README.md) | [⬅️ Tic-Tac-Toe](./09-tic-tac-toe.md) | [➡️ Interview Q&A](../05-interview-qa.md)
 
 # 🐍🪜 Snake & Ladder Game Design
 

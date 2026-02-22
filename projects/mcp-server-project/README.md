@@ -123,7 +123,7 @@ python src/server.py
 ## 📚 Resources
 
 - [MCP Documentation](https://modelcontextprotocol.io/)
-- [Agentic AI Guide](../../components/genai/agentic-ai-guide.md)
+- [Agentic AI Guide](../../interview-prep/system-design/components/genai/agentic-ai-guide.md)
 - [MCP Python SDK](https://github.com/modelcontextprotocol/python-sdk)
 
 ---
