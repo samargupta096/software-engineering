@@ -1,0 +1,668 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Elasticsearch Internals — Interactive Visualizer</title>
+    <meta
+      name="description"
+      content="Master Elasticsearch internals through interactive visualizations. Understand inverted indexes, shards, full-text search, fuzzy matching, analyzers, scoring, aggregations, and scaling."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <body>
+    <!-- ═══════════════════════ HERO ═══════════════════════ -->
+    <header class="hero" id="hero">
+      <div class="hero__bg-orbs">
+        <div class="orb orb--1"></div>
+        <div class="orb orb--2"></div>
+        <div class="orb orb--3"></div>
+      </div>
+      <div class="hero__content">
+        <span class="hero__badge">Interactive Deep Dive</span>
+        <h1 class="hero__title">
+          <span class="gradient-text">Elasticsearch</span> Internals
+        </h1>
+        <p class="hero__subtitle">
+          Understand inverted indexes, full-text search, fuzzy matching, sharding,
+          analyzers, scoring, and scaling — through live, interactive visualizations.
+        </p>
+        <a href="#cluster" class="hero__cta">
+          <span>Explore Internals</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 5v14M5 12l7 7 7-7" />
+          </svg>
+        </a>
+      </div>
+    </header>
+
+    <main>
+      <!-- ═══════════════ 1. CLUSTER ARCHITECTURE ═══════════════ -->
+      <section class="section reveal" id="cluster">
+        <div class="section__header">
+          <span class="section__number">01</span>
+          <h2 class="section__title">Cluster Architecture</h2>
+        </div>
+        <p class="section__desc">
+          An Elasticsearch <strong>cluster</strong> consists of one or more <strong>nodes</strong>.
+          Each node can have different roles: <em>master</em> (manages cluster state),
+          <em>data</em> (stores data and handles CRUD), and <em>coordinating</em> (routes requests).
+          Hover over a node to see its details.
+        </p>
+
+        <div class="viz-card">
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-elect-master" style="background: linear-gradient(135deg, var(--accent-amber), #d97706);">
+              ⚡ Simulate Master Election
+            </button>
+            <button class="send-btn" id="btn-restore-cluster" style="background: linear-gradient(135deg, var(--accent-cyan), #0891b2);">
+              🔄 Restore
+            </button>
+          </div>
+          <div class="viz-canvas">
+            <div class="cluster-container" id="cluster-viz">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+          <div class="callout cyan">
+            <strong>💡 Key Insight:</strong> The master node does NOT handle search/index requests directly.
+            It only manages metadata: index mappings, shard allocation, and cluster health. This separation
+            keeps the cluster responsive even under heavy load.
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 2. INDICES, SHARDS & REPLICAS ═══════════════ -->
+      <section class="section reveal" id="shards">
+        <div class="section__header">
+          <span class="section__number">02</span>
+          <h2 class="section__title">Indices, Shards &amp; Replicas</h2>
+        </div>
+        <p class="section__desc">
+          An <strong>index</strong> is a collection of documents (like a database table).
+          Each index is split into <strong>shards</strong> — self-contained Lucene indexes. Each shard
+          can have <strong>replicas</strong> for fault tolerance and read parallelism.
+        </p>
+
+        <div class="viz-card">
+          <div class="viz-controls">
+            <label for="slider-shards">Primary Shards</label>
+            <input type="range" id="slider-shards" min="1" max="5" value="3" />
+            <span class="viz-value" id="val-shards">3</span>
+            <label for="slider-replicas" style="margin-left: 1rem;">Replicas</label>
+            <input type="range" id="slider-replicas" min="0" max="2" value="1" />
+            <span class="viz-value" id="val-replicas">1</span>
+          </div>
+          <div class="viz-canvas">
+            <div class="scaling-viz" id="shard-distribution">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+          <p class="viz-hint">
+            Adjust sliders to see how shards and replicas are distributed across 3 nodes.
+            Primary shards are amber; replicas are cyan.
+          </p>
+          <div class="callout">
+            <strong>📦 Rule:</strong> Replicas are NEVER placed on the same node as their primary shard.
+            This ensures that if a node goes down, no data is lost. Total shards = primaries × (1 + replicas).
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 3. INVERTED INDEX ═══════════════ -->
+      <section class="section reveal" id="inverted-index">
+        <div class="section__header">
+          <span class="section__number">03</span>
+          <h2 class="section__title">The Inverted Index</h2>
+        </div>
+        <p class="section__desc">
+          The <strong>inverted index</strong> is the core data structure powering Elasticsearch.
+          Unlike a forward index (document → words), an inverted index maps <strong>terms → documents</strong>,
+          enabling lightning-fast lookups.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📑 Build an Inverted Index Live</h3>
+          <p class="tp-viz-desc">
+            Add documents below and watch the inverted index update in real time.
+          </p>
+          <div class="viz-controls">
+            <input type="text" class="search-input" id="ii-doc-input" placeholder="Type a document (e.g., 'the quick brown fox')" style="flex:1;" />
+            <button class="send-btn" id="btn-add-doc">+ Add Document</button>
+            <button class="send-btn" id="btn-clear-docs" style="background: linear-gradient(135deg, var(--accent-red), #dc2626);">Clear</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="inverted-index-container">
+              <div class="ii-input-area">
+                <h4 style="font-size: 0.9rem; font-weight: 700; color: var(--accent-cyan);">Documents</h4>
+                <div class="ii-docs" id="ii-docs">
+                  <!-- Rendered by JS -->
+                </div>
+              </div>
+              <div class="ii-table-area">
+                <h4 style="font-size: 0.9rem; font-weight: 700; color: var(--accent-amber);">Inverted Index</h4>
+                <table class="ii-table" id="ii-table">
+                  <thead>
+                    <tr><th>Term</th><th>Doc Frequency</th><th>Postings (Doc IDs)</th></tr>
+                  </thead>
+                  <tbody id="ii-table-body">
+                    <!-- Rendered by JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="callout cyan">
+            <strong>⚡ Why is this fast?</strong> To find all documents containing "fox", Elasticsearch
+            does ONE hash/tree lookup in the inverted index instead of scanning every document.
+            Time complexity: <code>O(1)</code> lookup vs <code>O(N)</code> full scan.
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 4. ANALYZERS & TOKENIZATION ═══════════════ -->
+      <section class="section reveal" id="analyzers">
+        <div class="section__header">
+          <span class="section__number">04</span>
+          <h2 class="section__title">Analyzers &amp; Tokenization</h2>
+        </div>
+        <p class="section__desc">
+          Before indexing, text passes through an <strong>analyzer</strong> pipeline:
+          <em>Character Filters</em> → <em>Tokenizer</em> → <em>Token Filters</em>.
+          The analyzer determines how text is broken into searchable terms.
+        </p>
+
+        <div class="viz-card">
+          <div class="viz-controls">
+            <label>Analyzer</label>
+            <div class="strategy-toggle" id="analyzer-toggle">
+              <button class="strategy-btn active" data-analyzer="standard">Standard</button>
+              <button class="strategy-btn" data-analyzer="whitespace">Whitespace</button>
+              <button class="strategy-btn" data-analyzer="keyword">Keyword</button>
+              <button class="strategy-btn" data-analyzer="custom">Custom</button>
+            </div>
+          </div>
+          <div class="viz-controls" style="border-bottom: none; padding-bottom: 0;">
+            <input type="text" class="search-input" id="analyzer-input" placeholder="Type text to analyze (e.g., 'The Quick Brown FOX-123!')" style="flex:1;" />
+          </div>
+          <div class="viz-canvas">
+            <div class="analyzer-pipeline" id="analyzer-pipeline">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+          <div class="callout green">
+            <strong>🔧 Custom Analyzers:</strong> You can chain filters like <code>html_strip</code>,
+            <code>lowercase</code>, <code>stemmer</code>, <code>stop_words</code>, and
+            <code>synonym</code> to build domain-specific analyzers.
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 5. DOCUMENT INDEXING FLOW ═══════════════ -->
+      <section class="section reveal" id="indexing-flow">
+        <div class="section__header">
+          <span class="section__number">05</span>
+          <h2 class="section__title">Document Indexing Flow</h2>
+        </div>
+        <p class="section__desc">
+          When you index a document, it doesn't go straight to a searchable segment.
+          It passes through a <strong>memory buffer</strong> and <strong>translog</strong> first.
+          Here's the complete write path.
+        </p>
+
+        <div class="viz-card">
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-index-doc">▶ Index a Document</button>
+            <button class="send-btn" id="btn-flush" style="background: linear-gradient(135deg, var(--accent-cyan), #0891b2);">
+              💾 Flush (Commit to Disk)
+            </button>
+          </div>
+          <div class="viz-canvas">
+            <div class="indexing-flow" id="doc-indexing-flow">
+              <div class="flow-stage">
+                <div class="flow-stage__box" id="flow-client">📄</div>
+                <div class="flow-stage__name">Client</div>
+                <div class="flow-stage__desc">Document sent</div>
+              </div>
+              <div class="flow-arrow">→</div>
+              <div class="flow-stage">
+                <div class="flow-stage__box" id="flow-buffer">📝</div>
+                <div class="flow-stage__name">Memory Buffer</div>
+                <div class="flow-stage__desc">In-memory indexing buffer</div>
+              </div>
+              <div class="flow-arrow">→</div>
+              <div class="flow-stage">
+                <div class="flow-stage__box" id="flow-translog">📋</div>
+                <div class="flow-stage__name">Translog</div>
+                <div class="flow-stage__desc">Write-ahead log for durability</div>
+              </div>
+              <div class="flow-arrow">→</div>
+              <div class="flow-stage">
+                <div class="flow-stage__box" id="flow-refresh">🔄</div>
+                <div class="flow-stage__name">Refresh (1s)</div>
+                <div class="flow-stage__desc">Buffer → new segment</div>
+              </div>
+              <div class="flow-arrow">→</div>
+              <div class="flow-stage">
+                <div class="flow-stage__box" id="flow-segment">📦</div>
+                <div class="flow-stage__name">Segment</div>
+                <div class="flow-stage__desc">Immutable Lucene segment</div>
+              </div>
+              <div class="flow-arrow">→</div>
+              <div class="flow-stage">
+                <div class="flow-stage__box" id="flow-merge">🔀</div>
+                <div class="flow-stage__name">Merge</div>
+                <div class="flow-stage__desc">Background segment merge</div>
+              </div>
+            </div>
+          </div>
+          <div class="callout">
+            <strong>⏱ Near Real-Time:</strong> Elasticsearch refreshes every <code>1 second</code> by default.
+            Documents become searchable ~1s after indexing. The <strong>translog</strong> ensures durability —
+            if the node crashes before a flush, unmerged data is replayed from the translog.
+          </div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📊 Refresh vs Flush vs Merge</h3>
+          <dl class="key-insight">
+            <dt>Refresh</dt>
+            <dd>Memory buffer → new segment (searchable). Default: every 1s. Cheap, doesn't involve disk fsync.</dd>
+            <dt>Flush</dt>
+            <dd>Lucene commit + translog clear. Ensures all data is persisted to disk. More expensive.</dd>
+            <dt>Merge</dt>
+            <dd>Background process that combines small segments into larger ones. Reclaims space from deleted docs.</dd>
+            <dt>Translog</dt>
+            <dd>Write-ahead log. Every indexing op is written here first. Survives crashes. Cleared on flush.</dd>
+          </dl>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 6. FULL-TEXT SEARCH ═══════════════ -->
+      <section class="section reveal" id="fulltext-search">
+        <div class="section__header">
+          <span class="section__number">06</span>
+          <h2 class="section__title">Full-Text Search</h2>
+        </div>
+        <p class="section__desc">
+          Elasticsearch excels at <strong>full-text search</strong>. When you search, the query text
+          is analyzed (same as indexing), then each term is looked up in the inverted index.
+          Results are ranked by <strong>relevance score</strong>.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🔍 Search the Inverted Index</h3>
+          <p class="tp-viz-desc">
+            The documents from Section 03 are indexed. Type a search query to see matching documents ranked by score.
+          </p>
+          <div class="viz-controls">
+            <label>Query Type</label>
+            <div class="strategy-toggle" id="search-type-toggle">
+              <button class="strategy-btn active" data-type="match">match</button>
+              <button class="strategy-btn" data-type="match_phrase">match_phrase</button>
+              <button class="strategy-btn" data-type="multi_match">multi_match</button>
+            </div>
+          </div>
+          <div class="search-container">
+            <div class="search-input-group">
+              <input type="text" class="search-input" id="search-query" placeholder="Search (e.g., 'quick fox')" />
+              <button class="send-btn" id="btn-search">Search</button>
+            </div>
+            <div class="search-results" id="search-results">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+          <div class="callout">
+            <strong>🔑 match vs match_phrase:</strong> <code>match</code> finds documents containing
+            ANY of the search terms (OR logic by default). <code>match_phrase</code> requires all terms
+            in the <em>exact order</em> and position — much stricter.
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 7. FUZZY SEARCH ═══════════════ -->
+      <section class="section reveal" id="fuzzy-search">
+        <div class="section__header">
+          <span class="section__number">07</span>
+          <h2 class="section__title">Fuzzy Search &amp; Edit Distance</h2>
+        </div>
+        <p class="section__desc">
+          <strong>Fuzzy search</strong> matches terms that are "close" to the query using
+          <strong>Levenshtein edit distance</strong> — the minimum number of single-character edits
+          (insertions, deletions, substitutions) needed to transform one string into another.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📏 Edit Distance Matrix</h3>
+          <p class="tp-viz-desc">
+            Type a misspelled word and a target word to see the edit distance computed step-by-step.
+          </p>
+          <div class="viz-controls">
+            <label>Source</label>
+            <input type="text" class="search-input" id="fuzzy-source" placeholder="e.g., 'quik'" style="width:150px;" />
+            <label>Target</label>
+            <input type="text" class="search-input" id="fuzzy-target" placeholder="e.g., 'quick'" style="width:150px;" />
+            <button class="send-btn" id="btn-fuzzy-calc">Calculate</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="fuzzy-container">
+              <div class="edit-distance-matrix" id="ed-matrix">
+                <!-- Rendered by JS -->
+              </div>
+              <div>
+                <h4 style="font-size: 0.9rem; font-weight: 700; color: var(--accent-amber); margin-bottom: 0.8rem;">Fuzzy Matches from Index</h4>
+                <div class="fuzzy-matches" id="fuzzy-matches">
+                  <!-- Rendered by JS -->
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="callout cyan">
+            <strong>⚙ Fuzziness levels:</strong> <code>AUTO</code> (recommended) adjusts based on term length:
+            0-2 chars → exact match, 3-5 chars → 1 edit, 6+ chars → 2 edits.
+            You can also set <code>fuzziness: 1</code> or <code>fuzziness: 2</code> explicitly.
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 8. QUERY DSL & SCORING ═══════════════ -->
+      <section class="section reveal" id="query-dsl">
+        <div class="section__header">
+          <span class="section__number">08</span>
+          <h2 class="section__title">Query DSL &amp; Scoring</h2>
+        </div>
+        <p class="section__desc">
+          Elasticsearch uses a powerful <strong>Query DSL</strong> (Domain Specific Language). The
+          <code>bool</code> query combines <code>must</code>, <code>should</code>, <code>must_not</code>,
+          and <code>filter</code> clauses. Scoring is based on <strong>BM25</strong> (since ES 5.0+).
+        </p>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🛠 Interactive Query Builder</h3>
+          <p class="tp-viz-desc">
+            Build a bool query and see the JSON update in real time.
+          </p>
+          <div class="viz-canvas">
+            <div class="query-builder">
+              <div class="qb-form" id="qb-form">
+                <div class="qb-clause">
+                  <select id="qb-clause-1-type">
+                    <option value="must" selected>must</option>
+                    <option value="should">should</option>
+                    <option value="must_not">must_not</option>
+                    <option value="filter">filter</option>
+                  </select>
+                  <select id="qb-clause-1-query">
+                    <option value="match" selected>match</option>
+                    <option value="term">term</option>
+                    <option value="range">range</option>
+                  </select>
+                  <input type="text" id="qb-clause-1-field" placeholder="field" value="title" />
+                  <input type="text" id="qb-clause-1-value" placeholder="value" value="elasticsearch" />
+                </div>
+                <div class="qb-clause">
+                  <select id="qb-clause-2-type">
+                    <option value="must">must</option>
+                    <option value="should" selected>should</option>
+                    <option value="must_not">must_not</option>
+                    <option value="filter">filter</option>
+                  </select>
+                  <select id="qb-clause-2-query">
+                    <option value="match" selected>match</option>
+                    <option value="term">term</option>
+                    <option value="range">range</option>
+                  </select>
+                  <input type="text" id="qb-clause-2-field" placeholder="field" value="content" />
+                  <input type="text" id="qb-clause-2-value" placeholder="value" value="search engine" />
+                </div>
+                <div class="qb-clause">
+                  <select id="qb-clause-3-type">
+                    <option value="must">must</option>
+                    <option value="should">should</option>
+                    <option value="must_not">must_not</option>
+                    <option value="filter" selected>filter</option>
+                  </select>
+                  <select id="qb-clause-3-query">
+                    <option value="match">match</option>
+                    <option value="term">term</option>
+                    <option value="range" selected>range</option>
+                  </select>
+                  <input type="text" id="qb-clause-3-field" placeholder="field" value="date" />
+                  <input type="text" id="qb-clause-3-value" placeholder="value" value="gte:2024-01-01" />
+                </div>
+              </div>
+              <div class="qb-json" id="qb-json">
+                <pre id="qb-json-output"><!-- Rendered by JS --></pre>
+              </div>
+            </div>
+          </div>
+          <div class="callout">
+            <strong>🎯 filter vs must:</strong> <code>filter</code> clauses do NOT contribute to the
+            relevance score — they're simply yes/no checks (and cached!). Use <code>filter</code> for
+            exact matches, ranges, and terms that don't need scoring. Use <code>must</code>/<code>should</code>
+            when relevance matters.
+          </div>
+        </div>
+
+        <!-- Scoring Comparison -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📊 TF-IDF vs BM25 Scoring</h3>
+          <div class="scoring-cards" id="scoring-cards">
+            <div class="scoring-card" data-scoring="tfidf">
+              <div class="scoring-card__title">TF-IDF</div>
+              <div class="scoring-card__formula">score = TF(t,d) × IDF(t) × norm(d)</div>
+              <div class="scoring-card__desc">
+                <strong>Term Frequency × Inverse Document Frequency.</strong>
+                Higher TF and higher IDF = higher score. Problem: TF grows without bound — very long documents
+                with many term repetitions get unfairly high scores.
+              </div>
+            </div>
+            <div class="scoring-card selected" data-scoring="bm25">
+              <div class="scoring-card__title">BM25 <span class="badge green">ES Default</span></div>
+              <div class="scoring-card__formula">score = IDF(t) × (tf × (k1 + 1)) / (tf + k1 × (1 - b + b × dl/avgdl))</div>
+              <div class="scoring-card__desc">
+                <strong>Best Matching 25 — a probabilistic model.</strong>
+                TF is saturated (diminishing returns). Document length is normalized.
+                <code>k1=1.2</code> controls TF saturation; <code>b=0.75</code> controls length normalization.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 9. AGGREGATIONS ═══════════════ -->
+      <section class="section reveal" id="aggregations">
+        <div class="section__header">
+          <span class="section__number">09</span>
+          <h2 class="section__title">Aggregations</h2>
+        </div>
+        <p class="section__desc">
+          Aggregations are Elasticsearch's analytics powerhouse. They let you compute
+          <strong>metrics</strong> (avg, sum, min, max), <strong>buckets</strong> (terms, ranges, dates),
+          and <strong>pipeline</strong> aggregations on your data — all in a single query.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📈 Interactive Aggregation Demo</h3>
+          <p class="tp-viz-desc">
+            Choose an aggregation type to visualize results from a sample e-commerce dataset.
+          </p>
+          <div class="viz-canvas">
+            <div class="agg-container">
+              <div class="agg-buttons" id="agg-buttons">
+                <button class="agg-btn active" data-agg="terms">📊 Terms Agg (by category)</button>
+                <button class="agg-btn" data-agg="range">📏 Range Agg (by price)</button>
+                <button class="agg-btn" data-agg="date_histogram">📅 Date Histogram (by month)</button>
+                <button class="agg-btn" data-agg="stats">📐 Stats Agg (price stats)</button>
+              </div>
+              <div class="agg-result" id="agg-result">
+                <!-- Rendered by JS -->
+              </div>
+            </div>
+          </div>
+          <div class="callout cyan">
+            <strong>🔗 Nested Aggregations:</strong> You can nest aggregations inside buckets.
+            E.g., a <code>terms</code> agg on category, with a nested <code>avg</code> agg on price —
+            giving you the average price per category in one query.
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 10. SCALING & SHARD ALLOCATION ═══════════════ -->
+      <section class="section reveal" id="scaling">
+        <div class="section__header">
+          <span class="section__number">10</span>
+          <h2 class="section__title">Scaling &amp; Shard Allocation</h2>
+        </div>
+        <p class="section__desc">
+          Elasticsearch scales horizontally by adding nodes. When nodes join or leave, shards are
+          <strong>automatically rebalanced</strong>. The shard allocator distributes shards to maintain
+          an even load across the cluster.
+        </p>
+
+        <div class="viz-card">
+          <div class="viz-controls">
+            <label for="slider-nodes">Data Nodes</label>
+            <input type="range" id="slider-nodes" min="1" max="6" value="3" />
+            <span class="viz-value" id="val-nodes">3</span>
+            <button class="send-btn" id="btn-rebalance">🔀 Rebalance Shards</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="scaling-viz" id="scaling-viz">
+              <div class="scaling-nodes" id="scaling-nodes">
+                <!-- Rendered by JS -->
+              </div>
+              <div class="scaling-metrics" id="scaling-metrics">
+                <!-- Rendered by JS -->
+              </div>
+            </div>
+          </div>
+          <p class="viz-hint">
+            Adjust the node count and click "Rebalance" to see shards redistribute.
+            Primary shards (amber) and replica shards (cyan) are allocated to different nodes.
+          </p>
+          <div class="callout">
+            <strong>📏 Shard Sizing Best Practice:</strong> Keep each shard between
+            <code>10-50 GB</code>. Too many small shards = overhead. Too few large shards = slow recovery.
+            A good rule: index size ÷ 30GB = number of primary shards.
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 11. SEGMENT MERGING ═══════════════ -->
+      <section class="section reveal" id="segments">
+        <div class="section__header">
+          <span class="section__number">11</span>
+          <h2 class="section__title">Segment Merging &amp; Performance</h2>
+        </div>
+        <p class="section__desc">
+          Each shard stores data in immutable <strong>Lucene segments</strong>. New documents create
+          new segments. Too many small segments slow down search. The <strong>merge process</strong>
+          combines smaller segments into larger, optimized ones.
+        </p>
+
+        <div class="viz-card">
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-add-segments">📄 Add Documents (new segments)</button>
+            <button class="send-btn" id="btn-merge-segments" style="background: linear-gradient(135deg, var(--accent-cyan), #0891b2);">
+              🔀 Trigger Merge
+            </button>
+            <button class="send-btn" id="btn-force-merge" style="background: linear-gradient(135deg, var(--accent-purple), #7c3aed);">
+              ⚡ Force Merge (to 1 segment)
+            </button>
+          </div>
+          <div class="viz-canvas">
+            <div class="segments-container" id="segments-container">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+          <div class="merge-stats" id="merge-stats">
+            <!-- Rendered by JS -->
+          </div>
+          <div class="callout red">
+            <strong>⚠ force_merge:</strong> Merges all segments into one. Useful for read-only indices
+            (e.g., time-based logs). <strong>Never</strong> run on active write indices — it's very I/O
+            intensive and blocks other merges.
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 12. ES vs RDBMS ═══════════════ -->
+      <section class="section reveal" id="comparison">
+        <div class="section__header">
+          <span class="section__number">12</span>
+          <h2 class="section__title">Elasticsearch vs RDBMS</h2>
+        </div>
+        <p class="section__desc">
+          Coming from a relational database background? Here's how Elasticsearch concepts map
+          to familiar RDBMS terminology — and where they fundamentally differ.
+        </p>
+
+        <div class="viz-card">
+          <div class="comparison-grid" id="comparison-grid">
+            <div class="comparison-cell header">Concept</div>
+            <div class="comparison-cell header">Elasticsearch</div>
+            <div class="comparison-cell header">RDBMS</div>
+
+            <div class="comparison-cell concept">Storage Unit</div>
+            <div class="comparison-cell es">Index</div>
+            <div class="comparison-cell rdbms">Database / Table</div>
+
+            <div class="comparison-cell concept">Record</div>
+            <div class="comparison-cell es">Document (JSON)</div>
+            <div class="comparison-cell rdbms">Row</div>
+
+            <div class="comparison-cell concept">Field</div>
+            <div class="comparison-cell es">Field (dynamic mapping)</div>
+            <div class="comparison-cell rdbms">Column (fixed schema)</div>
+
+            <div class="comparison-cell concept">Schema</div>
+            <div class="comparison-cell es">Mapping (flexible, auto-detected)</div>
+            <div class="comparison-cell rdbms">Schema (strict, predefined)</div>
+
+            <div class="comparison-cell concept">Partitioning</div>
+            <div class="comparison-cell es">Sharding (automatic)</div>
+            <div class="comparison-cell rdbms">Partitioning (manual)</div>
+
+            <div class="comparison-cell concept">Replication</div>
+            <div class="comparison-cell es">Replica shards (built-in)</div>
+            <div class="comparison-cell rdbms">Read replicas (manual setup)</div>
+
+            <div class="comparison-cell concept">Query Language</div>
+            <div class="comparison-cell es">Query DSL (JSON)</div>
+            <div class="comparison-cell rdbms">SQL</div>
+
+            <div class="comparison-cell concept">Search</div>
+            <div class="comparison-cell es">Full-text + inverted index</div>
+            <div class="comparison-cell rdbms">LIKE / Full-text index (limited)</div>
+
+            <div class="comparison-cell concept">Joins</div>
+            <div class="comparison-cell es">Denormalized (nested/parent-child)</div>
+            <div class="comparison-cell rdbms">Foreign keys + JOIN</div>
+
+            <div class="comparison-cell concept">Transactions</div>
+            <div class="comparison-cell es">Single-document ACID only</div>
+            <div class="comparison-cell rdbms">Multi-row ACID transactions</div>
+
+            <div class="comparison-cell concept">Best For</div>
+            <div class="comparison-cell es">Search, analytics, log aggregation</div>
+            <div class="comparison-cell rdbms">Transactional CRUD, relationships</div>
+          </div>
+          <div class="callout" style="margin-top: 1.5rem;">
+            <strong>💡 When to use both?</strong> A common pattern is storing primary data in an RDBMS
+            (PostgreSQL, MySQL) and syncing to Elasticsearch for search. Use tools like
+            <code>Debezium</code>, <code>Logstash</code>, or custom CDC to keep them in sync.
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="index.js"></script>
+  </body>
+</html>

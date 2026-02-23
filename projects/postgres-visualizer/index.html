@@ -1,0 +1,1072 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PostgreSQL Internals — Interactive Visualizer</title>
+    <meta
+      name="description"
+      content="Explore PostgreSQL's internal architecture through interactive visualizations. Understand MVCC, WAL, indexing, VACUUM, query planning, replication, and more."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <body>
+    <!-- ═══════════════════════ HERO ═══════════════════════ -->
+    <header class="hero" id="hero">
+      <div class="hero__bg-orbs">
+        <div class="orb orb--1"></div>
+        <div class="orb orb--2"></div>
+        <div class="orb orb--3"></div>
+      </div>
+      <div class="hero__content">
+        <span class="hero__badge">Interactive Deep Dive</span>
+        <h1 class="hero__title">
+          <span class="gradient-text">PostgreSQL</span> Internals
+        </h1>
+        <p class="hero__subtitle">
+          Understand MVCC, WAL, indexing, query execution, vacuum, locking,
+          replication and more — through live, interactive visualizations.
+        </p>
+        <a href="#architecture" class="hero__cta">
+          <span>Explore Internals</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 5v14M5 12l7 7 7-7" />
+          </svg>
+        </a>
+      </div>
+    </header>
+
+    <!-- ═══════════════════════ NAV ═══════════════════════ -->
+    <nav class="toc" id="toc">
+      <div class="toc__inner">
+        <a href="#architecture" class="toc__link" data-section="architecture">01 Architecture</a>
+        <a href="#process-model" class="toc__link" data-section="process-model">02 Processes</a>
+        <a href="#shared-memory" class="toc__link" data-section="shared-memory">03 Memory</a>
+        <a href="#query-execution" class="toc__link" data-section="query-execution">04 Query Exec</a>
+        <a href="#mvcc" class="toc__link" data-section="mvcc">05 MVCC</a>
+        <a href="#wal" class="toc__link" data-section="wal">06 WAL</a>
+        <a href="#indexing" class="toc__link" data-section="indexing">07 Indexing</a>
+        <a href="#vacuum" class="toc__link" data-section="vacuum">08 VACUUM</a>
+        <a href="#isolation" class="toc__link" data-section="isolation">09 Isolation</a>
+        <a href="#locks" class="toc__link" data-section="locks">10 Locks</a>
+        <a href="#query-planner" class="toc__link" data-section="query-planner">11 Planner</a>
+        <a href="#connection-pooling" class="toc__link" data-section="connection-pooling">12 Pooling</a>
+        <a href="#replication" class="toc__link" data-section="replication">13 Replication</a>
+        <a href="#partitioning" class="toc__link" data-section="partitioning">14 Partitioning</a>
+        <a href="#toast" class="toc__link" data-section="toast">15 TOAST</a>
+      </div>
+    </nav>
+
+    <main>
+      <!-- ═══════════════ 1. ARCHITECTURE OVERVIEW ═══════════════ -->
+      <section class="section reveal" id="architecture">
+        <div class="section__header">
+          <span class="section__number">01</span>
+          <h2 class="section__title">Architecture Overview</h2>
+        </div>
+        <p class="section__desc">
+          PostgreSQL uses a <strong>multi-process architecture</strong>. A <strong>Postmaster</strong>
+          (main daemon) listens for connections and forks a dedicated <strong>backend process</strong>
+          for each client. All backends communicate through <strong>shared memory</strong>.
+        </p>
+
+        <div class="viz-card">
+          <div class="viz-canvas">
+            <div class="arch-diagram" id="arch-diagram">
+              <div class="arch-clients" id="arch-clients">
+                <div class="arch-client" data-id="1">
+                  <div class="arch-client__icon">💻</div>
+                  <div class="arch-client__label">Client 1</div>
+                </div>
+                <div class="arch-client" data-id="2">
+                  <div class="arch-client__icon">💻</div>
+                  <div class="arch-client__label">Client 2</div>
+                </div>
+                <div class="arch-client" data-id="3">
+                  <div class="arch-client__icon">💻</div>
+                  <div class="arch-client__label">Client 3</div>
+                </div>
+              </div>
+
+              <div class="arch-arrow-zone">
+                <svg class="arch-svg" id="arch-svg"></svg>
+              </div>
+
+              <div class="arch-postmaster">
+                <div class="arch-postmaster__icon">🐘</div>
+                <div class="arch-postmaster__label">Postmaster</div>
+                <div class="arch-postmaster__desc">PID 1 — Main Daemon</div>
+              </div>
+
+              <div class="arch-arrow-zone">
+                <svg class="arch-svg" id="arch-svg-2"></svg>
+              </div>
+
+              <div class="arch-backends" id="arch-backends">
+                <div class="arch-backend" data-id="1">
+                  <div class="arch-backend__icon">⚙️</div>
+                  <div class="arch-backend__label">Backend 1</div>
+                </div>
+                <div class="arch-backend" data-id="2">
+                  <div class="arch-backend__icon">⚙️</div>
+                  <div class="arch-backend__label">Backend 2</div>
+                </div>
+                <div class="arch-backend" data-id="3">
+                  <div class="arch-backend__icon">⚙️</div>
+                  <div class="arch-backend__label">Backend 3</div>
+                </div>
+              </div>
+
+              <div class="arch-arrow-zone">
+                <svg class="arch-svg" id="arch-svg-3"></svg>
+              </div>
+
+              <div class="arch-shared-mem">
+                <div class="arch-shared-mem__title">📦 Shared Memory</div>
+                <div class="arch-shared-mem__blocks">
+                  <div class="arch-mem-block">Shared Buffers</div>
+                  <div class="arch-mem-block">WAL Buffers</div>
+                  <div class="arch-mem-block">CLOG</div>
+                  <div class="arch-mem-block">Lock Table</div>
+                </div>
+              </div>
+
+              <div class="arch-arrow-zone">
+                <svg class="arch-svg" id="arch-svg-4"></svg>
+              </div>
+
+              <div class="arch-storage">
+                <div class="arch-storage__icon">💾</div>
+                <div class="arch-storage__label">Data Files (Disk)</div>
+              </div>
+            </div>
+          </div>
+          <div class="callout pg-blue">
+            <strong>💡 Key Insight:</strong> Unlike MySQL which is thread-based, PostgreSQL uses
+            <strong>one process per connection</strong>. This provides better isolation but means
+            connection count directly impacts system resources. That's why <strong>connection pooling</strong>
+            (Section 12) is critical in production.
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 2. PROCESS MODEL ═══════════════ -->
+      <section class="section reveal" id="process-model">
+        <div class="section__header">
+          <span class="section__number">02</span>
+          <h2 class="section__title">Process Model</h2>
+        </div>
+        <p class="section__desc">
+          The <strong>Postmaster</strong> forks a new backend on every connection. Background processes
+          like <strong>WAL Writer</strong>, <strong>Checkpointer</strong>, <strong>Autovacuum</strong>,
+          and <strong>BGWriter</strong> run continuously to maintain the database.
+        </p>
+
+        <div class="viz-card">
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-spawn-conn">+ New Connection</button>
+            <button class="send-btn pg-red-btn" id="btn-kill-conn">✕ Kill Connection</button>
+            <button class="send-btn pg-teal-btn" id="btn-reset-procs">🔄 Reset</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="proc-tree" id="proc-tree">
+              <div class="proc-node proc-postmaster">
+                <span class="proc-icon">🐘</span>
+                <span class="proc-name">Postmaster</span>
+              </div>
+              <div class="proc-children" id="proc-children">
+                <div class="proc-branch">
+                  <div class="proc-node proc-bg">
+                    <span class="proc-icon">✍️</span>
+                    <span class="proc-name">WAL Writer</span>
+                  </div>
+                </div>
+                <div class="proc-branch">
+                  <div class="proc-node proc-bg">
+                    <span class="proc-icon">💾</span>
+                    <span class="proc-name">Checkpointer</span>
+                  </div>
+                </div>
+                <div class="proc-branch">
+                  <div class="proc-node proc-bg">
+                    <span class="proc-icon">🧹</span>
+                    <span class="proc-name">Autovacuum</span>
+                  </div>
+                </div>
+                <div class="proc-branch">
+                  <div class="proc-node proc-bg">
+                    <span class="proc-icon">📝</span>
+                    <span class="proc-name">BGWriter</span>
+                  </div>
+                </div>
+                <div class="proc-branch">
+                  <div class="proc-node proc-bg">
+                    <span class="proc-icon">📊</span>
+                    <span class="proc-name">Stats Collector</span>
+                  </div>
+                </div>
+              </div>
+              <div class="proc-conn-area" id="proc-conn-area">
+                <!-- Dynamic backend processes -->
+              </div>
+            </div>
+          </div>
+          <p class="viz-hint">
+            Click "+ New Connection" to fork a backend process. Each costs ~5-10 MB of RAM.
+          </p>
+          <div class="proc-counter" id="proc-counter">Active Backends: 0</div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🧩 Background Worker Roles</h3>
+          <dl class="key-insight">
+            <dt>WAL Writer</dt>
+            <dd>Flushes WAL buffers to disk periodically (every <code>wal_writer_delay</code> ms).</dd>
+            <dt>Checkpointer</dt>
+            <dd>Writes all dirty buffers to disk at checkpoint intervals, ensuring crash recovery starting point.</dd>
+            <dt>Autovacuum</dt>
+            <dd>Automatically runs VACUUM and ANALYZE to reclaim dead tuples and update statistics.</dd>
+            <dt>BGWriter</dt>
+            <dd>Writes dirty shared buffers to disk in the background, reducing checkpoint spikes.</dd>
+            <dt>Stats Collector</dt>
+            <dd>Collects table/index statistics for the query planner to make accurate cost estimates.</dd>
+          </dl>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 3. SHARED MEMORY & BUFFER POOL ═══════════════ -->
+      <section class="section reveal" id="shared-memory">
+        <div class="section__header">
+          <span class="section__number">03</span>
+          <h2 class="section__title">Shared Memory & Buffer Pool</h2>
+        </div>
+        <p class="section__desc">
+          The <strong>Shared Buffer Pool</strong> is PostgreSQL's page cache. When a query needs data,
+          it first checks the buffer pool. If the page is there (<strong>buffer hit</strong>), it avoids
+          disk I/O. If not (<strong>buffer miss</strong>), the page is read from disk into a free buffer.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📦 Buffer Pool Simulation</h3>
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-buf-read">📖 Read Page</button>
+            <button class="send-btn pg-teal-btn" id="btn-buf-write">✏️ Write Page</button>
+            <button class="send-btn pg-red-btn" id="btn-buf-flush">💾 Flush Dirty</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="buf-pool" id="buf-pool">
+              <!-- 8 buffer slots rendered by JS -->
+            </div>
+            <div class="buf-disk" id="buf-disk">
+              <div class="buf-disk__title">💾 Disk Pages</div>
+              <div class="buf-disk__pages" id="buf-disk-pages">
+                <!-- Rendered by JS -->
+              </div>
+            </div>
+          </div>
+          <div class="buf-stats" id="buf-stats">
+            <span class="buf-stat">Hits: <strong id="buf-hits">0</strong></span>
+            <span class="buf-stat">Misses: <strong id="buf-misses">0</strong></span>
+            <span class="buf-stat">Hit Ratio: <strong id="buf-ratio">—</strong></span>
+            <span class="buf-stat">Dirty: <strong id="buf-dirty">0</strong></span>
+          </div>
+          <div class="callout pg-blue">
+            <strong>💡 shared_buffers:</strong> Typically set to <strong>25% of system RAM</strong>.
+            A higher hit ratio (>99%) means most reads are served from memory. Check with
+            <code>SELECT * FROM pg_stat_bgwriter;</code>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 4. HOW A QUERY EXECUTES ═══════════════ -->
+      <section class="section reveal" id="query-execution">
+        <div class="section__header">
+          <span class="section__number">04</span>
+          <h2 class="section__title">How a Query Executes</h2>
+        </div>
+        <p class="section__desc">
+          Every SQL query goes through a <strong>5-stage pipeline</strong>: Parse → Analyze → Rewrite →
+          Plan → Execute. Understanding this pipeline is key to optimizing queries.
+        </p>
+
+        <div class="viz-card">
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-run-query">▶ Run Query</button>
+          </div>
+          <div class="query-input-area">
+            <code class="query-display" id="query-display">SELECT * FROM users WHERE age > 25 ORDER BY name;</code>
+          </div>
+          <div class="viz-canvas">
+            <div class="query-pipeline" id="query-pipeline">
+              <div class="qp-stage" data-stage="parse">
+                <div class="qp-stage__icon">📝</div>
+                <div class="qp-stage__name">Parser</div>
+                <div class="qp-stage__desc">Lexical analysis, syntax check, builds parse tree</div>
+              </div>
+              <div class="qp-arrow">→</div>
+              <div class="qp-stage" data-stage="analyze">
+                <div class="qp-stage__icon">🔍</div>
+                <div class="qp-stage__name">Analyzer</div>
+                <div class="qp-stage__desc">Resolves names, checks types, validates semantics</div>
+              </div>
+              <div class="qp-arrow">→</div>
+              <div class="qp-stage" data-stage="rewrite">
+                <div class="qp-stage__icon">🔄</div>
+                <div class="qp-stage__name">Rewriter</div>
+                <div class="qp-stage__desc">Applies rules (views, RLS policies)</div>
+              </div>
+              <div class="qp-arrow">→</div>
+              <div class="qp-stage" data-stage="plan">
+                <div class="qp-stage__icon">🗺️</div>
+                <div class="qp-stage__name">Planner</div>
+                <div class="qp-stage__desc">Generates optimal execution plan (cost-based)</div>
+              </div>
+              <div class="qp-arrow">→</div>
+              <div class="qp-stage" data-stage="execute">
+                <div class="qp-stage__icon">⚡</div>
+                <div class="qp-stage__name">Executor</div>
+                <div class="qp-stage__desc">Runs the plan, returns results</div>
+              </div>
+            </div>
+          </div>
+          <div class="qp-detail" id="qp-detail"></div>
+          <div class="callout">
+            <strong>📌 Prepared Statements:</strong> Using <code>PREPARE</code> skips parsing and planning
+            on subsequent executions — only the executor runs. This is why ORMs and connection pools
+            use prepared statements for performance.
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 5. MVCC ═══════════════ -->
+      <section class="section reveal" id="mvcc">
+        <div class="section__header">
+          <span class="section__number">05</span>
+          <h2 class="section__title">MVCC (Multi-Version Concurrency Control)</h2>
+        </div>
+        <p class="section__desc">
+          PostgreSQL never overwrites data in place. Instead, each <code>UPDATE</code> creates a
+          <strong>new version</strong> of the row. Old versions remain for concurrent transactions
+          that still need them. Each tuple has hidden columns <code>xmin</code> (created by) and
+          <code>xmax</code> (deleted/updated by).
+        </p>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🔄 Tuple Versioning in Action</h3>
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-mvcc-insert">INSERT row</button>
+            <button class="send-btn pg-teal-btn" id="btn-mvcc-update">UPDATE row</button>
+            <button class="send-btn pg-red-btn" id="btn-mvcc-delete">DELETE row</button>
+            <button class="send-btn" id="btn-mvcc-reset" style="background:linear-gradient(135deg,#6b7280,#4b5563);">🔄 Reset</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="mvcc-table" id="mvcc-table">
+              <div class="mvcc-header">
+                <span class="mvcc-col">xmin</span>
+                <span class="mvcc-col">xmax</span>
+                <span class="mvcc-col">name</span>
+                <span class="mvcc-col">email</span>
+                <span class="mvcc-col">status</span>
+              </div>
+              <div class="mvcc-rows" id="mvcc-rows">
+                <!-- Rendered by JS -->
+              </div>
+            </div>
+          </div>
+          <div class="mvcc-txn-info" id="mvcc-txn-info">Current Transaction ID: <strong>100</strong></div>
+          <div class="callout pg-blue">
+            <strong>💡 Visibility Rules:</strong> A tuple is visible to transaction T if:
+            <code>xmin</code> is committed AND (<code>xmax</code> is empty OR <code>xmax</code>
+            is aborted OR <code>xmax > T</code>). This is how PostgreSQL achieves
+            <strong>non-blocking reads</strong> — readers never block writers!
+          </div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">👁️ Snapshot Visibility</h3>
+          <p class="tp-viz-desc">
+            Each transaction gets a <strong>snapshot</strong> — a frozen view of which transactions
+            were committed at the moment the snapshot was taken. This determines which tuple versions
+            are visible.
+          </p>
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-snap-t1">▶ Start Txn T1</button>
+            <button class="send-btn pg-teal-btn" id="btn-snap-t2">▶ Start Txn T2</button>
+            <button class="send-btn" id="btn-snap-reset" style="background:linear-gradient(135deg,#6b7280,#4b5563);">🔄 Reset</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="snap-demo" id="snap-demo">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 6. WAL ═══════════════ -->
+      <section class="section reveal" id="wal">
+        <div class="section__header">
+          <span class="section__number">06</span>
+          <h2 class="section__title">WAL (Write-Ahead Logging)</h2>
+        </div>
+        <p class="section__desc">
+          Before any data change reaches the actual data files, it's first written to the
+          <strong>Write-Ahead Log</strong>. This guarantees <strong>durability</strong> — even if
+          the server crashes, PostgreSQL can replay the WAL to recover. The rule is simple:
+          <em>"WAL first, data later."</em>
+        </p>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📝 WAL Write Flow</h3>
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-wal-write">✏️ Write Data</button>
+            <button class="send-btn pg-red-btn" id="btn-wal-crash">💥 Simulate Crash</button>
+            <button class="send-btn pg-teal-btn" id="btn-wal-recover">🔄 Recover</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="wal-demo" id="wal-demo">
+              <div class="wal-component wal-app">
+                <div class="wal-comp-title">Application</div>
+                <div class="wal-comp-content" id="wal-app-content">INSERT INTO orders...</div>
+              </div>
+              <div class="wal-flow-arrow" id="wal-arrow-1">→</div>
+              <div class="wal-component wal-buffer">
+                <div class="wal-comp-title">WAL Buffer</div>
+                <div class="wal-comp-content" id="wal-buffer-content"></div>
+              </div>
+              <div class="wal-flow-arrow" id="wal-arrow-2">→</div>
+              <div class="wal-component wal-disk-wal">
+                <div class="wal-comp-title">WAL on Disk</div>
+                <div class="wal-comp-content wal-log" id="wal-disk-content"></div>
+              </div>
+              <div class="wal-flow-arrow wal-arrow-down" id="wal-arrow-3">↓</div>
+              <div class="wal-component wal-data-file">
+                <div class="wal-comp-title">Data Files</div>
+                <div class="wal-comp-content" id="wal-data-content"></div>
+              </div>
+            </div>
+          </div>
+          <div class="wal-status" id="wal-status"></div>
+          <div class="callout">
+            <strong>🔑 Checkpoint:</strong> Periodically, the <strong>Checkpointer</strong> writes
+            all dirty buffers to disk and records a checkpoint in WAL. During recovery, PG only needs
+            to replay WAL entries <em>after</em> the last checkpoint — making recovery faster.
+          </div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📊 WAL Internals</h3>
+          <dl class="key-insight">
+            <dt>LSN (Log Sequence Number)</dt>
+            <dd>A monotonically increasing pointer into the WAL stream. Every WAL record has a unique LSN.</dd>
+            <dt>WAL Segments</dt>
+            <dd>WAL is stored in 16MB segment files (configurable). Old segments are recycled or archived.</dd>
+            <dt>fsync</dt>
+            <dd>PostgreSQL calls <code>fsync()</code> to ensure WAL records are physically on disk before acknowledging a commit.</dd>
+            <dt>synchronous_commit</dt>
+            <dd>Can be turned off for ~3x throughput gain at the risk of losing the last few transactions on crash (data is still consistent, just potentially lost).</dd>
+          </dl>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 7. INDEXING DEEP DIVE ═══════════════ -->
+      <section class="section reveal" id="indexing">
+        <div class="section__header">
+          <span class="section__number">07</span>
+          <h2 class="section__title">Indexing Deep Dive — B-Tree</h2>
+        </div>
+        <p class="section__desc">
+          A <strong>B-Tree index</strong> is PostgreSQL's default index type. It organizes keys in a
+          balanced tree structure where each node contains sorted keys and pointers. Searches go from
+          root to leaf in <code>O(log n)</code> time instead of scanning the entire table.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🌳 B-Tree Construction</h3>
+          <div class="viz-controls">
+            <label for="btree-input">Insert Key:</label>
+            <input type="number" id="btree-input" class="btree-input" min="1" max="99" value="42" />
+            <button class="send-btn" id="btn-btree-insert">+ Insert</button>
+            <button class="send-btn pg-teal-btn" id="btn-btree-search">🔍 Search</button>
+            <button class="send-btn" id="btn-btree-reset" style="background:linear-gradient(135deg,#6b7280,#4b5563);">🔄 Reset</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="btree-viz" id="btree-viz">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+          <p class="viz-hint" id="btree-hint">Insert keys to build the B-Tree. Search to see the traversal path highlighted.</p>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🔍 Sequential Scan vs Index Scan</h3>
+          <div class="viz-controls">
+            <button class="send-btn pg-red-btn" id="btn-scan-seq">📋 Sequential Scan</button>
+            <button class="send-btn pg-teal-btn" id="btn-scan-idx">🎯 Index Scan</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="scan-compare" id="scan-compare">
+              <div class="scan-table-area">
+                <div class="scan-label">Table (Heap)</div>
+                <div class="scan-blocks" id="scan-blocks">
+                  <!-- Rendered by JS -->
+                </div>
+              </div>
+              <div class="scan-index-area">
+                <div class="scan-label">B-Tree Index</div>
+                <div class="scan-index" id="scan-index">
+                  <!-- Rendered by JS -->
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="scan-result" id="scan-result"></div>
+          <div class="callout pg-blue">
+            <strong>When does PG choose Seq Scan?</strong> When the query returns a large fraction
+            of the table (>5-10%), sequential scan is faster because it reads contiguous disk blocks.
+            The planner estimates this using <strong>table statistics</strong> (pg_stats).
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 8. VACUUM & DEAD TUPLES ═══════════════ -->
+      <section class="section reveal" id="vacuum">
+        <div class="section__header">
+          <span class="section__number">08</span>
+          <h2 class="section__title">VACUUM & Dead Tuples</h2>
+        </div>
+        <p class="section__desc">
+          Because MVCC keeps old tuple versions, <strong>dead tuples</strong> accumulate over time.
+          <strong>VACUUM</strong> marks dead tuple space as reusable. Without it, tables
+          <strong>bloat</strong> — growing in size even though live data hasn't changed.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🧹 Table Bloat & VACUUM</h3>
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-vac-updates">📝 Run 10 UPDATEs</button>
+            <button class="send-btn pg-teal-btn" id="btn-vac-vacuum">🧹 Run VACUUM</button>
+            <button class="send-btn pg-red-btn" id="btn-vac-full">🗜️ VACUUM FULL</button>
+            <button class="send-btn" id="btn-vac-reset" style="background:linear-gradient(135deg,#6b7280,#4b5563);">🔄 Reset</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="vac-table" id="vac-table">
+              <!-- Rendered by JS: grid of table blocks -->
+            </div>
+          </div>
+          <div class="vac-stats" id="vac-stats">
+            <span class="vac-stat">Live: <strong id="vac-live">20</strong></span>
+            <span class="vac-stat">Dead: <strong id="vac-dead">0</strong></span>
+            <span class="vac-stat">Free: <strong id="vac-free">0</strong></span>
+            <span class="vac-stat">Bloat: <strong id="vac-bloat">0%</strong></span>
+          </div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">⚙️ VACUUM vs VACUUM FULL</h3>
+          <div class="callout">
+            <strong>VACUUM (regular):</strong> Marks dead tuples as free space <em>within</em> the table.
+            <strong>Non-blocking</strong> — reads and writes continue. Space is reused by future INSERTs
+            but the file size doesn't shrink.
+          </div>
+          <div class="callout pg-blue" style="margin-top:0.8rem;">
+            <strong>VACUUM FULL:</strong> Rewrites the entire table, physically reclaiming space.
+            <strong>Requires an exclusive lock</strong> — blocks all operations. Use sparingly!
+          </div>
+          <dl class="key-insight">
+            <dt>autovacuum_vacuum_threshold</dt>
+            <dd>Min dead tuples before autovacuum kicks in (default: 50)</dd>
+            <dt>autovacuum_vacuum_scale_factor</dt>
+            <dd>Fraction of table that must be dead (default: 0.2 = 20%)</dd>
+            <dt>Formula</dt>
+            <dd><code>threshold + scale_factor × num_tuples</code> = when autovacuum triggers</dd>
+          </dl>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 9. TRANSACTION ISOLATION LEVELS ═══════════════ -->
+      <section class="section reveal" id="isolation">
+        <div class="section__header">
+          <span class="section__number">09</span>
+          <h2 class="section__title">Transaction Isolation Levels</h2>
+        </div>
+        <p class="section__desc">
+          Isolation levels control what a transaction can "see" when other transactions are
+          running concurrently. PostgreSQL supports <strong>Read Committed</strong> (default),
+          <strong>Repeatable Read</strong>, and <strong>Serializable</strong>.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🔬 Anomaly Demonstration</h3>
+          <div class="viz-controls">
+            <label>Isolation Level</label>
+            <div class="strategy-toggle" id="iso-toggle">
+              <button class="strategy-btn active" data-level="read-committed">Read Committed</button>
+              <button class="strategy-btn" data-level="repeatable-read">Repeatable Read</button>
+              <button class="strategy-btn" data-level="serializable">Serializable</button>
+            </div>
+          </div>
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-iso-run">▶ Run Anomaly Demo</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="iso-demo" id="iso-demo">
+              <div class="iso-txn" id="iso-txn1">
+                <div class="iso-txn__title">Transaction T1</div>
+                <div class="iso-txn__steps" id="iso-t1-steps"></div>
+              </div>
+              <div class="iso-txn" id="iso-txn2">
+                <div class="iso-txn__title">Transaction T2</div>
+                <div class="iso-txn__steps" id="iso-t2-steps"></div>
+              </div>
+            </div>
+          </div>
+          <div class="iso-result" id="iso-result"></div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📊 Isolation Level Comparison</h3>
+          <div class="iso-matrix">
+            <table class="iso-table">
+              <thead>
+                <tr>
+                  <th>Anomaly</th>
+                  <th>Read Committed</th>
+                  <th>Repeatable Read</th>
+                  <th>Serializable</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Dirty Read</td>
+                  <td class="iso-no">✗ Prevented</td>
+                  <td class="iso-no">✗ Prevented</td>
+                  <td class="iso-no">✗ Prevented</td>
+                </tr>
+                <tr>
+                  <td>Non-Repeatable Read</td>
+                  <td class="iso-yes">✓ Possible</td>
+                  <td class="iso-no">✗ Prevented</td>
+                  <td class="iso-no">✗ Prevented</td>
+                </tr>
+                <tr>
+                  <td>Phantom Read</td>
+                  <td class="iso-yes">✓ Possible</td>
+                  <td class="iso-no">✗ Prevented</td>
+                  <td class="iso-no">✗ Prevented</td>
+                </tr>
+                <tr>
+                  <td>Serialization Anomaly</td>
+                  <td class="iso-yes">✓ Possible</td>
+                  <td class="iso-yes">✓ Possible</td>
+                  <td class="iso-no">✗ Prevented</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="callout">
+            <strong>📌 Note:</strong> PostgreSQL's <strong>Repeatable Read</strong> actually prevents
+            phantom reads too (unlike the SQL standard minimum). It uses <strong>Snapshot Isolation</strong>
+            internally, which is stronger than the standard requires.
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 10. LOCK TYPES & DEADLOCKS ═══════════════ -->
+      <section class="section reveal" id="locks">
+        <div class="section__header">
+          <span class="section__number">10</span>
+          <h2 class="section__title">Lock Types & Deadlocks</h2>
+        </div>
+        <p class="section__desc">
+          PostgreSQL uses a sophisticated locking system. <strong>Row-level locks</strong> are for
+          concurrent writes, <strong>table-level locks</strong> for DDL operations. When two transactions
+          wait on each other, a <strong>deadlock</strong> occurs — PostgreSQL detects and resolves it.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🔒 Lock Conflict Matrix</h3>
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-lock-demo">▶ Simulate Lock Conflict</button>
+            <button class="send-btn pg-red-btn" id="btn-deadlock-demo">💀 Simulate Deadlock</button>
+            <button class="send-btn" id="btn-lock-reset" style="background:linear-gradient(135deg,#6b7280,#4b5563);">🔄 Reset</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="lock-demo" id="lock-demo">
+              <div class="lock-resource" id="lock-resource">
+                <div class="lock-resource__title">🗄️ Table: accounts</div>
+                <div class="lock-rows" id="lock-rows">
+                  <div class="lock-row" data-row="1">
+                    <span class="lock-row__data">Row 1: Alice ($1000)</span>
+                    <span class="lock-row__lock" id="lock-r1"></span>
+                  </div>
+                  <div class="lock-row" data-row="2">
+                    <span class="lock-row__data">Row 2: Bob ($500)</span>
+                    <span class="lock-row__lock" id="lock-r2"></span>
+                  </div>
+                </div>
+              </div>
+              <div class="lock-txns" id="lock-txns">
+                <div class="lock-txn" id="lock-txn1">
+                  <div class="lock-txn__title">Txn 1</div>
+                  <div class="lock-txn__status" id="lock-t1-status">Idle</div>
+                </div>
+                <div class="lock-txn" id="lock-txn2">
+                  <div class="lock-txn__title">Txn 2</div>
+                  <div class="lock-txn__status" id="lock-t2-status">Idle</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="lock-log" id="lock-log"></div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📊 Table Lock Modes</h3>
+          <dl class="key-insight">
+            <dt>ACCESS SHARE</dt>
+            <dd>Acquired by <code>SELECT</code>. Conflicts only with ACCESS EXCLUSIVE.</dd>
+            <dt>ROW SHARE</dt>
+            <dd>Acquired by <code>SELECT FOR UPDATE/SHARE</code>. Allows concurrent reads.</dd>
+            <dt>ROW EXCLUSIVE</dt>
+            <dd>Acquired by <code>INSERT/UPDATE/DELETE</code>. Allows concurrent DML.</dd>
+            <dt>ACCESS EXCLUSIVE</dt>
+            <dd>Acquired by <code>ALTER TABLE, DROP TABLE, VACUUM FULL</code>. Blocks everything.</dd>
+          </dl>
+          <div class="callout pg-blue">
+            <strong>Deadlock Detection:</strong> PostgreSQL runs a deadlock detector every
+            <code>deadlock_timeout</code> (default: 1s). When detected, one transaction is aborted
+            with <code>ERROR: deadlock detected</code>.
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 11. QUERY PLANNER & EXPLAIN ═══════════════ -->
+      <section class="section reveal" id="query-planner">
+        <div class="section__header">
+          <span class="section__number">11</span>
+          <h2 class="section__title">Query Planner & EXPLAIN</h2>
+        </div>
+        <p class="section__desc">
+          The query planner evaluates multiple strategies and picks the one with the
+          <strong>lowest estimated cost</strong>. Use <code>EXPLAIN ANALYZE</code> to see
+          the chosen plan, estimated vs actual rows, and execution time.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🗺️ Scan Strategy Comparison</h3>
+          <div class="viz-controls">
+            <label>Query Selectivity</label>
+            <input type="range" id="slider-selectivity" min="1" max="100" value="5" />
+            <span class="viz-value" id="val-selectivity">5%</span>
+          </div>
+          <div class="viz-canvas">
+            <div class="planner-demo" id="planner-demo">
+              <div class="plan-card" id="plan-seq">
+                <div class="plan-card__title">Sequential Scan</div>
+                <div class="plan-card__bar">
+                  <div class="plan-card__fill" id="plan-seq-fill"></div>
+                </div>
+                <div class="plan-card__cost" id="plan-seq-cost">Cost: 0</div>
+              </div>
+              <div class="plan-card" id="plan-idx">
+                <div class="plan-card__title">Index Scan</div>
+                <div class="plan-card__bar">
+                  <div class="plan-card__fill pg-teal-fill" id="plan-idx-fill"></div>
+                </div>
+                <div class="plan-card__cost" id="plan-idx-cost">Cost: 0</div>
+              </div>
+              <div class="plan-card" id="plan-bmp">
+                <div class="plan-card__title">Bitmap Index Scan</div>
+                <div class="plan-card__bar">
+                  <div class="plan-card__fill pg-purple-fill" id="plan-bmp-fill"></div>
+                </div>
+                <div class="plan-card__cost" id="plan-bmp-cost">Cost: 0</div>
+              </div>
+            </div>
+          </div>
+          <div class="planner-winner" id="planner-winner"></div>
+          <div class="callout">
+            <strong>📌 Key Parameters:</strong> <code>seq_page_cost = 1.0</code>,
+            <code>random_page_cost = 4.0</code> (SSD: lower to ~1.1).
+            The planner uses these to estimate I/O cost for each strategy.
+          </div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🤝 Join Strategies</h3>
+          <div class="viz-controls">
+            <div class="strategy-toggle" id="join-toggle">
+              <button class="strategy-btn active" data-join="nested-loop">Nested Loop</button>
+              <button class="strategy-btn" data-join="hash-join">Hash Join</button>
+              <button class="strategy-btn" data-join="merge-join">Merge Join</button>
+            </div>
+          </div>
+          <div class="viz-canvas">
+            <div class="join-demo" id="join-demo">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+          <div class="join-info" id="join-info"></div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 12. CONNECTION POOLING ═══════════════ -->
+      <section class="section reveal" id="connection-pooling">
+        <div class="section__header">
+          <span class="section__number">12</span>
+          <h2 class="section__title">Connection Pooling</h2>
+        </div>
+        <p class="section__desc">
+          Each PostgreSQL connection is a separate OS process (~5-10MB). With hundreds of concurrent
+          users, this exhausts resources. A <strong>connection pooler</strong> (like PgBouncer)
+          maintains a small pool of real connections and multiplexes client requests across them.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">⚡ With vs Without Connection Pooling</h3>
+          <div class="viz-controls">
+            <label for="slider-pool-clients">Clients</label>
+            <input type="range" id="slider-pool-clients" min="5" max="50" value="20" />
+            <span class="viz-value" id="val-pool-clients">20</span>
+            <button class="send-btn" id="btn-pool-run">▶ Run Comparison</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="pool-demo" id="pool-demo">
+              <div class="pool-side">
+                <div class="pool-side__title">❌ Without Pooling</div>
+                <div class="pool-clients" id="pool-no-clients"></div>
+                <div class="pool-arrow-area">→→→</div>
+                <div class="pool-pg" id="pool-no-pg">
+                  <div class="pool-pg__title">PostgreSQL</div>
+                  <div class="pool-pg__conns" id="pool-no-conns"></div>
+                </div>
+              </div>
+              <div class="pool-side">
+                <div class="pool-side__title">✅ With PgBouncer</div>
+                <div class="pool-clients" id="pool-yes-clients"></div>
+                <div class="pool-arrow-area">→→→</div>
+                <div class="pool-bouncer">
+                  <div class="pool-pg__title">PgBouncer</div>
+                  <div class="pool-pg__conns" id="pool-bouncer-conns"></div>
+                </div>
+                <div class="pool-arrow-area">→</div>
+                <div class="pool-pg" id="pool-yes-pg">
+                  <div class="pool-pg__title">PostgreSQL</div>
+                  <div class="pool-pg__conns" id="pool-yes-conns"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="pool-stats" id="pool-stats"></div>
+          <div class="callout pg-blue">
+            <strong>PgBouncer Modes:</strong>
+            <strong>Session</strong> — connection held for entire session.
+            <strong>Transaction</strong> — released after each transaction (recommended).
+            <strong>Statement</strong> — released after each statement (most aggressive).
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 13. REPLICATION ═══════════════ -->
+      <section class="section reveal" id="replication">
+        <div class="section__header">
+          <span class="section__number">13</span>
+          <h2 class="section__title">Replication</h2>
+        </div>
+        <p class="section__desc">
+          PostgreSQL supports <strong>streaming replication</strong> where the primary continuously
+          ships WAL records to standby servers. Standbys can serve read-only queries, providing
+          <strong>read scaling</strong> and <strong>high availability</strong>.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📡 Streaming Replication</h3>
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-repl-write">✏️ Write to Primary</button>
+            <button class="send-btn pg-red-btn" id="btn-repl-failover">💥 Primary Failure</button>
+            <button class="send-btn pg-teal-btn" id="btn-repl-restore">🔄 Restore</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="repl-demo" id="repl-demo">
+              <div class="repl-node repl-primary" id="repl-primary">
+                <div class="repl-node__icon">🟢</div>
+                <div class="repl-node__title">Primary</div>
+                <div class="repl-node__role">Read/Write</div>
+                <div class="repl-wal" id="repl-primary-wal"></div>
+              </div>
+              <div class="repl-stream" id="repl-stream">
+                <div class="repl-stream__label">WAL Stream</div>
+                <div class="repl-stream__line"></div>
+              </div>
+              <div class="repl-standbys" id="repl-standbys">
+                <div class="repl-node repl-standby" id="repl-standby-1">
+                  <div class="repl-node__icon">🔵</div>
+                  <div class="repl-node__title">Standby 1</div>
+                  <div class="repl-node__role">Read-Only (Sync)</div>
+                  <div class="repl-wal" id="repl-standby1-wal"></div>
+                </div>
+                <div class="repl-node repl-standby" id="repl-standby-2">
+                  <div class="repl-node__icon">🔵</div>
+                  <div class="repl-node__title">Standby 2</div>
+                  <div class="repl-node__role">Read-Only (Async)</div>
+                  <div class="repl-wal" id="repl-standby2-wal"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="repl-log" id="repl-log"></div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">⚖️ Sync vs Async Replication</h3>
+          <div class="callout">
+            <strong>Synchronous:</strong> Primary waits for standby to write WAL before acknowledging commit.
+            <strong>Zero data loss</strong> but higher latency.
+          </div>
+          <div class="callout pg-blue" style="margin-top:0.8rem;">
+            <strong>Asynchronous:</strong> Primary doesn't wait. Lower latency but standby may be
+            slightly behind — potential data loss on failover.
+          </div>
+          <dl class="key-insight">
+            <dt>Hot Standby</dt>
+            <dd>Standby accepts read-only queries while replicating (default in modern PG).</dd>
+            <dt>Logical Replication</dt>
+            <dd>Replicates specific tables/rows using publish-subscribe model. Supports cross-version replication.</dd>
+            <dt>pg_basebackup</dt>
+            <dd>Utility to create a standby from a running primary. Takes a physical backup + streams WAL.</dd>
+          </dl>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 14. PARTITIONING ═══════════════ -->
+      <section class="section reveal" id="partitioning">
+        <div class="section__header">
+          <span class="section__number">14</span>
+          <h2 class="section__title">Table Partitioning</h2>
+        </div>
+        <p class="section__desc">
+          Partitioning splits a large table into smaller physical pieces based on column values.
+          Queries that filter on the partition key skip irrelevant partitions entirely
+          (<strong>partition pruning</strong>), dramatically improving performance.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📊 Partition Routing</h3>
+          <div class="viz-controls">
+            <label>Strategy</label>
+            <div class="strategy-toggle" id="part-toggle">
+              <button class="strategy-btn active" data-part="range">Range</button>
+              <button class="strategy-btn" data-part="list">List</button>
+              <button class="strategy-btn" data-part="hash">Hash</button>
+            </div>
+            <button class="send-btn" id="btn-part-insert">+ INSERT Row</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="part-demo" id="part-demo">
+              <div class="part-parent">
+                <div class="part-parent__title">📋 Parent Table: orders</div>
+              </div>
+              <div class="part-children" id="part-children">
+                <!-- Rendered by JS -->
+              </div>
+            </div>
+          </div>
+          <div class="part-log" id="part-log"></div>
+          <div class="callout">
+            <strong>📌 Partition Pruning:</strong> When you run
+            <code>SELECT * FROM orders WHERE created_at = '2024-03-15'</code>,
+            PostgreSQL only scans the March 2024 partition — skipping all others entirely.
+          </div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🔧 Partitioning Best Practices</h3>
+          <dl class="key-insight">
+            <dt>When to Partition</dt>
+            <dd>Tables with >10M rows, time-series data, or data with natural groupings.</dd>
+            <dt>Partition Key</dt>
+            <dd>Choose a column frequently used in WHERE clauses. Date columns are the most common choice.</dd>
+            <dt>Number of Partitions</dt>
+            <dd>Avoid too many (>1000). Each partition has planning overhead. Use ranges that makes sense for your query patterns.</dd>
+            <dt>Default Partition</dt>
+            <dd>Always create one to catch rows that don't match any partition — prevents INSERT failures.</dd>
+          </dl>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 15. TOAST ═══════════════ -->
+      <section class="section reveal" id="toast">
+        <div class="section__header">
+          <span class="section__number">15</span>
+          <h2 class="section__title">TOAST — Oversized Attribute Storage</h2>
+        </div>
+        <p class="section__desc">
+          PostgreSQL pages are 8KB. When a row exceeds this limit, TOAST kicks in —
+          it <strong>compresses</strong> and/or <strong>stores large values out-of-line</strong>
+          in a separate TOAST table. This is transparent to the application.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📦 TOAST in Action</h3>
+          <div class="viz-controls">
+            <label for="slider-toast-size">Data Size</label>
+            <input type="range" id="slider-toast-size" min="100" max="10000" value="100" step="100" />
+            <span class="viz-value" id="val-toast-size">100 B</span>
+            <button class="send-btn" id="btn-toast-insert">+ INSERT</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="toast-demo" id="toast-demo">
+              <div class="toast-main-table">
+                <div class="toast-table-title">Main Table Page (8KB limit)</div>
+                <div class="toast-page" id="toast-page">
+                  <!-- Rendered by JS -->
+                </div>
+              </div>
+              <div class="toast-arrow" id="toast-arrow" style="display:none;">→ TOAST →</div>
+              <div class="toast-ext-table" id="toast-ext" style="opacity:0.3;">
+                <div class="toast-table-title">TOAST Table (chunks)</div>
+                <div class="toast-chunks" id="toast-chunks"></div>
+              </div>
+            </div>
+          </div>
+          <div class="toast-status" id="toast-status"></div>
+          <div class="callout pg-blue">
+            <strong>TOAST Strategies:</strong>
+            <strong>PLAIN</strong> — no compression, no out-of-line.
+            <strong>EXTENDED</strong> — compress first, then out-of-line if still too big (default for text/bytea).
+            <strong>EXTERNAL</strong> — out-of-line without compression.
+            <strong>MAIN</strong> — compress only, avoid out-of-line.
+          </div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📏 TOAST Thresholds</h3>
+          <dl class="key-insight">
+            <dt>TOAST Threshold</dt>
+            <dd>~2KB. Values larger than this may be compressed and/or moved out-of-line.</dd>
+            <dt>Chunk Size</dt>
+            <dd>~2000 bytes per chunk in the TOAST table. Large values are split into chunks.</dd>
+            <dt>Compression</dt>
+            <dd>Uses pglz (default) or lz4 (PG 14+). Set per-column with <code>ALTER TABLE ... SET STORAGE</code>.</dd>
+            <dt>Detoasting</dt>
+            <dd>Happens automatically on access. Use <code>SELECT col</code> not <code>SELECT *</code> to avoid detoasting unneeded columns.</dd>
+          </dl>
+        </div>
+      </section>
+    </main>
+
+    <!-- ═══════════════════════ FOOTER ═══════════════════════ -->
+    <footer class="footer">
+      <p>PostgreSQL Internals Visualizer — Built for Learning & Interview Prep</p>
+      <p class="footer__sub">Inspired by the PostgreSQL documentation and community resources</p>
+    </footer>
+
+    <script src="index.js"></script>
+  </body>
+</html>

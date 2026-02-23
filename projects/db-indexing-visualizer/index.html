@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Database Indexing — Interactive Visualizer</title>
+  <meta name="description" content="Learn database indexing through interactive visualizations — B-Tree, Hash Index, Clustered vs Non-Clustered, Composite Index, Query Plans, and more." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="index.css" />
+</head>
+<body>
+  <div class="app">
+
+    <!-- ═══════════════ HERO ═══════════════ -->
+    <header class="hero">
+      <div class="hero__orb hero__orb--1"></div>
+      <div class="hero__orb hero__orb--2"></div>
+      <h1 class="hero__title">Database<br /><span class="hero__accent">Indexing</span></h1>
+      <p class="hero__sub">Interactive guide to how databases find your data — fast.</p>
+    </header>
+
+    <main class="main">
+
+      <!-- ═══════════════ 1. FULL SCAN vs INDEX SCAN ═══════════════ -->
+      <section class="section reveal" id="scan-comparison">
+        <div class="section__header">
+          <span class="section__number">01</span>
+          <h2 class="section__title">Why Indexes? Full Scan vs Index Scan</h2>
+        </div>
+        <p class="section__desc">
+          Without an index, the database must check <strong>every single row</strong> (Full Table Scan = O(n)).
+          With an index, it jumps directly to the matching rows (Index Scan = O(log n)).
+        </p>
+
+        <div class="viz-card">
+          <h3 class="viz-title">🔍 Search for "user_42" in a 20-row table</h3>
+          <div class="viz-controls">
+            <button class="btn-primary" id="btn-full-scan">▶ Full Table Scan</button>
+            <button class="btn-accent" id="btn-index-scan">⚡ Index Lookup</button>
+            <button class="btn-muted" id="btn-scan-reset">🔄 Reset</button>
+          </div>
+          <div class="viz-canvas">
+            <div id="scan-demo"></div>
+          </div>
+          <div class="viz-result" id="scan-result"></div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 2. B-TREE / B+ TREE ═══════════════ -->
+      <section class="section reveal" id="btree">
+        <div class="section__header">
+          <span class="section__number">02</span>
+          <h2 class="section__title">B-Tree / B+ Tree</h2>
+        </div>
+        <p class="section__desc">
+          The <strong>B+ Tree</strong> is the most common index structure. It keeps data sorted in a balanced tree
+          with O(log n) search. Leaf nodes form a <strong>linked list</strong> for efficient range queries.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="viz-title">🌳 B+ Tree Search</h3>
+          <p class="viz-desc">Enter a value to search or insert. Watch the tree traversal path light up.</p>
+          <div class="viz-controls">
+            <input type="number" id="btree-input" class="input-field" placeholder="Value (1-99)" min="1" max="99" />
+            <button class="btn-primary" id="btn-btree-search">🔍 Search</button>
+            <button class="btn-accent" id="btn-btree-insert">+ Insert</button>
+          </div>
+          <div class="viz-canvas">
+            <div id="btree-demo"></div>
+          </div>
+          <div class="viz-result" id="btree-result"></div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="viz-title">📋 B+ Tree Properties</h3>
+          <dl class="key-insight">
+            <dt>Balanced</dt>
+            <dd>All leaf nodes are at the same depth — guarantees O(log n) for every lookup.</dd>
+            <dt>Sorted</dt>
+            <dd>Keys in each node are sorted, enabling binary search within nodes.</dd>
+            <dt>Leaf Linked List</dt>
+            <dd>Leaf nodes are linked left → right. Range queries (<code>WHERE age BETWEEN 20 AND 30</code>) just follow the chain.</dd>
+            <dt>Fan-out</dt>
+            <dd>Each node holds many keys (100+), so even billions of rows need only 3-4 levels.</dd>
+          </dl>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 3. HASH INDEX ═══════════════ -->
+      <section class="section reveal" id="hash-index">
+        <div class="section__header">
+          <span class="section__number">03</span>
+          <h2 class="section__title">Hash Index</h2>
+        </div>
+        <p class="section__desc">
+          A hash index provides <strong>O(1) exact-match lookups</strong> by mapping keys through a hash function
+          to buckets. The trade-off: <strong>no range queries</strong> and no ordering.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="viz-title">#️⃣ Hash Function → Bucket</h3>
+          <div class="viz-controls">
+            <input type="text" id="hash-input" class="input-field" placeholder="Key (e.g. user_42)" />
+            <button class="btn-primary" id="btn-hash-lookup">🔍 Hash Lookup</button>
+          </div>
+          <div class="viz-canvas">
+            <div id="hash-demo"></div>
+          </div>
+          <div class="viz-result" id="hash-result"></div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="viz-title">📋 Hash vs B-Tree</h3>
+          <table class="compare-table">
+            <thead>
+              <tr><th>Feature</th><th class="col-a">Hash Index</th><th class="col-b">B-Tree Index</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Exact match (=)</td><td>✅ O(1)</td><td>✅ O(log n)</td></tr>
+              <tr><td>Range (&lt;, &gt;, BETWEEN)</td><td>❌ Not supported</td><td>✅ Efficient</td></tr>
+              <tr><td>ORDER BY</td><td>❌ No ordering</td><td>✅ Sorted</td></tr>
+              <tr><td>Prefix search (LIKE 'abc%')</td><td>❌ No</td><td>✅ Yes</td></tr>
+              <tr><td>Space</td><td>Compact</td><td>More overhead</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 4. CLUSTERED vs NON-CLUSTERED ═══════════════ -->
+      <section class="section reveal" id="clustered">
+        <div class="section__header">
+          <span class="section__number">04</span>
+          <h2 class="section__title">Clustered vs Non-Clustered Index</h2>
+        </div>
+        <p class="section__desc">
+          A <strong>clustered index</strong> determines the physical order of rows on disk — there can be only <strong>one per table</strong>.
+          A <strong>non-clustered index</strong> is a separate structure with pointers back to the heap.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="viz-title">📦 Physical vs Logical Organization</h3>
+          <div class="viz-controls">
+            <div class="toggle-group" id="cluster-toggle">
+              <button class="toggle-btn active" data-type="clustered">Clustered</button>
+              <button class="toggle-btn" data-type="nonclustered">Non-Clustered</button>
+            </div>
+            <button class="btn-primary" id="btn-cluster-search">🔍 Search id=7</button>
+          </div>
+          <div class="viz-canvas">
+            <div id="cluster-demo"></div>
+          </div>
+          <div class="viz-result" id="cluster-result"></div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="viz-title">📋 Key Differences</h3>
+          <dl class="key-insight">
+            <dt>Clustered (1 per table)</dt>
+            <dd>Rows are stored in index order. Sequential reads are fast. The index IS the table (InnoDB primary key).</dd>
+            <dt>Non-Clustered (many per table)</dt>
+            <dd>Separate B-Tree with pointers to heap rows. Requires an extra "bookmark lookup" to fetch full row data.</dd>
+            <dt>InnoDB default</dt>
+            <dd>Primary key = clustered index. Secondary indexes store the PK value (not a row pointer) as the bookmark.</dd>
+          </dl>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 5. COMPOSITE INDEX ═══════════════ -->
+      <section class="section reveal" id="composite">
+        <div class="section__header">
+          <span class="section__number">05</span>
+          <h2 class="section__title">Composite (Multi-Column) Index</h2>
+        </div>
+        <p class="section__desc">
+          An index on <code>(last_name, first_name, age)</code> sorts by last_name first, then first_name, then age.
+          The <strong>leftmost prefix rule</strong> determines which queries can use the index.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="viz-title">🧪 Leftmost Prefix Rule Test</h3>
+          <p class="viz-desc">Index: <code>CREATE INDEX idx ON users(last_name, first_name, age)</code></p>
+          <div class="viz-controls" style="flex-wrap: wrap; gap: 0.5rem;">
+            <button class="btn-primary composite-query" data-q="last">WHERE last_name = 'Smith'</button>
+            <button class="btn-primary composite-query" data-q="lastfirst">WHERE last_name = 'Smith' AND first_name = 'John'</button>
+            <button class="btn-primary composite-query" data-q="all3">WHERE last_name = 'Smith' AND first_name = 'John' AND age = 30</button>
+            <button class="btn-primary composite-query" data-q="first">WHERE first_name = 'John'</button>
+            <button class="btn-primary composite-query" data-q="age">WHERE age = 30</button>
+            <button class="btn-primary composite-query" data-q="firstage">WHERE first_name = 'John' AND age = 30</button>
+          </div>
+          <div class="viz-canvas">
+            <div id="composite-demo"></div>
+          </div>
+          <div class="viz-result" id="composite-result"></div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 6. COVERING INDEX ═══════════════ -->
+      <section class="section reveal" id="covering">
+        <div class="section__header">
+          <span class="section__number">06</span>
+          <h2 class="section__title">Covering Index</h2>
+        </div>
+        <p class="section__desc">
+          A <strong>covering index</strong> contains all columns needed by a query — the database never needs to
+          visit the actual table rows. This eliminates the expensive <strong>heap/table lookup</strong>.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="viz-title">📄 Index-Only Scan vs Table Lookup</h3>
+          <div class="viz-controls">
+            <div class="toggle-group" id="cover-toggle">
+              <button class="toggle-btn active" data-type="regular">Regular Index</button>
+              <button class="toggle-btn" data-type="covering">Covering Index</button>
+            </div>
+            <button class="btn-primary" id="btn-cover-query">▶ Run Query</button>
+          </div>
+          <div class="viz-canvas">
+            <div id="cover-demo"></div>
+          </div>
+          <div class="viz-result" id="cover-result"></div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 7. EXPLAIN / QUERY PLAN ═══════════════ -->
+      <section class="section reveal" id="explain">
+        <div class="section__header">
+          <span class="section__number">07</span>
+          <h2 class="section__title">EXPLAIN / Query Plan</h2>
+        </div>
+        <p class="section__desc">
+          <code>EXPLAIN</code> reveals how the database will execute a query. Understanding the
+          query plan is essential for identifying <strong>missing indexes</strong> and <strong>performance bottlenecks</strong>.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="viz-title">📊 Query Execution Plan</h3>
+          <div class="viz-controls" style="flex-wrap: wrap; gap: 0.5rem;">
+            <button class="btn-primary explain-query" data-plan="seqscan">SELECT * FROM users WHERE status = 'active'</button>
+            <button class="btn-primary explain-query" data-plan="indexscan">SELECT * FROM users WHERE id = 42</button>
+            <button class="btn-primary explain-query" data-plan="indexonly">SELECT name FROM users WHERE email = 'a@b.com'</button>
+            <button class="btn-primary explain-query" data-plan="bitmap">SELECT * FROM orders WHERE total > 100 AND date > '2024-01'</button>
+          </div>
+          <div class="viz-canvas">
+            <div id="explain-demo"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 8. SELECTIVITY & CARDINALITY ═══════════════ -->
+      <section class="section reveal" id="selectivity">
+        <div class="section__header">
+          <span class="section__number">08</span>
+          <h2 class="section__title">Index Selectivity &amp; Cardinality</h2>
+        </div>
+        <p class="section__desc">
+          <strong>Cardinality</strong> = number of unique values. <strong>Selectivity</strong> = cardinality / total rows.
+          High selectivity (like email) makes great indexes. Low selectivity (like gender) wastes space.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="viz-title">📊 Cardinality Comparison</h3>
+          <div class="viz-controls">
+            <button class="btn-primary" id="btn-sel-show">▶ Show Comparison</button>
+          </div>
+          <div class="viz-canvas">
+            <div id="selectivity-demo"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 9. WRITE PENALTY ═══════════════ -->
+      <section class="section reveal" id="write-penalty">
+        <div class="section__header">
+          <span class="section__number">09</span>
+          <h2 class="section__title">Write Penalty (Index Overhead)</h2>
+        </div>
+        <p class="section__desc">
+          Every <code>INSERT</code>, <code>UPDATE</code>, or <code>DELETE</code> must update
+          <strong>every index</strong> on the table. More indexes = faster reads but slower writes.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="viz-title">⚖️ Write Amplification</h3>
+          <div class="viz-controls">
+            <button class="btn-primary" id="btn-write-zero">▶ INSERT (0 indexes)</button>
+            <button class="btn-accent" id="btn-write-three">▶ INSERT (3 indexes)</button>
+            <button class="btn-danger" id="btn-write-five">▶ INSERT (5 indexes)</button>
+          </div>
+          <div class="viz-canvas">
+            <div id="write-demo"></div>
+          </div>
+          <div class="viz-result" id="write-result"></div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 10. WHEN NOT TO INDEX ═══════════════ -->
+      <section class="section reveal" id="anti-patterns">
+        <div class="section__header">
+          <span class="section__number">10</span>
+          <h2 class="section__title">When NOT to Use an Index</h2>
+        </div>
+        <p class="section__desc">
+          Indexes aren't free — they cost disk space and slow down writes.
+          Toggle the conditions below to see the recommendation change.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="viz-title">🧪 Should I Add an Index?</h3>
+          <div class="viz-canvas">
+            <div id="antipattern-demo"></div>
+          </div>
+          <div class="viz-result" id="antipattern-result"></div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="viz-title">📋 Index Types Comparison</h3>
+          <table class="compare-table">
+            <thead>
+              <tr><th>Type</th><th>Best For</th><th>Engine</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="col-a">B-Tree</td><td>General purpose, range queries, sorting</td><td>All (default)</td></tr>
+              <tr><td class="col-a">Hash</td><td>Exact-match only (= queries)</td><td>Memory, NDB</td></tr>
+              <tr><td class="col-a">GiST</td><td>Geometric, full-text, range types</td><td>PostgreSQL</td></tr>
+              <tr><td class="col-a">GIN</td><td>Arrays, JSONB, full-text search</td><td>PostgreSQL</td></tr>
+              <tr><td class="col-a">BRIN</td><td>Very large tables with natural ordering</td><td>PostgreSQL</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="footer">
+      Built for learning — <strong>Database Indexing Visualizer</strong>
+    </footer>
+  </div>
+
+  <script src="index.js"></script>
+</body>
+</html>

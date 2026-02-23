@@ -1,0 +1,799 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>How the Internet Works — Interactive Visualizer</title>
+    <meta
+      name="description"
+      content="Explore how the internet works through interactive visualizations. Understand DNS, TCP/IP, HTTP, TLS/SSL, routing, firewalls, CDNs, WebSockets, and the complete request lifecycle."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <body>
+    <!-- ═══════════════════════ HERO ═══════════════════════ -->
+    <header class="hero" id="hero">
+      <div class="hero__bg-orbs">
+        <div class="orb orb--1"></div>
+        <div class="orb orb--2"></div>
+        <div class="orb orb--3"></div>
+      </div>
+      <div class="hero__particles" id="hero-particles"></div>
+      <div class="hero__content">
+        <span class="hero__badge">🌐 Interactive Deep Dive</span>
+        <h1 class="hero__title">
+          How the <span class="gradient-text">Internet</span> Works
+        </h1>
+        <p class="hero__subtitle">
+          From typing a URL to receiving a response — explore protocols,
+          security layers, and data flow through live, interactive visualizations.
+        </p>
+        <a href="#network-of-networks" class="hero__cta">
+          <span>Start Exploring</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 5v14M5 12l7 7 7-7" />
+          </svg>
+        </a>
+      </div>
+    </header>
+
+    <main>
+      <!-- ═══════════════ 1. NETWORK OF NETWORKS ═══════════════ -->
+      <section class="section reveal" id="network-of-networks">
+        <div class="section__header">
+          <span class="section__number">01</span>
+          <h2 class="section__title">The Internet — A Network of Networks</h2>
+        </div>
+        <p class="section__desc">
+          The internet is a <strong>global network of interconnected networks</strong>. Your device connects
+          to a <strong>local network</strong> (home/office), which connects to an <strong>ISP</strong>,
+          which peers with other ISPs through <strong>Internet Exchange Points (IXPs)</strong> and
+          <strong>backbone networks</strong>. Click on nodes to trace the data path.
+        </p>
+
+        <div class="viz-card">
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-trace-path">🔍 Trace a Request Path</button>
+            <button class="send-btn secondary" id="btn-reset-network">🔄 Reset</button>
+          </div>
+          <div class="viz-canvas">
+            <canvas id="network-canvas" width="900" height="450"></canvas>
+          </div>
+          <div class="callout cyan">
+            <strong>💡 Key Insight:</strong> No single entity "owns" the internet. It's a decentralized
+            network of networks connected through peering agreements, IXPs, and undersea cables spanning
+            over <strong>550 submarine cables</strong> across ocean floors.
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 2. DNS RESOLUTION ═══════════════ -->
+      <section class="section reveal" id="dns">
+        <div class="section__header">
+          <span class="section__number">02</span>
+          <h2 class="section__title">DNS Resolution</h2>
+        </div>
+        <p class="section__desc">
+          The <strong>Domain Name System (DNS)</strong> translates human-readable domain names
+          (like <code>google.com</code>) into IP addresses (<code>142.250.190.14</code>). This
+          hierarchical lookup cascades through multiple servers before returning the IP.
+        </p>
+
+        <div class="viz-card">
+          <div class="viz-controls">
+            <label for="dns-domain">Domain</label>
+            <input type="text" id="dns-domain" class="text-input" value="www.example.com" placeholder="Enter domain..." />
+            <button class="send-btn" id="btn-dns-lookup">🔍 Resolve DNS</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="dns-flow" id="dns-flow">
+              <div class="dns-node" data-step="0">
+                <div class="dns-node__icon">💻</div>
+                <div class="dns-node__label">Your Browser</div>
+                <div class="dns-node__detail">Check local cache</div>
+              </div>
+              <div class="dns-arrow" data-step="1">
+                <div class="dns-arrow__line"></div>
+                <div class="dns-arrow__label">Query</div>
+              </div>
+              <div class="dns-node" data-step="1">
+                <div class="dns-node__icon">🔄</div>
+                <div class="dns-node__label">Recursive Resolver</div>
+                <div class="dns-node__detail">ISP's DNS server</div>
+              </div>
+              <div class="dns-arrow" data-step="2">
+                <div class="dns-arrow__line"></div>
+                <div class="dns-arrow__label">Query</div>
+              </div>
+              <div class="dns-node" data-step="2">
+                <div class="dns-node__icon">🌍</div>
+                <div class="dns-node__label">Root Server</div>
+                <div class="dns-node__detail">13 root server clusters</div>
+              </div>
+              <div class="dns-arrow" data-step="3">
+                <div class="dns-arrow__line"></div>
+                <div class="dns-arrow__label">Referral → .com</div>
+              </div>
+              <div class="dns-node" data-step="3">
+                <div class="dns-node__icon">📂</div>
+                <div class="dns-node__label">TLD Server</div>
+                <div class="dns-node__detail">.com nameserver</div>
+              </div>
+              <div class="dns-arrow" data-step="4">
+                <div class="dns-arrow__line"></div>
+                <div class="dns-arrow__label">Referral → NS</div>
+              </div>
+              <div class="dns-node" data-step="4">
+                <div class="dns-node__icon">✅</div>
+                <div class="dns-node__label">Authoritative NS</div>
+                <div class="dns-node__detail">Returns IP address</div>
+              </div>
+            </div>
+          </div>
+          <div class="dns-result" id="dns-result"></div>
+          <div class="callout">
+            <strong>⚡ DNS Caching:</strong> Results are cached at every level — browser cache,
+            OS cache, resolver cache — controlled by <code>TTL</code> (Time To Live). A typical DNS
+            lookup takes <strong>20-120ms</strong>, but cached lookups are <strong>&lt;1ms</strong>.
+          </div>
+        </div>
+
+        <!-- DNS Record Types -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📋 DNS Record Types</h3>
+          <div class="record-grid" id="dns-records">
+            <div class="record-card active" data-type="A">
+              <div class="record-card__type">A</div>
+              <div class="record-card__desc">Maps domain to IPv4 address</div>
+              <div class="record-card__example"><code>example.com → 93.184.216.34</code></div>
+            </div>
+            <div class="record-card" data-type="AAAA">
+              <div class="record-card__type">AAAA</div>
+              <div class="record-card__desc">Maps domain to IPv6 address</div>
+              <div class="record-card__example"><code>example.com → 2606:2800:220:1:...</code></div>
+            </div>
+            <div class="record-card" data-type="CNAME">
+              <div class="record-card__type">CNAME</div>
+              <div class="record-card__desc">Alias pointing to another domain</div>
+              <div class="record-card__example"><code>www.example.com → example.com</code></div>
+            </div>
+            <div class="record-card" data-type="MX">
+              <div class="record-card__type">MX</div>
+              <div class="record-card__desc">Mail server for the domain</div>
+              <div class="record-card__example"><code>example.com → mail.example.com</code></div>
+            </div>
+            <div class="record-card" data-type="NS">
+              <div class="record-card__type">NS</div>
+              <div class="record-card__desc">Authoritative nameserver</div>
+              <div class="record-card__example"><code>example.com → ns1.example.com</code></div>
+            </div>
+            <div class="record-card" data-type="TXT">
+              <div class="record-card__type">TXT</div>
+              <div class="record-card__desc">Arbitrary text (SPF, DKIM, verification)</div>
+              <div class="record-card__example"><code>"v=spf1 include:_spf.google.com"</code></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 3. TCP/IP & OSI MODEL ═══════════════ -->
+      <section class="section reveal" id="tcp-ip-model">
+        <div class="section__header">
+          <span class="section__number">03</span>
+          <h2 class="section__title">TCP/IP &amp; the OSI Model</h2>
+        </div>
+        <p class="section__desc">
+          Data travels through <strong>layers</strong> — each adding its own header
+          (<em>encapsulation</em>). The <strong>OSI model</strong> has 7 layers while the
+          <strong>TCP/IP model</strong> has 4. Toggle between them to see how data gets wrapped at each layer.
+        </p>
+
+        <div class="viz-card">
+          <div class="viz-controls">
+            <label>Model</label>
+            <div class="strategy-toggle" id="model-toggle">
+              <button class="strategy-btn active" data-model="tcpip">TCP/IP (4 Layers)</button>
+              <button class="strategy-btn" data-model="osi">OSI (7 Layers)</button>
+            </div>
+            <button class="send-btn" id="btn-encapsulate">📦 Encapsulate Data</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="layer-stack" id="layer-stack">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+          <div class="callout cyan">
+            <strong>📦 Encapsulation:</strong> At each layer, a header is added. The sender goes
+            <strong>top → bottom</strong> (adding headers), and the receiver goes
+            <strong>bottom → top</strong> (stripping headers). This is how a simple "Hello" becomes
+            a full network packet.
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 4. TCP THREE-WAY HANDSHAKE ═══════════════ -->
+      <section class="section reveal" id="tcp-handshake">
+        <div class="section__header">
+          <span class="section__number">04</span>
+          <h2 class="section__title">TCP Three-Way Handshake</h2>
+        </div>
+        <p class="section__desc">
+          Before any data is sent over TCP, a <strong>three-way handshake</strong> establishes a
+          reliable connection. This ensures both sides are ready and agree on initial
+          <strong>sequence numbers</strong> for tracking data.
+        </p>
+
+        <div class="viz-card">
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-handshake">🤝 Run Handshake</button>
+            <button class="send-btn secondary" id="btn-teardown">🔌 Connection Teardown (FIN)</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="handshake-viz" id="handshake-viz">
+              <div class="hs-endpoint">
+                <div class="hs-endpoint__icon">💻</div>
+                <div class="hs-endpoint__label">Client</div>
+                <div class="hs-endpoint__state" id="hs-client-state">CLOSED</div>
+              </div>
+              <div class="hs-timeline" id="hs-timeline">
+                <!-- Arrows rendered by JS -->
+              </div>
+              <div class="hs-endpoint">
+                <div class="hs-endpoint__icon">🖥️</div>
+                <div class="hs-endpoint__label">Server</div>
+                <div class="hs-endpoint__state" id="hs-server-state">LISTEN</div>
+              </div>
+            </div>
+          </div>
+          <div class="hs-log" id="hs-log"></div>
+          <div class="callout">
+            <strong>🔢 Sequence Numbers:</strong> The client picks a random <code>ISN</code>
+            (Initial Sequence Number). The server picks its own. These track every byte sent,
+            enabling <strong>reliable, ordered delivery</strong> and <strong>duplicate detection</strong>.
+          </div>
+        </div>
+
+        <!-- TCP vs UDP -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">⚖️ TCP vs UDP</h3>
+          <div class="comparison-grid">
+            <div class="comparison-card tcp-card">
+              <div class="comparison-card__title">TCP</div>
+              <div class="comparison-card__subtitle">Transmission Control Protocol</div>
+              <ul class="comparison-card__list">
+                <li>✅ Connection-oriented (handshake)</li>
+                <li>✅ Reliable, ordered delivery</li>
+                <li>✅ Flow & congestion control</li>
+                <li>❌ Higher latency (overhead)</li>
+                <li>📧 Used for: HTTP, Email, FTP, SSH</li>
+              </ul>
+            </div>
+            <div class="comparison-card udp-card">
+              <div class="comparison-card__title">UDP</div>
+              <div class="comparison-card__subtitle">User Datagram Protocol</div>
+              <ul class="comparison-card__list">
+                <li>❌ Connectionless (no handshake)</li>
+                <li>❌ No guarantee of delivery/order</li>
+                <li>❌ No congestion control</li>
+                <li>✅ Low latency, lightweight</li>
+                <li>🎮 Used for: DNS, Gaming, Video, VoIP</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 5. HTTP REQUEST/RESPONSE ═══════════════ -->
+      <section class="section reveal" id="http">
+        <div class="section__header">
+          <span class="section__number">05</span>
+          <h2 class="section__title">HTTP Request/Response Lifecycle</h2>
+        </div>
+        <p class="section__desc">
+          <strong>HTTP (HyperText Transfer Protocol)</strong> is the application-layer protocol
+          that powers the web. Every interaction — loading a page, submitting a form, calling an API —
+          follows the <strong>request/response</strong> pattern.
+        </p>
+
+        <div class="viz-card">
+          <div class="viz-controls">
+            <label>Method</label>
+            <div class="strategy-toggle" id="http-method-toggle">
+              <button class="strategy-btn active" data-method="GET">GET</button>
+              <button class="strategy-btn" data-method="POST">POST</button>
+              <button class="strategy-btn" data-method="PUT">PUT</button>
+              <button class="strategy-btn" data-method="DELETE">DELETE</button>
+            </div>
+            <button class="send-btn" id="btn-send-request">🚀 Send Request</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="http-viz" id="http-viz">
+              <div class="http-panel request-panel">
+                <div class="http-panel__title">📤 Request</div>
+                <pre class="http-panel__code" id="http-request-code">GET /api/users HTTP/1.1
+Host: api.example.com
+Accept: application/json
+Authorization: Bearer eyJhbGciOi...
+User-Agent: Mozilla/5.0
+Connection: keep-alive</pre>
+              </div>
+              <div class="http-flight" id="http-flight">
+                <div class="http-packet" id="http-packet"></div>
+              </div>
+              <div class="http-panel response-panel">
+                <div class="http-panel__title">📥 Response</div>
+                <pre class="http-panel__code" id="http-response-code">HTTP/1.1 200 OK
+Content-Type: application/json
+Cache-Control: max-age=3600
+X-Request-Id: abc-123
+
+{
+  "users": [
+    { "id": 1, "name": "Alice" },
+    { "id": 2, "name": "Bob" }
+  ]
+}</pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status Codes -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📊 HTTP Status Codes</h3>
+          <div class="status-grid" id="status-grid">
+            <div class="status-category" data-category="2xx">
+              <div class="status-category__header success">2xx Success</div>
+              <div class="status-category__items">
+                <span class="status-chip success">200 OK</span>
+                <span class="status-chip success">201 Created</span>
+                <span class="status-chip success">204 No Content</span>
+              </div>
+            </div>
+            <div class="status-category" data-category="3xx">
+              <div class="status-category__header redirect">3xx Redirect</div>
+              <div class="status-category__items">
+                <span class="status-chip redirect">301 Moved Permanently</span>
+                <span class="status-chip redirect">304 Not Modified</span>
+              </div>
+            </div>
+            <div class="status-category" data-category="4xx">
+              <div class="status-category__header client-error">4xx Client Error</div>
+              <div class="status-category__items">
+                <span class="status-chip client-error">400 Bad Request</span>
+                <span class="status-chip client-error">401 Unauthorized</span>
+                <span class="status-chip client-error">403 Forbidden</span>
+                <span class="status-chip client-error">404 Not Found</span>
+                <span class="status-chip client-error">429 Too Many Requests</span>
+              </div>
+            </div>
+            <div class="status-category" data-category="5xx">
+              <div class="status-category__header server-error">5xx Server Error</div>
+              <div class="status-category__items">
+                <span class="status-chip server-error">500 Internal Server Error</span>
+                <span class="status-chip server-error">502 Bad Gateway</span>
+                <span class="status-chip server-error">503 Service Unavailable</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 6. TLS/SSL & HTTPS ═══════════════ -->
+      <section class="section reveal" id="tls">
+        <div class="section__header">
+          <span class="section__number">06</span>
+          <h2 class="section__title">TLS/SSL &amp; HTTPS</h2>
+        </div>
+        <p class="section__desc">
+          <strong>TLS (Transport Layer Security)</strong> encrypts data between client and server.
+          <strong>HTTPS = HTTP + TLS</strong>. The TLS handshake establishes a secure channel using
+          <em>asymmetric encryption</em> for key exchange, then <em>symmetric encryption</em> for data.
+        </p>
+
+        <div class="viz-card">
+          <div class="viz-controls">
+            <label>Protocol</label>
+            <div class="strategy-toggle" id="tls-toggle">
+              <button class="strategy-btn" data-mode="http">HTTP (Unencrypted)</button>
+              <button class="strategy-btn active" data-mode="https">HTTPS (TLS 1.3)</button>
+            </div>
+            <button class="send-btn" id="btn-tls-handshake">🔐 Run TLS Handshake</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="tls-viz" id="tls-viz">
+              <div class="tls-endpoint">
+                <div class="tls-endpoint__icon">💻</div>
+                <div class="tls-endpoint__label">Client</div>
+              </div>
+              <div class="tls-steps" id="tls-steps">
+                <!-- Rendered by JS -->
+              </div>
+              <div class="tls-endpoint">
+                <div class="tls-endpoint__icon">🖥️</div>
+                <div class="tls-endpoint__label">Server</div>
+              </div>
+            </div>
+          </div>
+          <div class="tls-comparison" id="tls-comparison">
+            <div class="tls-compare-card insecure" id="tls-http-card">
+              <div class="tls-compare-card__icon">🔓</div>
+              <div class="tls-compare-card__title">HTTP</div>
+              <div class="tls-compare-card__text">Data sent in <strong>plaintext</strong>. Anyone on the network can read it.</div>
+              <div class="tls-compare-card__data" id="tls-plaintext">GET /login?user=alice&pass=secret123</div>
+            </div>
+            <div class="tls-compare-card secure" id="tls-https-card">
+              <div class="tls-compare-card__icon">🔒</div>
+              <div class="tls-compare-card__title">HTTPS</div>
+              <div class="tls-compare-card__text">Data is <strong>encrypted</strong>. Only the intended recipient can read it.</div>
+              <div class="tls-compare-card__data encrypted" id="tls-encrypted">a7f3b2c9e1d4f6...8b2a5c7e9f1d3</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Certificate Chain -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📜 Certificate Chain of Trust</h3>
+          <div class="cert-chain" id="cert-chain">
+            <div class="cert-node root">
+              <div class="cert-node__icon">🏛️</div>
+              <div class="cert-node__label">Root CA</div>
+              <div class="cert-node__detail">Pre-installed in browser/OS</div>
+            </div>
+            <div class="cert-arrow">↓ signs</div>
+            <div class="cert-node intermediate">
+              <div class="cert-node__icon">🔗</div>
+              <div class="cert-node__label">Intermediate CA</div>
+              <div class="cert-node__detail">Let's Encrypt, DigiCert, etc.</div>
+            </div>
+            <div class="cert-arrow">↓ signs</div>
+            <div class="cert-node leaf">
+              <div class="cert-node__icon">📄</div>
+              <div class="cert-node__label">Server Certificate</div>
+              <div class="cert-node__detail">example.com — your site's cert</div>
+            </div>
+          </div>
+          <div class="callout">
+            <strong>🔑 Key Exchange (TLS 1.3):</strong> Uses <code>ECDHE</code> (Elliptic Curve Diffie-Hellman Ephemeral)
+            for <strong>forward secrecy</strong> — even if the server's private key is compromised later,
+            past sessions remain secure.
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 7. ROUTING & IP ADDRESSING ═══════════════ -->
+      <section class="section reveal" id="routing">
+        <div class="section__header">
+          <span class="section__number">07</span>
+          <h2 class="section__title">Routing &amp; IP Addressing</h2>
+        </div>
+        <p class="section__desc">
+          Every device on the internet has an <strong>IP address</strong>. Routers forward packets
+          hop-by-hop toward the destination using <strong>routing tables</strong>. Each hop decrements
+          the <strong>TTL (Time To Live)</strong> to prevent infinite loops.
+        </p>
+
+        <div class="viz-card">
+          <div class="viz-controls">
+            <label for="slider-ttl">TTL</label>
+            <input type="range" id="slider-ttl" min="1" max="10" value="6" />
+            <span class="viz-value" id="val-ttl">6</span>
+            <button class="send-btn" id="btn-trace-route">🛤️ Trace Route</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="route-viz" id="route-viz">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+          <div class="route-log" id="route-log"></div>
+          <div class="callout cyan">
+            <strong>🔢 TTL (Time To Live):</strong> A counter that starts at a value (typically 64 or 128)
+            and decrements at each router hop. If TTL reaches 0, the packet is dropped and an
+            <code>ICMP Time Exceeded</code> message is sent back — this is how <code>traceroute</code> works!
+          </div>
+        </div>
+
+        <!-- IPv4 vs IPv6 -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🔢 IPv4 vs IPv6</h3>
+          <div class="comparison-grid">
+            <div class="comparison-card ipv4-card">
+              <div class="comparison-card__title">IPv4</div>
+              <div class="comparison-card__subtitle">32-bit addresses</div>
+              <ul class="comparison-card__list">
+                <li>📍 Format: <code>192.168.1.1</code></li>
+                <li>📊 ~4.3 billion addresses</li>
+                <li>⚠️ Exhausted — requires NAT</li>
+                <li>📦 Min header: 20 bytes</li>
+              </ul>
+            </div>
+            <div class="comparison-card ipv6-card">
+              <div class="comparison-card__title">IPv6</div>
+              <div class="comparison-card__subtitle">128-bit addresses</div>
+              <ul class="comparison-card__list">
+                <li>📍 Format: <code>2001:db8::1</code></li>
+                <li>📊 ~340 undecillion addresses</li>
+                <li>✅ No NAT needed</li>
+                <li>📦 Fixed header: 40 bytes</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 8. FIREWALLS, NAT & PROXIES ═══════════════ -->
+      <section class="section reveal" id="firewalls">
+        <div class="section__header">
+          <span class="section__number">08</span>
+          <h2 class="section__title">Firewalls, NAT &amp; Proxies</h2>
+        </div>
+        <p class="section__desc">
+          <strong>Firewalls</strong> filter network traffic based on rules. <strong>NAT</strong> translates
+          private IP addresses to public ones. <strong>Proxies</strong> act as intermediaries between
+          clients and servers.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🛡️ Firewall Packet Filter</h3>
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-send-packets">📦 Send Packets</button>
+            <button class="send-btn secondary" id="btn-reset-firewall">🔄 Reset</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="firewall-viz" id="firewall-viz">
+              <div class="fw-source">
+                <div class="fw-label">Incoming Packets</div>
+                <div class="fw-packets" id="fw-packets">
+                  <!-- Rendered by JS -->
+                </div>
+              </div>
+              <div class="fw-wall" id="fw-wall">
+                <div class="fw-wall__label">🛡️ Firewall</div>
+                <div class="fw-rules" id="fw-rules">
+                  <div class="fw-rule allow">✅ Allow Port 443 (HTTPS)</div>
+                  <div class="fw-rule allow">✅ Allow Port 80 (HTTP)</div>
+                  <div class="fw-rule deny">❌ Deny Port 22 (SSH)</div>
+                  <div class="fw-rule deny">❌ Deny Port 23 (Telnet)</div>
+                  <div class="fw-rule allow">✅ Allow Port 53 (DNS)</div>
+                </div>
+              </div>
+              <div class="fw-dest">
+                <div class="fw-label">Passed</div>
+                <div class="fw-passed" id="fw-passed"></div>
+                <div class="fw-label" style="margin-top:1rem; color: var(--accent-red);">Blocked</div>
+                <div class="fw-blocked" id="fw-blocked"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- NAT -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🔀 Network Address Translation (NAT)</h3>
+          <div class="nat-viz" id="nat-viz">
+            <div class="nat-side private">
+              <div class="nat-side__title">Private Network</div>
+              <div class="nat-device" data-ip="192.168.1.10">💻 192.168.1.10</div>
+              <div class="nat-device" data-ip="192.168.1.11">📱 192.168.1.11</div>
+              <div class="nat-device" data-ip="192.168.1.12">🖥️ 192.168.1.12</div>
+            </div>
+            <div class="nat-router">
+              <div class="nat-router__icon">📡</div>
+              <div class="nat-router__label">NAT Router</div>
+              <div class="nat-router__table" id="nat-table">
+                <!-- Rendered by JS -->
+              </div>
+            </div>
+            <div class="nat-side public">
+              <div class="nat-side__title">Public Internet</div>
+              <div class="nat-device public-ip" data-ip="203.0.113.5">🌐 203.0.113.5</div>
+            </div>
+          </div>
+          <div class="callout">
+            <strong>🔀 NAT:</strong> Multiple devices share one public IP. The router maintains a
+            translation table mapping <code>private_ip:port → public_ip:port</code>. This is why
+            ~17 million private IP addresses (e.g., 192.168.x.x) can all access the internet through
+            a single public IP.
+          </div>
+        </div>
+
+        <!-- Forward vs Reverse Proxy -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🔄 Forward Proxy vs Reverse Proxy</h3>
+          <div class="proxy-comparison" id="proxy-comparison">
+            <div class="proxy-diagram forward">
+              <div class="proxy-diagram__title">Forward Proxy</div>
+              <div class="proxy-flow">
+                <div class="proxy-entity">👥 Clients</div>
+                <div class="proxy-arrow">→</div>
+                <div class="proxy-entity proxy-server">🛡️ Proxy</div>
+                <div class="proxy-arrow">→</div>
+                <div class="proxy-entity">🌐 Internet</div>
+              </div>
+              <div class="proxy-use-cases">
+                <span class="proxy-tag">Anonymity</span>
+                <span class="proxy-tag">Content filtering</span>
+                <span class="proxy-tag">Caching</span>
+              </div>
+            </div>
+            <div class="proxy-diagram reverse">
+              <div class="proxy-diagram__title">Reverse Proxy</div>
+              <div class="proxy-flow">
+                <div class="proxy-entity">🌐 Clients</div>
+                <div class="proxy-arrow">→</div>
+                <div class="proxy-entity proxy-server">⚖️ Proxy</div>
+                <div class="proxy-arrow">→</div>
+                <div class="proxy-entity">🖥️ Servers</div>
+              </div>
+              <div class="proxy-use-cases">
+                <span class="proxy-tag">Load balancing</span>
+                <span class="proxy-tag">SSL termination</span>
+                <span class="proxy-tag">Nginx / HAProxy</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 9. CDNs & CACHING ═══════════════ -->
+      <section class="section reveal" id="cdn">
+        <div class="section__header">
+          <span class="section__number">09</span>
+          <h2 class="section__title">CDNs &amp; Caching</h2>
+        </div>
+        <p class="section__desc">
+          A <strong>Content Delivery Network (CDN)</strong> distributes copies of content to
+          <strong>edge servers</strong> worldwide. Users are served from the nearest edge location,
+          reducing latency dramatically.
+        </p>
+
+        <div class="viz-card">
+          <div class="viz-controls">
+            <label>Location</label>
+            <div class="strategy-toggle" id="cdn-location-toggle">
+              <button class="strategy-btn active" data-location="nearby">📍 Nearby (Sydney)</button>
+              <button class="strategy-btn" data-location="far">📍 Far Away (London)</button>
+            </div>
+            <button class="send-btn" id="btn-cdn-request">🚀 Fetch Resource</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="cdn-viz" id="cdn-viz">
+              <div class="cdn-user">
+                <div class="cdn-entity-icon">👤</div>
+                <div class="cdn-entity-label">You</div>
+              </div>
+              <div class="cdn-path" id="cdn-path">
+                <!-- Rendered by JS -->
+              </div>
+              <div class="cdn-edge">
+                <div class="cdn-entity-icon">⚡</div>
+                <div class="cdn-entity-label">Edge Server</div>
+                <div class="cdn-cache-status" id="cdn-cache-status">CACHE HIT</div>
+              </div>
+              <div class="cdn-origin-path" id="cdn-origin-path"></div>
+              <div class="cdn-origin">
+                <div class="cdn-entity-icon">🏢</div>
+                <div class="cdn-entity-label">Origin Server</div>
+              </div>
+            </div>
+          </div>
+          <div class="cdn-metrics" id="cdn-metrics">
+            <!-- Rendered by JS -->
+          </div>
+          <div class="callout cyan">
+            <strong>⚡ Cache HIT vs MISS:</strong> On a <strong>cache HIT</strong>, the edge server
+            returns content immediately (~20ms). On a <strong>cache MISS</strong>, it fetches from the
+            origin server (~200-400ms), caches it, then returns to the user. Subsequent requests = HIT.
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 10. WEBSOCKETS & REAL-TIME ═══════════════ -->
+      <section class="section reveal" id="websockets">
+        <div class="section__header">
+          <span class="section__number">10</span>
+          <h2 class="section__title">WebSockets &amp; Real-Time Communication</h2>
+        </div>
+        <p class="section__desc">
+          <strong>WebSockets</strong> provide <strong>full-duplex</strong> communication over a single
+          TCP connection. Unlike HTTP's request-response model, WebSockets allow the server to push
+          data to the client <em>at any time</em> — ideal for chat, gaming, and live updates.
+        </p>
+
+        <div class="viz-card">
+          <div class="viz-controls">
+            <label>Mode</label>
+            <div class="strategy-toggle" id="ws-mode-toggle">
+              <button class="strategy-btn" data-mode="polling">HTTP Polling</button>
+              <button class="strategy-btn active" data-mode="websocket">WebSocket</button>
+            </div>
+            <button class="send-btn" id="btn-ws-demo">▶ Run Demo</button>
+            <button class="send-btn secondary" id="btn-ws-stop">⏹ Stop</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="ws-viz" id="ws-viz">
+              <div class="ws-endpoint client-side">
+                <div class="ws-endpoint__icon">💻</div>
+                <div class="ws-endpoint__label">Client</div>
+              </div>
+              <div class="ws-channel" id="ws-channel">
+                <div class="ws-channel__label" id="ws-channel-label">WebSocket Connection</div>
+                <div class="ws-messages" id="ws-messages">
+                  <!-- Rendered by JS -->
+                </div>
+              </div>
+              <div class="ws-endpoint server-side">
+                <div class="ws-endpoint__icon">🖥️</div>
+                <div class="ws-endpoint__label">Server</div>
+              </div>
+            </div>
+          </div>
+          <div class="ws-stats" id="ws-stats">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- WebSocket Upgrade -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🔄 WebSocket Upgrade Handshake</h3>
+          <div class="ws-upgrade" id="ws-upgrade">
+            <div class="ws-upgrade-step">
+              <div class="ws-upgrade-step__num">1</div>
+              <div class="ws-upgrade-step__content">
+                <div class="ws-upgrade-step__title">Client sends HTTP Upgrade request</div>
+                <pre class="ws-upgrade-step__code">GET /chat HTTP/1.1
+Upgrade: websocket
+Connection: Upgrade
+Sec-WebSocket-Key: dGhlIHNhbXBsZQ==
+Sec-WebSocket-Version: 13</pre>
+              </div>
+            </div>
+            <div class="ws-upgrade-step">
+              <div class="ws-upgrade-step__num">2</div>
+              <div class="ws-upgrade-step__content">
+                <div class="ws-upgrade-step__title">Server responds with 101 Switching Protocols</div>
+                <pre class="ws-upgrade-step__code">HTTP/1.1 101 Switching Protocols
+Upgrade: websocket
+Connection: Upgrade
+Sec-WebSocket-Accept: s3pPLMBiTxaQ9k...</pre>
+              </div>
+            </div>
+            <div class="ws-upgrade-step">
+              <div class="ws-upgrade-step__num">3</div>
+              <div class="ws-upgrade-step__content">
+                <div class="ws-upgrade-step__title">Full-duplex communication established</div>
+                <div class="ws-upgrade-step__desc">Both sides can now send frames at any time without HTTP overhead.</div>
+              </div>
+            </div>
+          </div>
+          <div class="callout">
+            <strong>📊 Polling vs WebSocket overhead:</strong> HTTP polling sends headers with <em>every</em> request
+            (~800 bytes). WebSocket frames are just <strong>2-14 bytes</strong> of overhead. For 1000 messages/min,
+            polling uses ~800KB overhead vs WebSocket's ~14KB.
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ═══════════════ FOOTER ═══════════════ -->
+    <footer class="footer">
+      <div class="footer__content">
+        <p class="footer__text">
+          <span class="gradient-text">Internet & Networking Visualizer</span> — built for software engineers
+          who learn by seeing.
+        </p>
+        <div class="footer__links">
+          <a href="#hero" class="footer__link">↑ Back to Top</a>
+        </div>
+      </div>
+    </footer>
+
+    <script src="index.js"></script>
+  </body>
+</html>

@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Java Design Patterns — Interactive Visualizer</title>
+  <meta name="description" content="Learn the 10 most frequent Java design patterns through interactive visualizations — Singleton, Factory, Builder, Strategy, Observer, Decorator, Adapter, Proxy, and more." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="index.css" />
+</head>
+<body>
+  <div class="app">
+
+    <!-- ═══════════════ HERO ═══════════════ -->
+    <header class="hero">
+      <div class="hero__orb hero__orb--1"></div>
+      <div class="hero__orb hero__orb--2"></div>
+      <div class="hero__orb hero__orb--3"></div>
+      <h1 class="hero__title">Java Design<br /><span class="hero__accent">Patterns</span></h1>
+      <p class="hero__sub">Interactive guide to the 10 most frequently asked design patterns — learn by seeing them in action.</p>
+      <div class="hero__badges">
+        <span class="hero__badge">🔵 Creational</span>
+        <span class="hero__badge">🟢 Structural</span>
+        <span class="hero__badge">🟡 Behavioral</span>
+        <span class="hero__badge">☕ Java-focused</span>
+      </div>
+    </header>
+
+    <main class="main">
+
+      <!-- ═══════════════ 1. SINGLETON ═══════════════ -->
+      <section class="section reveal" id="singleton">
+        <div class="section__header">
+          <span class="section__number">01</span>
+          <h2 class="section__title">Singleton</h2>
+          <span class="section__badge section__badge--creational">Creational</span>
+        </div>
+        <p class="section__desc">
+          Ensures a class has <strong>only one instance</strong> and provides a <strong>global access point</strong> to it.
+          The most asked design pattern in Java interviews — especially around thread safety.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="viz-title">🔒 Instance Identity Test</h3>
+          <p class="viz-desc">Click "Get Instance" multiple times — every call returns the same object.</p>
+          <div class="viz-controls">
+            <button class="btn-primary" id="btn-singleton-get">▶ getInstance()</button>
+            <button class="btn-primary" id="btn-singleton-get2">▶ getInstance() again</button>
+            <button class="btn-muted" id="btn-singleton-reset">🔄 Reset</button>
+          </div>
+          <div class="viz-canvas">
+            <div id="singleton-demo"></div>
+          </div>
+          <div class="viz-result" id="singleton-result"></div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="viz-title">🧪 Thread Safety Variants</h3>
+          <div class="viz-controls">
+            <div class="toggle-group" id="singleton-toggle">
+              <button class="toggle-btn active" data-type="eager">Eager Init</button>
+              <button class="toggle-btn" data-type="lazy">Lazy (Broken)</button>
+              <button class="toggle-btn" data-type="dcl">Double-Check Lock</button>
+              <button class="toggle-btn" data-type="holder">Bill Pugh</button>
+              <button class="toggle-btn" data-type="enum">Enum</button>
+            </div>
+          </div>
+          <div class="viz-canvas">
+            <div id="singleton-code"></div>
+          </div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="viz-title">📋 Key Insights</h3>
+          <dl class="key-insight">
+            <dt>Private Constructor</dt>
+            <dd>Prevents external instantiation — <code>new Singleton()</code> is forbidden outside the class.</dd>
+            <dt>Static Instance</dt>
+            <dd>The single instance is stored as a <code>private static</code> field.</dd>
+            <dt>Thread Safety</dt>
+            <dd>Lazy init without synchronization is broken in multi-threaded contexts. Use DCL, Bill Pugh Holder, or Enum.</dd>
+          </dl>
+          <div class="real-world">
+            <span class="rw-tag">Runtime.getRuntime()</span>
+            <span class="rw-tag">Spring Beans (default)</span>
+            <span class="rw-tag">Logger instances</span>
+            <span class="rw-tag">Connection Pool</span>
+          </div>
+        </div>
+
+        <div class="interview-card">
+          <div class="interview-header" onclick="this.classList.toggle('open'); this.nextElementSibling.classList.toggle('open');">
+            <span class="chevron">▶</span>
+            <span class="interview-label">🎯 Interview Tips</span>
+          </div>
+          <div class="interview-body">
+            <div class="interview-content">
+              <ul>
+                <li>Explain why <strong>double-checked locking</strong> needs <code>volatile</code> (instruction reordering).</li>
+                <li>Bill Pugh Holder pattern leverages the JVM's class loading guarantee — thread-safe & lazy.</li>
+                <li>Enum singleton is <strong>serialization-safe</strong> and <strong>reflection-proof</strong> — Joshua Bloch's recommended approach.</li>
+                <li>Know the trade-offs: testability issues, hidden dependencies, and global state.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 2. FACTORY METHOD ═══════════════ -->
+      <section class="section reveal" id="factory-method">
+        <div class="section__header">
+          <span class="section__number">02</span>
+          <h2 class="section__title">Factory Method</h2>
+          <span class="section__badge section__badge--creational">Creational</span>
+        </div>
+        <p class="section__desc">
+          Defines an interface for creating objects but lets <strong>subclasses decide</strong> which class to instantiate.
+          Shifts the <code>new</code> keyword from client code into a dedicated factory method.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="viz-title">🏭 Create Product by Type</h3>
+          <p class="viz-desc">Select a notification type — the factory creates the correct object.</p>
+          <div class="viz-controls">
+            <button class="btn-primary factory-btn" data-type="email">📧 Email</button>
+            <button class="btn-accent factory-btn" data-type="sms">📱 SMS</button>
+            <button class="btn-warn factory-btn" data-type="push">🔔 Push</button>
+            <button class="btn-muted" id="btn-factory-reset">🔄 Reset</button>
+          </div>
+          <div class="viz-canvas">
+            <div id="factory-demo"></div>
+          </div>
+          <div class="viz-result" id="factory-result"></div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="viz-title">📋 Key Insights</h3>
+          <dl class="key-insight">
+            <dt>Open/Closed Principle</dt>
+            <dd>Adding a new notification type means creating a new class — existing code untouched.</dd>
+            <dt>Decoupling</dt>
+            <dd>Client code depends on the <code>Notification</code> interface, not concrete classes.</dd>
+            <dt>vs Simple Factory</dt>
+            <dd>Factory Method uses inheritance (subclass factories), Simple Factory uses a static method with switch/case.</dd>
+          </dl>
+          <div class="real-world">
+            <span class="rw-tag">DriverManager.getConnection()</span>
+            <span class="rw-tag">Calendar.getInstance()</span>
+            <span class="rw-tag">Spring BeanFactory</span>
+          </div>
+        </div>
+
+        <div class="interview-card">
+          <div class="interview-header" onclick="this.classList.toggle('open'); this.nextElementSibling.classList.toggle('open');">
+            <span class="chevron">▶</span>
+            <span class="interview-label">🎯 Interview Tips</span>
+          </div>
+          <div class="interview-body">
+            <div class="interview-content">
+              <ul>
+                <li>Differentiate <strong>Factory Method</strong> (uses inheritance) from <strong>Abstract Factory</strong> (family of products).</li>
+                <li>Key benefit: avoids tight coupling to concrete classes — enables <strong>dependency injection</strong>.</li>
+                <li>Follows <strong>SRP</strong> — creation logic is separated from business logic.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 3. ABSTRACT FACTORY ═══════════════ -->
+      <section class="section reveal" id="abstract-factory">
+        <div class="section__header">
+          <span class="section__number">03</span>
+          <h2 class="section__title">Abstract Factory</h2>
+          <span class="section__badge section__badge--creational">Creational</span>
+        </div>
+        <p class="section__desc">
+          Provides an interface for creating <strong>families of related objects</strong> without specifying their concrete classes.
+          Think of it as a "factory of factories" — each factory produces a set of matching components.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="viz-title">🎨 UI Theme Factory</h3>
+          <p class="viz-desc">Switch themes — each factory creates matching Button + Checkbox components.</p>
+          <div class="viz-controls">
+            <div class="toggle-group" id="af-toggle">
+              <button class="toggle-btn active" data-theme="dark">🌙 Dark Theme</button>
+              <button class="toggle-btn" data-theme="light">☀️ Light Theme</button>
+            </div>
+            <button class="btn-primary" id="btn-af-create">▶ Create Components</button>
+          </div>
+          <div class="viz-canvas">
+            <div id="af-demo"></div>
+          </div>
+          <div class="viz-result" id="af-result"></div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="viz-title">📋 Abstract Factory vs Factory Method</h3>
+          <table class="compare-table">
+            <thead>
+              <tr><th>Aspect</th><th class="col-a">Factory Method</th><th class="col-b">Abstract Factory</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Creates</td><td>One product</td><td>Family of products</td></tr>
+              <tr><td>Uses</td><td>Inheritance (subclass)</td><td>Composition (factory object)</td></tr>
+              <tr><td>Adding products</td><td>New subclass per type</td><td>New factory per family</td></tr>
+              <tr><td>Example</td><td>createNotification()</td><td>createButton() + createCheckbox()</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="interview-card">
+          <div class="interview-header" onclick="this.classList.toggle('open'); this.nextElementSibling.classList.toggle('open');">
+            <span class="chevron">▶</span>
+            <span class="interview-label">🎯 Interview Tips</span>
+          </div>
+          <div class="interview-body">
+            <div class="interview-content">
+              <ul>
+                <li>Abstract Factory ensures <strong>consistency</strong> across a product family — you can't mix a DarkButton with a LightCheckbox.</li>
+                <li>Used in <strong>cross-platform UI toolkits</strong> (Swing, SWT) and <strong>JDBC driver APIs</strong>.</li>
+                <li>Follows <strong>Dependency Inversion</strong> — client depends on abstractions, not concrete factories.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 4. BUILDER ═══════════════ -->
+      <section class="section reveal" id="builder">
+        <div class="section__header">
+          <span class="section__number">04</span>
+          <h2 class="section__title">Builder</h2>
+          <span class="section__badge section__badge--creational">Creational</span>
+        </div>
+        <p class="section__desc">
+          Separates the construction of a complex object from its representation.
+          Enables step-by-step construction with a <strong>fluent API</strong> — each method returns <code>this</code>.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="viz-title">🏗️ Build a User Object</h3>
+          <p class="viz-desc">Click each setter to chain method calls, then build the final object.</p>
+          <div class="viz-controls">
+            <button class="btn-primary builder-btn" data-field="name" data-val="Alice">. name("Alice")</button>
+            <button class="btn-primary builder-btn" data-field="email" data-val="alice@dev.io">. email("alice@dev.io")</button>
+            <button class="btn-primary builder-btn" data-field="age" data-val="28">. age(28)</button>
+            <button class="btn-primary builder-btn" data-field="role" data-val="ADMIN">. role("ADMIN")</button>
+            <button class="btn-accent" id="btn-builder-build">🏗️ .build()</button>
+            <button class="btn-muted" id="btn-builder-reset">🔄 Reset</button>
+          </div>
+          <div class="viz-canvas">
+            <div id="builder-demo"></div>
+          </div>
+          <div class="viz-result" id="builder-result"></div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="viz-title">📋 Key Insights</h3>
+          <dl class="key-insight">
+            <dt>Telescoping Constructor Anti-pattern</dt>
+            <dd>Builder solves the problem of constructors with too many parameters — <code>new User(name, email, age, role, ...)</code>.</dd>
+            <dt>Immutability</dt>
+            <dd>The built object can be made immutable — all fields set during construction, no setters exposed.</dd>
+            <dt>Fluent API</dt>
+            <dd>Each setter returns <code>this</code>, enabling <code>builder.name("Alice").age(28).build()</code>.</dd>
+          </dl>
+          <div class="real-world">
+            <span class="rw-tag">StringBuilder</span>
+            <span class="rw-tag">Lombok @Builder</span>
+            <span class="rw-tag">Stream API pipeline</span>
+            <span class="rw-tag">HttpClient.newBuilder()</span>
+          </div>
+        </div>
+
+        <div class="interview-card">
+          <div class="interview-header" onclick="this.classList.toggle('open'); this.nextElementSibling.classList.toggle('open');">
+            <span class="chevron">▶</span>
+            <span class="interview-label">🎯 Interview Tips</span>
+          </div>
+          <div class="interview-body">
+            <div class="interview-content">
+              <ul>
+                <li>Explain how Lombok's <code>@Builder</code> generates the pattern at compile-time.</li>
+                <li>Builder is ideal when an object has <strong>many optional fields</strong> — avoids multiple overloaded constructors.</li>
+                <li>Distinguish Builder (step-by-step) from <strong>Factory</strong> (one-shot creation).</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 5. STRATEGY ═══════════════ -->
+      <section class="section reveal" id="strategy">
+        <div class="section__header">
+          <span class="section__number">05</span>
+          <h2 class="section__title">Strategy</h2>
+          <span class="section__badge section__badge--behavioral">Behavioral</span>
+        </div>
+        <p class="section__desc">
+          Defines a family of algorithms, encapsulates each one, and makes them <strong>interchangeable at runtime</strong>.
+          The client delegates behavior to a strategy object instead of using conditional logic.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="viz-title">📊 Sort with Different Strategies</h3>
+          <p class="viz-desc">Select a sorting strategy — the context delegates to it at runtime.</p>
+          <div class="viz-controls">
+            <button class="btn-primary strategy-btn" data-strategy="bubble">🫧 Bubble Sort</button>
+            <button class="btn-accent strategy-btn" data-strategy="merge">🔀 Merge Sort</button>
+            <button class="btn-warn strategy-btn" data-strategy="quick">⚡ Quick Sort</button>
+            <button class="btn-muted" id="btn-strategy-reset">🔄 Reset</button>
+          </div>
+          <div class="viz-canvas">
+            <div id="strategy-demo"></div>
+          </div>
+          <div class="viz-result" id="strategy-result"></div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="viz-title">📋 Key Insights</h3>
+          <dl class="key-insight">
+            <dt>Replace Conditionals</dt>
+            <dd>Instead of <code>if (type == "A") ... else if (type == "B")</code>, inject the strategy.</dd>
+            <dt>Open/Closed</dt>
+            <dd>Adding a new algorithm means adding a new class — no existing code changes.</dd>
+            <dt>Composition over Inheritance</dt>
+            <dd>Strategy uses <strong>HAS-A</strong> (the context has a strategy), not IS-A.</dd>
+          </dl>
+          <div class="real-world">
+            <span class="rw-tag">Comparator interface</span>
+            <span class="rw-tag">Collections.sort()</span>
+            <span class="rw-tag">LayoutManager (Swing)</span>
+            <span class="rw-tag">Payment processing</span>
+          </div>
+        </div>
+
+        <div class="interview-card">
+          <div class="interview-header" onclick="this.classList.toggle('open'); this.nextElementSibling.classList.toggle('open');">
+            <span class="chevron">▶</span>
+            <span class="interview-label">🎯 Interview Tips</span>
+          </div>
+          <div class="interview-body">
+            <div class="interview-content">
+              <ul>
+                <li><code>Comparator</code> is the textbook Java Strategy pattern — pass different comparators for different sort orders.</li>
+                <li>With Java 8+, strategies can be <strong>lambdas</strong>: <code>context.setStrategy(arr -> Arrays.sort(arr))</code>.</li>
+                <li>Differentiate from <strong>State pattern</strong>: Strategy is chosen by the client, State transitions internally.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 6. OBSERVER ═══════════════ -->
+      <section class="section reveal" id="observer">
+        <div class="section__header">
+          <span class="section__number">06</span>
+          <h2 class="section__title">Observer</h2>
+          <span class="section__badge section__badge--behavioral">Behavioral</span>
+        </div>
+        <p class="section__desc">
+          Defines a <strong>one-to-many dependency</strong> between objects so that when one object changes state,
+          all its dependents are <strong>notified automatically</strong>. The foundation of event-driven systems.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="viz-title">📡 Publish-Subscribe Demo</h3>
+          <p class="viz-desc">Add/remove subscribers, then fire an event to notify all active listeners.</p>
+          <div class="viz-controls">
+            <button class="btn-accent" id="btn-obs-add">+ Add Subscriber</button>
+            <button class="btn-danger" id="btn-obs-remove">− Remove Last</button>
+            <button class="btn-primary" id="btn-obs-fire">🔔 Fire Event</button>
+            <button class="btn-muted" id="btn-obs-reset">🔄 Reset</button>
+          </div>
+          <div class="viz-canvas">
+            <div id="observer-demo"></div>
+          </div>
+          <div class="viz-result" id="observer-result"></div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="viz-title">📋 Key Insights</h3>
+          <dl class="key-insight">
+            <dt>Loose Coupling</dt>
+            <dd>The publisher knows nothing about subscribers except that they implement <code>Observer</code>.</dd>
+            <dt>Push vs Pull</dt>
+            <dd>Push: subject sends data in <code>update(data)</code>. Pull: observer queries the subject for changes.</dd>
+            <dt>Memory Leaks</dt>
+            <dd>Forgotten subscriptions cause leaks — always unsubscribe when done (common in Android/UI frameworks).</dd>
+          </dl>
+          <div class="real-world">
+            <span class="rw-tag">java.util.Observer (deprecated)</span>
+            <span class="rw-tag">PropertyChangeListener</span>
+            <span class="rw-tag">Spring ApplicationEvent</span>
+            <span class="rw-tag">RxJava / Reactor</span>
+          </div>
+        </div>
+
+        <div class="interview-card">
+          <div class="interview-header" onclick="this.classList.toggle('open'); this.nextElementSibling.classList.toggle('open');">
+            <span class="chevron">▶</span>
+            <span class="interview-label">🎯 Interview Tips</span>
+          </div>
+          <div class="interview-body">
+            <div class="interview-content">
+              <ul>
+                <li>Know why <code>java.util.Observer</code> was deprecated (Java 9) — it's a <strong>class</strong>, not an interface, preventing multiple inheritance.</li>
+                <li>Relate to <strong>event-driven architecture</strong>, <strong>message queues</strong> (Kafka), and <strong>reactive streams</strong>.</li>
+                <li>Discuss thread safety: if observers are notified on different threads, use <code>CopyOnWriteArrayList</code>.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 7. DECORATOR ═══════════════ -->
+      <section class="section reveal" id="decorator">
+        <div class="section__header">
+          <span class="section__number">07</span>
+          <h2 class="section__title">Decorator</h2>
+          <span class="section__badge section__badge--structural">Structural</span>
+        </div>
+        <p class="section__desc">
+          Attaches additional responsibilities to an object <strong>dynamically</strong> — wrapping it like layers of an onion.
+          An alternative to subclassing for extending functionality.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="viz-title">🧅 Stack Decorators on a Coffee Order</h3>
+          <p class="viz-desc">Add decorators to see the wrapping pipeline grow. Each layer adds cost & behavior.</p>
+          <div class="viz-controls">
+            <button class="btn-primary decorator-btn" data-decorator="milk">🥛 + Milk ($0.50)</button>
+            <button class="btn-primary decorator-btn" data-decorator="sugar">🍬 + Sugar ($0.30)</button>
+            <button class="btn-accent decorator-btn" data-decorator="whip">🍦 + Whipped Cream ($0.70)</button>
+            <button class="btn-warn decorator-btn" data-decorator="caramel">🍯 + Caramel ($0.60)</button>
+            <button class="btn-muted" id="btn-decorator-reset">🔄 Reset</button>
+          </div>
+          <div class="viz-canvas">
+            <div id="decorator-demo"></div>
+          </div>
+          <div class="viz-result" id="decorator-result"></div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="viz-title">📋 Key Insights</h3>
+          <dl class="key-insight">
+            <dt>Same Interface</dt>
+            <dd>Both the component and decorator implement the same interface — the client can't tell the difference.</dd>
+            <dt>Recursive Composition</dt>
+            <dd>A decorator wraps a component which could itself be another decorator — unlimited stacking.</dd>
+            <dt>vs Inheritance</dt>
+            <dd>Inheritance is static (compile-time). Decorator is dynamic (runtime) — mix & match behaviors.</dd>
+          </dl>
+          <div class="real-world">
+            <span class="rw-tag">BufferedInputStream</span>
+            <span class="rw-tag">DataOutputStream</span>
+            <span class="rw-tag">Collections.unmodifiableList()</span>
+            <span class="rw-tag">Spring HandlerInterceptor</span>
+          </div>
+        </div>
+
+        <div class="interview-card">
+          <div class="interview-header" onclick="this.classList.toggle('open'); this.nextElementSibling.classList.toggle('open');">
+            <span class="chevron">▶</span>
+            <span class="interview-label">🎯 Interview Tips</span>
+          </div>
+          <div class="interview-body">
+            <div class="interview-content">
+              <ul>
+                <li>Java I/O is the classic Decorator example: <code>new BufferedReader(new InputStreamReader(new FileInputStream("file")))</code>.</li>
+                <li>Differentiate from <strong>Proxy</strong>: Decorator adds behavior, Proxy controls access.</li>
+                <li>Explain the <strong>class explosion problem</strong> that Decorator solves vs. subclassing every combination.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 8. ADAPTER ═══════════════ -->
+      <section class="section reveal" id="adapter">
+        <div class="section__header">
+          <span class="section__number">08</span>
+          <h2 class="section__title">Adapter</h2>
+          <span class="section__badge section__badge--structural">Structural</span>
+        </div>
+        <p class="section__desc">
+          Converts the interface of a class into <strong>another interface the client expects</strong>.
+          Allows classes with incompatible interfaces to work together — the "power adapter" of software.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="viz-title">🔌 Convert XML → JSON Adapter</h3>
+          <p class="viz-desc">The legacy system returns XML, but the new API expects JSON. The adapter bridges the gap.</p>
+          <div class="viz-controls">
+            <button class="btn-primary" id="btn-adapter-direct">❌ Direct Call (Fails)</button>
+            <button class="btn-accent" id="btn-adapter-adapted">✅ Through Adapter</button>
+            <button class="btn-muted" id="btn-adapter-reset">🔄 Reset</button>
+          </div>
+          <div class="viz-canvas">
+            <div id="adapter-demo"></div>
+          </div>
+          <div class="viz-result" id="adapter-result"></div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="viz-title">📋 Key Insights</h3>
+          <dl class="key-insight">
+            <dt>Class vs Object Adapter</dt>
+            <dd>Class adapter uses <strong>multiple inheritance</strong> (not possible in Java). Object adapter uses <strong>composition</strong> (wraps the adaptee).</dd>
+            <dt>Single Responsibility</dt>
+            <dd>Conversion logic is isolated in the adapter — neither client nor adaptee need to change.</dd>
+            <dt>When to Use</dt>
+            <dd>Integrating legacy code, 3rd-party libraries, or when you can't modify the source.</dd>
+          </dl>
+          <div class="real-world">
+            <span class="rw-tag">Arrays.asList()</span>
+            <span class="rw-tag">InputStreamReader</span>
+            <span class="rw-tag">Spring HandlerAdapter</span>
+            <span class="rw-tag">JDBC Drivers</span>
+          </div>
+        </div>
+
+        <div class="interview-card">
+          <div class="interview-header" onclick="this.classList.toggle('open'); this.nextElementSibling.classList.toggle('open');">
+            <span class="chevron">▶</span>
+            <span class="interview-label">🎯 Interview Tips</span>
+          </div>
+          <div class="interview-body">
+            <div class="interview-content">
+              <ul>
+                <li><code>Arrays.asList()</code> adapts an array to the <code>List</code> interface — classic JDK adapter.</li>
+                <li>Differentiate from <strong>Facade</strong>: Adapter changes interface, Facade simplifies it.</li>
+                <li>In Java, use <strong>object adapter</strong> (composition) since Java doesn't support multiple inheritance of classes.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 9. PROXY ═══════════════ -->
+      <section class="section reveal" id="proxy">
+        <div class="section__header">
+          <span class="section__number">09</span>
+          <h2 class="section__title">Proxy</h2>
+          <span class="section__badge section__badge--structural">Structural</span>
+        </div>
+        <p class="section__desc">
+          Provides a <strong>surrogate or placeholder</strong> for another object to control access to it.
+          The proxy implements the same interface and adds a layer of indirection — caching, logging, access control, or lazy loading.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="viz-title">🛡️ Caching Proxy Demo</h3>
+          <p class="viz-desc">First call hits the real service (slow). Subsequent calls hit the proxy cache (instant).</p>
+          <div class="viz-controls">
+            <button class="btn-primary" id="btn-proxy-call1">▶ fetchData("users")</button>
+            <button class="btn-primary" id="btn-proxy-call2">▶ fetchData("users") again</button>
+            <button class="btn-accent" id="btn-proxy-call3">▶ fetchData("orders")</button>
+            <button class="btn-muted" id="btn-proxy-reset">🔄 Reset</button>
+          </div>
+          <div class="viz-canvas">
+            <div id="proxy-demo"></div>
+          </div>
+          <div class="viz-result" id="proxy-result"></div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="viz-title">📋 Proxy Types</h3>
+          <table class="compare-table">
+            <thead>
+              <tr><th>Type</th><th>Purpose</th><th class="col-a">Example</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="col-b">Virtual Proxy</td><td>Lazy initialization — defer expensive creation</td><td>Hibernate lazy loading</td></tr>
+              <tr><td class="col-b">Protection Proxy</td><td>Access control — check permissions</td><td>Spring Security</td></tr>
+              <tr><td class="col-b">Caching Proxy</td><td>Cache results — skip repeated calls</td><td>@Cacheable annotation</td></tr>
+              <tr><td class="col-b">Remote Proxy</td><td>Represent remote object locally</td><td>RMI, gRPC stubs</td></tr>
+              <tr><td class="col-b">Logging Proxy</td><td>Log method calls before delegating</td><td>AOP interceptors</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="interview-card">
+          <div class="interview-header" onclick="this.classList.toggle('open'); this.nextElementSibling.classList.toggle('open');">
+            <span class="chevron">▶</span>
+            <span class="interview-label">🎯 Interview Tips</span>
+          </div>
+          <div class="interview-body">
+            <div class="interview-content">
+              <ul>
+                <li>Spring AOP uses <strong>JDK Dynamic Proxy</strong> (for interfaces) or <strong>CGLIB Proxy</strong> (for classes) behind the scenes.</li>
+                <li>Differentiate from <strong>Decorator</strong>: Proxy controls access, Decorator adds responsibility.</li>
+                <li>Know <code>java.lang.reflect.Proxy</code> for dynamic proxy creation at runtime.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 10. TEMPLATE METHOD ═══════════════ -->
+      <section class="section reveal" id="template-method">
+        <div class="section__header">
+          <span class="section__number">10</span>
+          <h2 class="section__title">Template Method</h2>
+          <span class="section__badge section__badge--behavioral">Behavioral</span>
+        </div>
+        <p class="section__desc">
+          Defines the <strong>skeleton of an algorithm</strong> in a base class, deferring some steps to subclasses.
+          The overall structure is fixed; subclasses fill in the details — the "Hollywood Principle" (don't call us, we'll call you).
+        </p>
+
+        <div class="viz-card">
+          <h3 class="viz-title">📝 Data Mining Algorithm</h3>
+          <p class="viz-desc">Same skeleton, different implementations. Watch which steps are fixed vs. overridden.</p>
+          <div class="viz-controls">
+            <div class="toggle-group" id="template-toggle">
+              <button class="toggle-btn active" data-type="csv">📄 CSV Miner</button>
+              <button class="toggle-btn" data-type="json">📋 JSON Miner</button>
+              <button class="toggle-btn" data-type="db">🗄️ DB Miner</button>
+            </div>
+            <button class="btn-primary" id="btn-template-run">▶ Run Algorithm</button>
+          </div>
+          <div class="viz-canvas">
+            <div id="template-demo"></div>
+          </div>
+          <div class="viz-result" id="template-result"></div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="viz-title">📋 Key Insights</h3>
+          <dl class="key-insight">
+            <dt>Hollywood Principle</dt>
+            <dd>"Don't call us, we'll call you" — the base class calls subclass methods, not the other way around.</dd>
+            <dt>Hooks</dt>
+            <dd>Optional methods with default (empty) implementation. Subclasses can override them for extra behavior.</dd>
+            <dt>vs Strategy</dt>
+            <dd>Template Method uses <strong>inheritance</strong> (IS-A). Strategy uses <strong>composition</strong> (HAS-A).</dd>
+          </dl>
+          <div class="real-world">
+            <span class="rw-tag">HttpServlet.doGet/doPost</span>
+            <span class="rw-tag">JdbcTemplate</span>
+            <span class="rw-tag">AbstractList</span>
+            <span class="rw-tag">JUnit @Before/@After</span>
+          </div>
+        </div>
+
+        <div class="interview-card">
+          <div class="interview-header" onclick="this.classList.toggle('open'); this.nextElementSibling.classList.toggle('open');">
+            <span class="chevron">▶</span>
+            <span class="interview-label">🎯 Interview Tips</span>
+          </div>
+          <div class="interview-body">
+            <div class="interview-content">
+              <ul>
+                <li>Spring's <code>JdbcTemplate</code> is the classic example — you provide the SQL and row mapper, it handles connection/statement/cleanup.</li>
+                <li>Explain <strong>hooks vs abstract methods</strong>: hooks are optional (have default impl), abstract methods are mandatory.</li>
+                <li>Template Method inverts control — subclass doesn't call the algorithm, the algorithm calls the subclass.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="footer">
+      Built for learning — <strong>Java Design Patterns Visualizer</strong>
+    </footer>
+  </div>
+
+  <script src="index.js"></script>
+</body>
+</html>

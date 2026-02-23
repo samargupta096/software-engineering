@@ -1,0 +1,898 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AWS Services — Interactive Visualizer</title>
+    <meta name="description" content="Learn AWS services through interactive visualizations. Understand VPC, IAM, S3, SQS, SNS, ECS, EKS, Step Functions, CloudWatch, EventBridge and real-world architecture patterns." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <body>
+    <!-- ═══════════════════════ HERO ═══════════════════════ -->
+    <header class="hero" id="hero">
+      <div class="hero__bg-orbs">
+        <div class="orb orb--1"></div>
+        <div class="orb orb--2"></div>
+        <div class="orb orb--3"></div>
+      </div>
+      <div class="hero__content">
+        <span class="hero__badge">Interactive Deep Dive</span>
+        <h1 class="hero__title">
+          <span class="gradient-text">AWS</span> Services &amp; Architecture
+        </h1>
+        <p class="hero__subtitle">
+          Master core AWS services, their use cases, key terminology, and how to combine them
+          in real-world architectures — through live, interactive visualizations.
+        </p>
+        <a href="#vpc" class="hero__cta">
+          <span>Explore Services</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 5v14M5 12l7 7 7-7" />
+          </svg>
+        </a>
+      </div>
+    </header>
+
+    <main>
+      <!-- ═══════════════ 01. VPC & NETWORKING ═══════════════ -->
+      <section class="section reveal" id="vpc">
+        <div class="section__header">
+          <span class="section__number">01</span>
+          <h2 class="section__title">VPC &amp; Networking</h2>
+        </div>
+        <p class="section__desc">
+          A <strong>Virtual Private Cloud (VPC)</strong> is your isolated network in AWS.
+          It contains <strong>subnets</strong> (public &amp; private), <strong>route tables</strong>,
+          <strong>Internet Gateways (IGW)</strong>, <strong>NAT Gateways</strong>, and
+          <strong>security layers</strong>. Every AWS resource you deploy lives inside a VPC.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🌐 VPC Architecture Diagram</h3>
+          <p class="tp-viz-desc">
+            Click on subnets to toggle between public and private. Hover over resources to learn more.
+          </p>
+          <div class="viz-canvas">
+            <div class="gw-bar" id="gw-bar">
+              <div class="gw-chip">🌍 Internet</div>
+              <div class="gw-chip">⬇ Internet Gateway (IGW)</div>
+              <div class="gw-chip">🔄 NAT Gateway</div>
+            </div>
+            <div class="vpc-diagram" id="vpc-diagram">
+              <span class="vpc-label">VPC 10.0.0.0/16</span>
+              <div class="subnet-row" id="vpc-subnets">
+                <!-- Rendered by JS -->
+              </div>
+            </div>
+          </div>
+          <div class="callout teal">
+            <strong>💡 Key Concept:</strong> <strong>Public subnets</strong> have a route to the IGW
+            (resources can reach the internet directly). <strong>Private subnets</strong> route through
+            a NAT Gateway — resources can initiate outbound connections but can't be reached from the internet.
+          </div>
+        </div>
+
+        <!-- Security Groups vs NACLs -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🛡️ Security Groups vs NACLs</h3>
+          <div class="sg-nacl-compare" id="sg-nacl-compare">
+            <div class="sg-nacl-card">
+              <h4>🔒 Security Groups</h4>
+              <ul>
+                <li><strong>Stateful</strong> — return traffic auto-allowed</li>
+                <li>Instance-level (attached to ENI)</li>
+                <li>Allow rules only (no deny rules)</li>
+                <li>All rules evaluated before decision</li>
+                <li>Default: deny all inbound, allow all outbound</li>
+              </ul>
+            </div>
+            <div class="sg-nacl-card">
+              <h4>🚧 Network ACLs (NACLs)</h4>
+              <ul>
+                <li><strong>Stateless</strong> — must allow return traffic explicitly</li>
+                <li>Subnet-level firewall</li>
+                <li>Allow AND deny rules</li>
+                <li>Rules processed in order (lowest number first)</li>
+                <li>Default: allow all in/out</li>
+              </ul>
+            </div>
+          </div>
+          <div class="callout">
+            <strong>📌 Interview Tip:</strong> Security Groups = <em>stateful instance firewall</em>.
+            NACLs = <em>stateless subnet firewall</em>. Use SGs for fine-grained control per resource,
+            NACLs for broad subnet-level blocking (e.g., block a known malicious IP range).
+          </div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📋 VPC Key Terms</h3>
+          <dl class="key-insight">
+            <dt>CIDR Block</dt>
+            <dd>IP range for your VPC (e.g., 10.0.0.0/16 = 65,536 IPs). Cannot be changed after creation.</dd>
+            <dt>Route Table</dt>
+            <dd>Rules that determine where network traffic is directed. Each subnet has one.</dd>
+            <dt>Elastic IP</dt>
+            <dd>Static public IPv4 address. Free when attached to a running instance; charged when idle.</dd>
+            <dt>VPC Peering</dt>
+            <dd>Private connection between two VPCs. Non-transitive — A↔B and B↔C does NOT mean A↔C.</dd>
+            <dt>VPC Endpoints</dt>
+            <dd>Private access to AWS services (S3, DynamoDB) without traversing the internet.</dd>
+            <dt>Transit Gateway</dt>
+            <dd>Central hub to connect multiple VPCs across accounts/regions. Solves peering complexity.</dd>
+          </dl>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 02. IAM ═══════════════ -->
+      <section class="section reveal" id="iam">
+        <div class="section__header">
+          <span class="section__number">02</span>
+          <h2 class="section__title">IAM — Identity &amp; Access Management</h2>
+        </div>
+        <p class="section__desc">
+          <strong>IAM</strong> controls <em>who</em> (authentication) can do <em>what</em> (authorization) on
+          <em>which resources</em>. It uses <strong>Users</strong>, <strong>Groups</strong>,
+          <strong>Roles</strong>, and <strong>Policies</strong> — the foundation of AWS security.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">👥 IAM Entities</h3>
+          <div class="viz-canvas">
+            <div class="iam-entities" id="iam-entities">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Policy Simulator -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🔐 Policy Simulator</h3>
+          <p class="tp-viz-desc">
+            Toggle policy rules to see how AWS evaluates access. Remember: an <strong>explicit Deny
+            always wins</strong> over any Allow.
+          </p>
+          <div class="viz-controls">
+            <label>Action</label>
+            <div class="strategy-toggle" id="iam-action-toggle">
+              <button class="strategy-btn active" data-action="s3:GetObject">s3:GetObject</button>
+              <button class="strategy-btn" data-action="s3:PutObject">s3:PutObject</button>
+              <button class="strategy-btn" data-action="s3:DeleteObject">s3:DeleteObject</button>
+              <button class="strategy-btn" data-action="ec2:TerminateInstances">ec2:Terminate</button>
+            </div>
+            <button class="send-btn" id="btn-evaluate-policy">Evaluate</button>
+          </div>
+          <div class="policy-sim" id="policy-sim">
+            <div class="policy-rules" id="policy-rules">
+              <!-- Rendered by JS -->
+            </div>
+            <div class="policy-result" id="policy-result"></div>
+          </div>
+          <div class="callout red">
+            <strong>⚠️ Evaluation Logic:</strong> 1) Start with implicit Deny → 2) Check all policies
+            → 3) If any explicit <code>Deny</code> → DENIED → 4) If any <code>Allow</code> → ALLOWED
+            → 5) Otherwise → implicit DENY. Explicit Deny always wins.
+          </div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📋 IAM Key Terms</h3>
+          <dl class="key-insight">
+            <dt>IAM Role</dt>
+            <dd>Temporary credentials for services/users. No password — uses STS AssumeRole. Preferred over long-term keys.</dd>
+            <dt>STS</dt>
+            <dd>Security Token Service — issues temporary credentials. Used for cross-account access, federation.</dd>
+            <dt>Principle of Least Privilege</dt>
+            <dd>Grant only the minimum permissions needed. Start with zero access, add as required.</dd>
+            <dt>Trust Policy</dt>
+            <dd>Defines WHO can assume a role. Attached to the role itself (not the user).</dd>
+            <dt>Permission Boundary</dt>
+            <dd>Maximum permissions an IAM entity CAN have. Intersection of boundary and identity policy.</dd>
+          </dl>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 03. S3 ═══════════════ -->
+      <section class="section reveal" id="s3">
+        <div class="section__header">
+          <span class="section__number">03</span>
+          <h2 class="section__title">S3 — Object Storage</h2>
+        </div>
+        <p class="section__desc">
+          <strong>Amazon S3</strong> is virtually unlimited object storage. Objects are stored in
+          <strong>buckets</strong> with unique global names. S3 offers multiple <strong>storage classes</strong>
+          for cost optimization, <strong>versioning</strong>, <strong>lifecycle rules</strong>, and
+          <strong>event notifications</strong>.
+        </p>
+
+        <!-- Storage Classes -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📊 Storage Classes — Cost vs Access</h3>
+          <p class="tp-viz-desc">Click a storage class to see its details and best use case.</p>
+          <div class="storage-classes" id="storage-classes">
+            <!-- Rendered by JS -->
+          </div>
+          <div class="callout teal" id="storage-class-detail" style="margin-top:1rem;">
+            <strong>Select a storage class above</strong> to see its durability, availability, and pricing details.
+          </div>
+        </div>
+
+        <!-- Upload / Versioning Demo -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📤 Upload &amp; Versioning</h3>
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-s3-upload">Upload Object</button>
+            <button class="send-btn" id="btn-s3-version" style="background:linear-gradient(135deg,var(--accent-teal),#05b388);">
+              Upload New Version
+            </button>
+            <button class="send-btn" id="btn-s3-delete" style="background:linear-gradient(135deg,var(--accent-red),#d63b5e);">
+              Delete (Add Marker)
+            </button>
+          </div>
+          <div class="viz-canvas">
+            <div class="s3-upload-demo" id="s3-upload-demo">
+              <div class="s3-bucket" id="s3-bucket">
+                <div class="s3-bucket__title">📦 my-app-bucket</div>
+                <div id="s3-objects"></div>
+                <div class="version-list" id="s3-versions"></div>
+              </div>
+            </div>
+          </div>
+          <div class="callout">
+            <strong>📌 Versioning:</strong> When enabled, S3 keeps ALL versions of an object. Deletes add a
+            <code>delete marker</code> (soft delete). You can restore by removing the marker. Essential for audit
+            trails and accidental deletion recovery.
+          </div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📋 S3 Key Terms</h3>
+          <dl class="key-insight">
+            <dt>Bucket Policy</dt>
+            <dd>Resource-based JSON policy on the bucket. Grants cross-account access without IAM roles.</dd>
+            <dt>Presigned URL</dt>
+            <dd>Temporary URL granting time-limited GET/PUT access. No AWS credentials needed by the client.</dd>
+            <dt>Multipart Upload</dt>
+            <dd>Upload large objects (>100MB recommended) in parts. Can upload in parallel; resume on failure.</dd>
+            <dt>S3 Event Notifications</dt>
+            <dd>Trigger Lambda, SQS, or SNS on s3:ObjectCreated, s3:ObjectRemoved, etc.</dd>
+            <dt>Cross-Region Replication</dt>
+            <dd>Auto-replicate objects to another region. Requires versioning enabled on both buckets.</dd>
+            <dt>S3 Transfer Acceleration</dt>
+            <dd>Uploads to nearest CloudFront edge location → fast backbone transfer to bucket's region.</dd>
+          </dl>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 04. SQS ═══════════════ -->
+      <section class="section reveal" id="sqs">
+        <div class="section__header">
+          <span class="section__number">04</span>
+          <h2 class="section__title">SQS — Message Queuing</h2>
+        </div>
+        <p class="section__desc">
+          <strong>Amazon SQS</strong> decouples components by placing messages in a queue. Producers send messages;
+          consumers poll and process them. SQS supports <strong>Standard</strong> (best-effort ordering, at-least-once)
+          and <strong>FIFO</strong> (strict ordering, exactly-once) queues.
+        </p>
+
+        <!-- Queue Simulation -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📬 Queue Simulation</h3>
+          <div class="viz-controls">
+            <label>Queue Type</label>
+            <div class="strategy-toggle" id="sqs-type-toggle">
+              <button class="strategy-btn active" data-type="standard">Standard</button>
+              <button class="strategy-btn" data-type="fifo">FIFO</button>
+            </div>
+            <button class="send-btn" id="btn-sqs-send">Send Message</button>
+            <button class="send-btn" id="btn-sqs-send5" style="background:linear-gradient(135deg,var(--accent-blue),#3aa8d0);">
+              Send 5 Messages
+            </button>
+            <button class="send-btn" id="btn-sqs-process" style="background:linear-gradient(135deg,var(--accent-teal),#05b388);">
+              Process Next
+            </button>
+          </div>
+          <div class="viz-canvas">
+            <div class="queue-demo" id="queue-demo">
+              <div class="queue-box">
+                <div class="queue-box__title">📤 Producer</div>
+                <div class="queue-messages" id="sqs-sent"></div>
+              </div>
+              <div class="queue-box">
+                <div class="queue-box__title">📬 Queue</div>
+                <div class="queue-messages" id="sqs-queue"></div>
+              </div>
+              <div class="queue-box">
+                <div class="queue-box__title">✅ Processed</div>
+                <div class="queue-messages" id="sqs-processed"></div>
+              </div>
+              <div class="queue-box">
+                <div class="queue-box__title">💀 DLQ</div>
+                <div class="queue-messages" id="sqs-dlq"></div>
+              </div>
+            </div>
+          </div>
+          <div class="queue-stats" id="sqs-stats">
+            <!-- Rendered by JS -->
+          </div>
+          <p class="viz-hint">
+            Send messages, then process them. Messages that fail 3 times are moved to the Dead Letter Queue (DLQ).
+          </p>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">⚖️ Standard vs FIFO</h3>
+          <div class="sg-nacl-compare">
+            <div class="sg-nacl-card">
+              <h4>📨 Standard Queue</h4>
+              <ul>
+                <li>Nearly unlimited throughput</li>
+                <li>Best-effort ordering</li>
+                <li>At-least-once delivery (may duplicate)</li>
+                <li>Use: log processing, background jobs</li>
+              </ul>
+            </div>
+            <div class="sg-nacl-card">
+              <h4>📋 FIFO Queue</h4>
+              <ul>
+                <li>300 msg/sec (3000 with batching)</li>
+                <li>Strict ordering within message group</li>
+                <li>Exactly-once processing</li>
+                <li>Use: financial transactions, order processing</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📋 SQS Key Terms</h3>
+          <dl class="key-insight">
+            <dt>Visibility Timeout</dt>
+            <dd>After a consumer reads a message, it's hidden from other consumers for this duration (default 30s). If not deleted, it reappears.</dd>
+            <dt>Dead Letter Queue</dt>
+            <dd>Messages that fail processing N times are moved here. Set via <code>maxReceiveCount</code> in redrive policy.</dd>
+            <dt>Long Polling</dt>
+            <dd>Wait up to 20s for messages. Reduces empty responses and API costs. Set <code>WaitTimeSeconds > 0</code>.</dd>
+            <dt>Message Group ID</dt>
+            <dd>FIFO only — messages with same group ID are delivered in order. Different groups can be processed in parallel.</dd>
+            <dt>Deduplication ID</dt>
+            <dd>FIFO only — prevents duplicate messages within a 5-minute window.</dd>
+            <dt>Max Message Size</dt>
+            <dd>256 KB. For larger payloads, store in S3 and send a pointer (SQS Extended Client Library).</dd>
+          </dl>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 05. SNS ═══════════════ -->
+      <section class="section reveal" id="sns">
+        <div class="section__header">
+          <span class="section__number">05</span>
+          <h2 class="section__title">SNS — Pub/Sub Notifications</h2>
+        </div>
+        <p class="section__desc">
+          <strong>Amazon SNS</strong> is a pub/sub messaging service. A <strong>topic</strong> acts as a channel —
+          publishers send messages to topics, and all <strong>subscribers</strong> (Lambda, SQS, HTTP, email, SMS)
+          receive a copy. It's the foundation for <em>fan-out</em> architectures.
+        </p>
+
+        <!-- Fan-Out Demo -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📡 Fan-Out Demo</h3>
+          <p class="tp-viz-desc">Publish a message and watch it fan out to all subscribers simultaneously.</p>
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-sns-publish">Publish Message</button>
+            <button class="send-btn" id="btn-sns-reset" style="background:linear-gradient(135deg,var(--accent-blue),#3aa8d0);">
+              Reset
+            </button>
+          </div>
+          <div class="viz-canvas">
+            <div class="fanout-demo" id="fanout-demo">
+              <div class="sns-topic-node" id="sns-topic">📢 order-events Topic</div>
+              <div class="fanout-arrows" id="fanout-arrows">
+                <div class="fanout-arrow" id="fa-1"></div>
+                <div class="fanout-arrow" id="fa-2"></div>
+                <div class="fanout-arrow" id="fa-3"></div>
+                <div class="fanout-arrow" id="fa-4"></div>
+              </div>
+              <div class="fanout-subscribers" id="fanout-subs">
+                <div class="subscriber-node" data-sub="0">📧 Email Service</div>
+                <div class="subscriber-node" data-sub="1">📬 SQS → Inventory</div>
+                <div class="subscriber-node" data-sub="2">⚡ Lambda → Analytics</div>
+                <div class="subscriber-node" data-sub="3">🔗 HTTP → Partner API</div>
+              </div>
+            </div>
+          </div>
+          <div class="callout teal">
+            <strong>Fan-Out Pattern:</strong> One publish → N deliveries. Each subscriber processes
+            independently. If one fails, others are unaffected. SNS retries failed deliveries.
+          </div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📋 SNS Key Terms</h3>
+          <dl class="key-insight">
+            <dt>Topic</dt>
+            <dd>A named channel for messages. Supports up to 12.5M subscriptions per topic.</dd>
+            <dt>Message Filtering</dt>
+            <dd>Subscribers can set filter policies to receive only matching messages. Reduces processing waste.</dd>
+            <dt>FIFO Topic</dt>
+            <dd>Strict ordering + deduplication. Only SQS FIFO queues can subscribe.</dd>
+            <dt>Message Attributes</dt>
+            <dd>Key-value metadata sent with each message. Used by filter policies for routing.</dd>
+            <dt>Delivery Protocols</dt>
+            <dd>SQS, Lambda, HTTP/S, Email, SMS, Kinesis Data Firehose, mobile push (APNs, FCM).</dd>
+          </dl>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 06. SNS + SQS FAN-OUT ═══════════════ -->
+      <section class="section reveal" id="fanout-pattern">
+        <div class="section__header">
+          <span class="section__number">06</span>
+          <h2 class="section__title">SNS + SQS — Fan-Out Pattern</h2>
+        </div>
+        <p class="section__desc">
+          The <strong>SNS → SQS fan-out</strong> is the most common event-driven pattern in AWS.
+          SNS distributes the message; each SQS queue buffers it for independent processing.
+          This gives you the <em>reliability of SQS</em> with the <em>broadcast of SNS</em>.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🔄 Animated Fan-Out Pipeline</h3>
+          <p class="tp-viz-desc">Watch an order event flow from producer through SNS to multiple SQS consumers.</p>
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-fanout-run">▶ Run Pipeline</button>
+            <button class="send-btn" id="btn-fanout-reset" style="background:linear-gradient(135deg,var(--accent-blue),#3aa8d0);">
+              Reset
+            </button>
+          </div>
+          <div class="viz-canvas">
+            <div class="pipeline-demo" id="pipeline-demo">
+              <div class="pipeline-stage">
+                <div class="pipeline-node" id="pipe-producer">📤 Order Service</div>
+              </div>
+              <div class="pipeline-stage"><div class="pipeline-connector vert" id="pipe-c1"></div></div>
+              <div class="pipeline-stage">
+                <div class="pipeline-node" id="pipe-sns">📢 SNS Topic</div>
+              </div>
+              <div class="pipeline-stage">
+                <div class="pipeline-connector vert" id="pipe-c2a"></div>
+                <div class="pipeline-connector vert" id="pipe-c2b"></div>
+                <div class="pipeline-connector vert" id="pipe-c2c"></div>
+              </div>
+              <div class="pipeline-stage">
+                <div class="pipeline-node" id="pipe-sqs1">📬 SQS: Email</div>
+                <div class="pipeline-node" id="pipe-sqs2">📬 SQS: Inventory</div>
+                <div class="pipeline-node" id="pipe-sqs3">📬 SQS: Analytics</div>
+              </div>
+              <div class="pipeline-stage">
+                <div class="pipeline-connector vert" id="pipe-c3a"></div>
+                <div class="pipeline-connector vert" id="pipe-c3b"></div>
+                <div class="pipeline-connector vert" id="pipe-c3c"></div>
+              </div>
+              <div class="pipeline-stage">
+                <div class="pipeline-node" id="pipe-lambda1">⚡ Lambda</div>
+                <div class="pipeline-node" id="pipe-lambda2">⚡ Lambda</div>
+                <div class="pipeline-node" id="pipe-lambda3">⚡ Lambda</div>
+              </div>
+            </div>
+          </div>
+          <div class="callout">
+            <strong>Why SNS + SQS?</strong> SNS alone doesn't retry or buffer. If a subscriber is down,
+            the message is lost. Adding SQS between SNS and the consumer provides <strong>durability</strong>
+            (messages persist up to 14 days), <strong>retry logic</strong>, and <strong>DLQ support</strong>.
+          </div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🏗️ When to Use Which</h3>
+          <div class="sg-nacl-compare">
+            <div class="sg-nacl-card">
+              <h4>📬 SQS Only</h4>
+              <ul>
+                <li>One producer → one consumer</li>
+                <li>Task queue / work distribution</li>
+                <li>Rate smoothing / buffering</li>
+                <li>Order processing pipeline</li>
+              </ul>
+            </div>
+            <div class="sg-nacl-card">
+              <h4>📢 SNS + SQS</h4>
+              <ul>
+                <li>One event → multiple downstream systems</li>
+                <li>Microservice event broadcasting</li>
+                <li>Each consumer processes independently</li>
+                <li>Decoupled, fault-tolerant architecture</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 07. ECS & EKS ═══════════════ -->
+      <section class="section reveal" id="containers">
+        <div class="section__header">
+          <span class="section__number">07</span>
+          <h2 class="section__title">ECS &amp; EKS — Container Orchestration</h2>
+        </div>
+        <p class="section__desc">
+          <strong>ECS (Elastic Container Service)</strong> is AWS's native container orchestrator.
+          <strong>EKS (Elastic Kubernetes Service)</strong> is managed Kubernetes. Both run Docker containers
+          but differ in complexity, portability, and ecosystem.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">⚖️ ECS vs EKS</h3>
+          <div class="container-compare">
+            <div class="container-card">
+              <h4>🐳 ECS</h4>
+              <ul class="feature-list">
+                <li>AWS-native, simpler to set up</li>
+                <li>Task Definitions define containers</li>
+                <li>Fargate = serverless (no EC2 to manage)</li>
+                <li>Deep AWS integration (ALB, CloudWatch)</li>
+                <li>Best for: AWS-centric teams, simpler workloads</li>
+              </ul>
+            </div>
+            <div class="container-card">
+              <h4>☸️ EKS</h4>
+              <ul class="feature-list">
+                <li>Managed Kubernetes (CNCF standard)</li>
+                <li>Pods, Deployments, Services</li>
+                <li>Portable across clouds / on-prem</li>
+                <li>Rich Kubernetes ecosystem (Helm, Istio)</li>
+                <li>Best for: multi-cloud, complex microservices</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Container Scaling Demo -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📈 Container Scaling Demo</h3>
+          <div class="viz-controls">
+            <label for="slider-tasks">Tasks / Pods</label>
+            <input type="range" id="slider-tasks" min="1" max="12" value="3" />
+            <span class="viz-value" id="val-tasks">3</span>
+            <label>Launch Type</label>
+            <div class="strategy-toggle" id="launch-type-toggle">
+              <button class="strategy-btn active" data-type="fargate">Fargate</button>
+              <button class="strategy-btn" data-type="ec2">EC2</button>
+            </div>
+          </div>
+          <div class="viz-canvas">
+            <div class="task-grid" id="task-grid">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+          <p class="viz-hint">
+            Drag the slider to scale containers. Fargate = serverless (no servers to manage).
+            EC2 = you manage the underlying instances.
+          </p>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📋 Container Key Terms</h3>
+          <dl class="key-insight">
+            <dt>Task Definition</dt>
+            <dd>ECS blueprint for containers: image, CPU, memory, ports, env vars. Like a docker-compose file.</dd>
+            <dt>Service</dt>
+            <dd>Maintains desired count of tasks. Auto-replaces failed tasks. Integrates with ALB for load balancing.</dd>
+            <dt>Fargate</dt>
+            <dd>Serverless compute for containers. No EC2 management. Pay per vCPU+memory per second.</dd>
+            <dt>ECR</dt>
+            <dd>Elastic Container Registry — private Docker image repo. Integrates with ECS/EKS for image pulls.</dd>
+            <dt>Pod (EKS)</dt>
+            <dd>Smallest deployable unit in Kubernetes. Contains one or more containers sharing network/storage.</dd>
+            <dt>Service Mesh</dt>
+            <dd>App Mesh (ECS) or Istio (EKS) — manages service-to-service communication, observability, traffic routing.</dd>
+          </dl>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 08. STEP FUNCTIONS ═══════════════ -->
+      <section class="section reveal" id="step-functions">
+        <div class="section__header">
+          <span class="section__number">08</span>
+          <h2 class="section__title">Step Functions — Workflow Orchestration</h2>
+        </div>
+        <p class="section__desc">
+          <strong>AWS Step Functions</strong> coordinate multiple AWS services into <strong>serverless
+          workflows</strong> using visual state machines. Define states (Task, Choice, Parallel, Wait, Fail)
+          and transitions. Built-in error handling, retries, and timeouts.
+        </p>
+
+        <!-- State Machine Demo -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🔄 State Machine — Order Processing</h3>
+          <p class="tp-viz-desc">
+            Click "Run" to simulate an order workflow. Click "Simulate Failure" to see error handling.
+          </p>
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-sf-run">▶ Run Workflow</button>
+            <button class="send-btn" id="btn-sf-fail" style="background:linear-gradient(135deg,var(--accent-red),#d63b5e);">
+              💥 Simulate Failure
+            </button>
+            <button class="send-btn" id="btn-sf-reset" style="background:linear-gradient(135deg,var(--accent-blue),#3aa8d0);">
+              Reset
+            </button>
+          </div>
+          <div class="viz-canvas">
+            <div class="state-machine" id="state-machine">
+              <div class="state-node" data-state="start" id="sf-start">▶ Start</div>
+              <div class="state-connector" id="sf-c1"></div>
+              <div class="state-node" data-state="validate" id="sf-validate">✅ Validate Order</div>
+              <div class="state-connector" id="sf-c2"></div>
+              <div class="state-node choice" data-state="check-inventory" id="sf-check">❓ Check Inventory</div>
+              <div class="state-connector" id="sf-c3"></div>
+              <div class="state-branches">
+                <div class="state-branch" id="sf-success-branch">
+                  <div class="branch-label">In Stock ✓</div>
+                  <div class="state-node" data-state="charge" id="sf-charge">💳 Charge Payment</div>
+                  <div class="state-connector" id="sf-c4"></div>
+                  <div class="state-node" data-state="ship" id="sf-ship">📦 Ship Order</div>
+                  <div class="state-connector" id="sf-c5"></div>
+                  <div class="state-node" data-state="notify" id="sf-notify">📧 Send Notification</div>
+                  <div class="state-connector" id="sf-c6"></div>
+                  <div class="state-node" data-state="end-success" id="sf-end">✅ End (Success)</div>
+                </div>
+                <div class="state-branch" id="sf-fail-branch">
+                  <div class="branch-label">Out of Stock ✗</div>
+                  <div class="state-node" data-state="refund" id="sf-refund">💸 Refund</div>
+                  <div class="state-connector" id="sf-c7"></div>
+                  <div class="state-node" data-state="end-fail" id="sf-end-fail">❌ End (Failed)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="callout">
+            <strong>Error Handling:</strong> Step Functions support <code>Retry</code> (with backoff) and
+            <code>Catch</code> (fallback state) on every Task state. This eliminates manual try/catch in Lambda code.
+          </div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📋 Step Functions Key Terms</h3>
+          <dl class="key-insight">
+            <dt>State Types</dt>
+            <dd>Task (do work), Choice (branch), Parallel (concurrent), Wait (delay), Pass (transform), Succeed/Fail (end).</dd>
+            <dt>Standard vs Express</dt>
+            <dd>Standard: up to 1 year, exactly-once, audit trail. Express: up to 5 min, at-least-once, high throughput.</dd>
+            <dt>Input/Output Processing</dt>
+            <dd>InputPath, OutputPath, ResultPath control data flow between states. Parameters maps input.</dd>
+            <dt>Service Integrations</dt>
+            <dd>Native SDK integrations: Lambda, DynamoDB, ECS, SQS, SNS, Glue, SageMaker, and 200+ AWS actions.</dd>
+            <dt>Map State</dt>
+            <dd>Iterate over an array, running a sub-workflow for each element. Supports concurrency limits.</dd>
+          </dl>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 09. CLOUDWATCH & EVENTBRIDGE ═══════════════ -->
+      <section class="section reveal" id="monitoring">
+        <div class="section__header">
+          <span class="section__number">09</span>
+          <h2 class="section__title">CloudWatch &amp; EventBridge</h2>
+        </div>
+        <p class="section__desc">
+          <strong>CloudWatch</strong> collects <em>metrics</em>, <em>logs</em>, and <em>alarms</em> for monitoring.
+          <strong>EventBridge</strong> routes <em>events</em> from AWS services, SaaS apps, and custom sources to
+          targets based on rules. Together they form AWS's observability and event-driven backbone.
+        </p>
+
+        <!-- Metrics Dashboard -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📊 CloudWatch Metrics Dashboard</h3>
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-cw-refresh">🔄 Refresh Metrics</button>
+            <button class="send-btn" id="btn-cw-alarm" style="background:linear-gradient(135deg,var(--accent-red),#d63b5e);">
+              🚨 Trigger Alarm
+            </button>
+          </div>
+          <div class="metrics-grid" id="cw-metrics">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- EventBridge Rule Builder -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🎯 EventBridge — Event Rule Builder</h3>
+          <p class="tp-viz-desc">
+            Define an event pattern and see which events match, then watch targets get triggered.
+          </p>
+          <div class="viz-controls">
+            <label>Event Source</label>
+            <div class="strategy-toggle" id="eb-source-toggle">
+              <button class="strategy-btn active" data-source="ec2">EC2</button>
+              <button class="strategy-btn" data-source="s3">S3</button>
+              <button class="strategy-btn" data-source="custom">Custom App</button>
+            </div>
+            <button class="send-btn" id="btn-eb-fire">🔥 Fire Event</button>
+          </div>
+          <div class="event-rule-builder" id="eb-rule">
+            <div class="event-rule-row">
+              <span class="event-rule-label">Source</span>
+              <span class="event-rule-value" id="eb-rule-source">aws.ec2</span>
+            </div>
+            <div class="event-rule-row">
+              <span class="event-rule-label">Detail Type</span>
+              <span class="event-rule-value" id="eb-rule-detail">EC2 Instance State-change</span>
+            </div>
+            <div class="event-rule-row">
+              <span class="event-rule-label">Pattern</span>
+              <span class="event-rule-value" id="eb-rule-pattern">{"state": "stopped"}</span>
+            </div>
+          </div>
+          <div class="event-targets" id="eb-targets">
+            <div class="event-target" data-target="lambda">⚡ Lambda: auto-restart</div>
+            <div class="event-target" data-target="sns">📢 SNS: notify-ops</div>
+            <div class="event-target" data-target="sqs">📬 SQS: audit-log</div>
+          </div>
+          <div class="callout blue">
+            <strong>EventBridge vs SNS:</strong> EventBridge supports content-based filtering with JSON patterns,
+            schema registry, replay, and 3rd-party SaaS integrations. Use SNS for simple fan-out;
+            use EventBridge for complex routing logic.
+          </div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📋 Monitoring Key Terms</h3>
+          <dl class="key-insight">
+            <dt>CloudWatch Alarm</dt>
+            <dd>Watches a metric; fires when threshold breached. Actions: SNS, Auto Scaling, EC2 stop/terminate.</dd>
+            <dt>Log Groups/Streams</dt>
+            <dd>Logs organized by group (app) and stream (instance). Retention: 1 day to never expire.</dd>
+            <dt>Metric Filters</dt>
+            <dd>Extract custom metrics from log data. E.g., count ERROR occurrences → create alarm.</dd>
+            <dt>EventBridge Rule</dt>
+            <dd>Matches events by pattern (source, detail-type, content) → routes to 1+ targets.</dd>
+            <dt>Event Bus</dt>
+            <dd>Channel for events. Default bus for AWS events; custom buses for your apps; partner buses for SaaS.</dd>
+            <dt>Scheduled Rules</dt>
+            <dd>Cron or rate expressions. E.g., <code>rate(5 minutes)</code> to invoke Lambda periodically.</dd>
+          </dl>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 10. LAMBDA + API GATEWAY ═══════════════ -->
+      <section class="section reveal" id="lambda">
+        <div class="section__header">
+          <span class="section__number">10</span>
+          <h2 class="section__title">Lambda &amp; API Gateway</h2>
+        </div>
+        <p class="section__desc">
+          <strong>AWS Lambda</strong> runs code without provisioning servers. You pay only for compute time consumed.
+          <strong>API Gateway</strong> creates RESTful and WebSocket APIs that front Lambda functions,
+          providing routing, auth, throttling, and caching.
+        </p>
+
+        <!-- Request Flow -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🔄 Request Flow Animation</h3>
+          <p class="tp-viz-desc">Watch an HTTP request flow through the serverless stack.</p>
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-lambda-run">▶ Send Request</button>
+            <button class="send-btn" id="btn-lambda-cold" style="background:linear-gradient(135deg,var(--accent-purple),#7c3aed);">
+              🧊 Cold Start
+            </button>
+          </div>
+          <div class="viz-canvas">
+            <div class="request-flow" id="request-flow">
+              <div class="flow-node" id="rf-client">👤 Client</div>
+              <div class="flow-arrow" id="rf-a1">→</div>
+              <div class="flow-node" id="rf-apigw">🚪 API Gateway</div>
+              <div class="flow-arrow" id="rf-a2">→</div>
+              <div class="flow-node" id="rf-lambda">⚡ Lambda</div>
+              <div class="flow-arrow" id="rf-a3">→</div>
+              <div class="flow-node" id="rf-db">🗄️ DynamoDB</div>
+              <div class="flow-arrow" id="rf-a4">→</div>
+              <div class="flow-node" id="rf-response">📨 Response</div>
+            </div>
+          </div>
+          <div class="lambda-metrics" id="lambda-metrics">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🧊 Cold Start Explained</h3>
+          <div class="callout red">
+            <strong>Cold Start:</strong> First invocation after idle → AWS must: 1) Provision a container,
+            2) Download code, 3) Initialize runtime, 4) Run your handler. This adds 100ms–10s latency.
+            Subsequent calls reuse the warm container (warm start = ~1ms overhead).
+          </div>
+          <div class="callout teal">
+            <strong>Mitigation:</strong> Use <code>Provisioned Concurrency</code> (keeps N instances warm),
+            minimize package size, use lightweight runtimes (Python/Node over Java), put initialization
+            code outside the handler function.
+          </div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📋 Serverless Key Terms</h3>
+          <dl class="key-insight">
+            <dt>Invocation Types</dt>
+            <dd>Synchronous (API GW), Asynchronous (S3/SNS events), Poll-based (SQS/DynamoDB streams).</dd>
+            <dt>Concurrency</dt>
+            <dd>Default 1000 concurrent executions per account per region. Reserved concurrency caps per function.</dd>
+            <dt>Layers</dt>
+            <dd>Reusable packages (libs, SDKs) shared across functions. Max 5 layers, 250MB total unzipped.</dd>
+            <dt>Destinations</dt>
+            <dd>Route async invocation results (success/failure) to SQS, SNS, Lambda, or EventBridge.</dd>
+            <dt>API GW: REST vs HTTP</dt>
+            <dd>REST API: full-featured (caching, WAF, usage plans). HTTP API: simpler, cheaper, faster. Use HTTP API unless you need REST extras.</dd>
+            <dt>Lambda@Edge</dt>
+            <dd>Run Lambda at CloudFront edge locations. Use for auth, URL rewrites, A/B testing at the CDN layer.</dd>
+          </dl>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 11. COMBINED ARCHITECTURE ═══════════════ -->
+      <section class="section reveal" id="architectures">
+        <div class="section__header">
+          <span class="section__number">11</span>
+          <h2 class="section__title">Combined Architecture Patterns</h2>
+        </div>
+        <p class="section__desc">
+          Real-world systems combine multiple AWS services. Here are 3 common patterns showing how
+          services work together for <strong>web apps</strong>, <strong>event processing</strong>, and
+          <strong>microservices</strong>.
+        </p>
+
+        <div class="viz-card">
+          <div class="arch-tabs" id="arch-tabs">
+            <button class="arch-tab active" data-arch="webapp">🌐 Serverless Web App</button>
+            <button class="arch-tab" data-arch="event">⚡ Event Processing</button>
+            <button class="arch-tab" data-arch="micro">🔄 Microservices</button>
+          </div>
+          <div class="arch-diagram" id="arch-diagram">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🏗️ Architecture Decision Guide</h3>
+          <dl class="key-insight">
+            <dt>Synchronous</dt>
+            <dd>Client waits for response → API GW + Lambda + DynamoDB. Simple, low latency.</dd>
+            <dt>Asynchronous</dt>
+            <dd>Fire-and-forget → SNS/SQS + Lambda. Decoupled, fault-tolerant, scalable.</dd>
+            <dt>Orchestration</dt>
+            <dd>Complex multi-step workflows → Step Functions. Visual, auditable, built-in error handling.</dd>
+            <dt>Choreography</dt>
+            <dd>Services react to events → EventBridge. Loosely coupled, independently deployable.</dd>
+            <dt>Batch Processing</dt>
+            <dd>Large dataset processing → S3 + Lambda/ECS + Step Functions. Event-driven batch.</dd>
+          </dl>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 12. CHEAT SHEET ═══════════════ -->
+      <section class="section reveal" id="cheatsheet">
+        <div class="section__header">
+          <span class="section__number">12</span>
+          <h2 class="section__title">Cheat Sheet &amp; Quick Reference</h2>
+        </div>
+        <p class="section__desc">
+          Searchable reference cards for all services covered. Filter by name, category, or keyword.
+        </p>
+
+        <div class="viz-card">
+          <input type="text" class="cheat-search" id="cheat-search" placeholder="🔍 Search services... (e.g., SQS, serverless, storage)" />
+          <div class="cheat-grid" id="cheat-grid">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>AWS Services — Interactive Visualizer &middot; Built for learning &middot; 2026</p>
+    </footer>
+
+    <script src="index.js"></script>
+  </body>
+</html>
