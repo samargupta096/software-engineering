@@ -6,6 +6,7 @@
 
 ---
 
+<!--
 ## 📚 Learning Path
 
 ```mermaid
@@ -70,6 +71,7 @@ flowchart TD
 <td valign="top"><div align="center"><img src="./assets/animations/frontend-mastery.png" width="200" alt="Frontend"></div><br><b>Frontend Mastery:</b><br><ul><li>📜 <a href="./frontend/javascript-es6-guide.md">JS ES6+ Complete</a> ⭐</li><li>📘 <a href="./frontend/typescript-guide.md">TypeScript Mastery</a> ⭐</li><li>⚛️ <a href="./frontend/react-guide.md">React.js Guide</a> ⭐</li><li>🅰️ <a href="./frontend/angular-guide.md">Angular Guide</a></li></ul></td>
 </tr>
 </table>
+-->
 
 
 
