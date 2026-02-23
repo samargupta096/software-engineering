@@ -1,64 +1,116 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Interactive Visualizers Hub</title>
-    <meta name="description" content="A central hub for interactive software engineering visualizers including AWS, System Design, Databases, Kafka, and more.">
+    <meta
+      name="description"
+      content="A central hub for interactive software engineering visualizers including AWS, System Design, Databases, Kafka, and more."
+    />
     <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="index.css">
-</head>
-<body>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <body>
     <div class="background-animation">
-        <div class="blob blob-1"></div>
-        <div class="blob blob-2"></div>
-        <div class="blob blob-3"></div>
+      <div class="blob blob-1"></div>
+      <div class="blob blob-2"></div>
+      <div class="blob blob-3"></div>
     </div>
 
     <header class="hub-header">
-        <div class="header-content">
-            <div class="brand-badge">Software Engineering</div>
-            <h1 class="hero-title">Interactive <span class="gradient-text">Visualizers</span></h1>
-            <p class="hero-subtitle">Explore complex engineering concepts through dynamic, interactive learning experiences.</p>
-            
-            <div class="search-container">
-                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
-                <input type="text" id="searchInput" placeholder="Search visualizers (e.g., Kafka, AWS, Indexes)..." autocomplete="off">
-            </div>
+      <div class="header-content">
+        <div class="brand-badge">Software Engineering</div>
+        <h1 class="hero-title">
+          Interactive <span class="gradient-text">Visualizers</span>
+        </h1>
+        <p class="hero-subtitle">
+          Explore complex engineering concepts through dynamic, interactive
+          learning experiences.
+        </p>
 
-            <div class="filter-container" id="filterContainer">
-                <button class="filter-btn active" data-filter="all">All</button>
-                <button class="filter-btn" data-filter="cloud">Cloud & Infra</button>
-                <button class="filter-btn" data-filter="database">Databases</button>
-                <button class="filter-btn" data-filter="architecture">Architecture</button>
-                <button class="filter-btn" data-filter="algorithms">Algorithms</button>
-            </div>
+        <div class="search-container">
+          <svg
+            class="search-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Search visualizers (e.g., Kafka, AWS, Indexes)..."
+            autocomplete="off"
+          />
         </div>
+
+        <div class="filter-container" id="filterContainer">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="cloud">Cloud & Infra</button>
+          <button class="filter-btn" data-filter="database">Databases</button>
+          <button class="filter-btn" data-filter="architecture">
+            Architecture
+          </button>
+          <button class="filter-btn" data-filter="algorithms">
+            Algorithms
+          </button>
+        </div>
+      </div>
     </header>
 
-    <main class="hub-main">
-        <div class="grid-container" id="visualizerGrid">
-            <!-- Cards will be dynamically injected here by index.js -->
-        </div>
-        
-        <div class="empty-state" id="emptyState" style="display: none;">
-            <div class="empty-icon">🔍</div>
-            <h3>No visualizers found</h3>
-            <p>Try adjusting your search terms or filters.</p>
-            <button class="reset-btn" id="resetBtn">Reset Filters</button>
-        </div>
+    <main class="hub-main" id="hubMain">
+      <div class="grid-container" id="visualizerGrid">
+        <!-- Cards will be dynamically injected here by index.js -->
+      </div>
+
+      <div class="empty-state" id="emptyState" style="display: none">
+        <div class="empty-icon">🔍</div>
+        <h3>No visualizers found</h3>
+        <p>Try adjusting your search terms or filters.</p>
+        <button class="reset-btn" id="resetBtn">Reset Filters</button>
+      </div>
     </main>
 
-    <footer class="hub-footer">
-        <p>Built for learning and exploring software engineering concepts.</p>
+    <!-- Unified App Container -->
+    <div class="app-container" id="appContainer" style="display: none">
+      <button class="back-btn" id="backBtn" aria-label="Back to Hub">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        <span>Back to Hub</span>
+      </button>
+      <iframe
+        class="app-iframe"
+        id="appIframe"
+        src="about:blank"
+        title="Interactive Visualizer"
+      ></iframe>
+    </div>
+
+    <footer class="hub-footer" id="hubFooter">
+      <p>Built for learning and exploring software engineering concepts.</p>
     </footer>
 
     <script src="index.js"></script>
-</body>
+  </body>
 </html>

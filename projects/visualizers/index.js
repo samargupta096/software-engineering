@@ -138,6 +138,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 const card = document.createElement('a');
                 card.href = vis.path;
                 card.className = 'vis-card';
+                // Intercept click to load in iframe
+                card.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    openVisualizerApp(vis.path, vis.title);
+                });
+                
                 // Stagger animations based on index
                 card.style.animationDelay = `${index * 0.1}s`;
                 card.style.animation = 'popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both';
@@ -193,6 +199,64 @@ document.addEventListener('DOMContentLoaded', () => {
         renderVisualizers();
     });
 
+    // Unified App State Management
+    const appContainer = document.getElementById('appContainer');
+    const appIframe = document.getElementById('appIframe');
+    const backBtn = document.getElementById('backBtn');
+
+    function openVisualizerApp(path, title) {
+        // Build an absolute URL so the iframe context works properly
+        const urlToLoad = new URL(path, window.location.href).href;
+        
+        appIframe.src = urlToLoad;
+        appIframe.title = title;
+        
+        // Show app container and hide hub background
+        appContainer.style.display = 'flex';
+        // Force reflow to ensure transition works
+        appContainer.offsetHeight; 
+        
+        appContainer.classList.add('active');
+        document.body.classList.add('app-active');
+        
+        // Focus the iframe for accessibility
+        appIframe.focus();
+        
+        // Update URL to reflect the open app without reloading the page
+        const newUrl = new URL(window.location);
+        newUrl.searchParams.set('app', path.split('/')[1]);
+        window.history.pushState({ path: path }, title, newUrl);
+    }
+
+    function closeVisualizerApp() {
+        appContainer.classList.remove('active');
+        document.body.classList.remove('app-active');
+        
+        // Wait for transition before hiding
+        setTimeout(() => {
+            appContainer.style.display = 'none';
+            appIframe.src = 'about:blank'; // Clear iframe memory
+        }, 500); // matches CSS transition duration
+        
+        // Clean up URL
+        const newUrl = new URL(window.location);
+        newUrl.searchParams.delete('app');
+        window.history.pushState({}, '', newUrl);
+    }
+
+    backBtn.addEventListener('click', closeVisualizerApp);
+
     // Initial render
     renderVisualizers();
+    
+    // Check if URL has an app to open directly
+    const urlParams = new URLSearchParams(window.location.search);
+    const appParam = urlParams.get('app');
+    if (appParam) {
+        // Find matching visualizer
+        const matchingVis = visualizers.find(v => v.path.includes(appParam));
+        if (matchingVis) {
+            openVisualizerApp(matchingVis.path, matchingVis.title);
+        }
+    }
 });
