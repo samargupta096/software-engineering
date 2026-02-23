@@ -1,0 +1,1400 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Apache Kafka Architecture — Interactive Visualizer</title>
+    <meta
+      name="description"
+      content="Explore Apache Kafka's distributed architecture through interactive visualizations. Understand brokers, topics, partitions, consumer groups, replication, and high throughput."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <body>
+    <!-- ═══════════════════════ HERO ═══════════════════════ -->
+    <header class="hero" id="hero">
+      <div class="hero__bg-orbs">
+        <div class="orb orb--1"></div>
+        <div class="orb orb--2"></div>
+        <div class="orb orb--3"></div>
+      </div>
+      <div class="hero__content">
+        <span class="hero__badge">Interactive Deep Dive</span>
+        <h1 class="hero__title">
+          Apache <span class="gradient-text">Kafka</span> Architecture
+        </h1>
+        <p class="hero__subtitle">
+          Understand distributed messaging, parallel processing, fault tolerance
+          and high throughput — through live, interactive visualizations.
+        </p>
+        <a href="#cluster" class="hero__cta">
+          <span>Explore Architecture</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 5v14M5 12l7 7 7-7" />
+          </svg>
+        </a>
+      </div>
+    </header>
+
+    <main>
+      <!-- ═══════════════ 1. CLUSTER OVERVIEW ═══════════════ -->
+      <section class="section reveal" id="cluster">
+        <div class="section__header">
+          <span class="section__number">01</span>
+          <h2 class="section__title">Kafka Cluster &amp; Brokers</h2>
+        </div>
+        <p class="section__desc">
+          A Kafka <strong>cluster</strong> consists of multiple <strong>brokers</strong> (servers).
+          Each broker stores partitions of topics and serves client requests. Multiple brokers
+          provide <em>fault tolerance</em> and <em>horizontal scalability</em>.
+          Hover over a broker to see its partitions.
+        </p>
+
+        <div class="viz-card">
+          <div class="viz-canvas">
+            <div class="cluster-container" id="cluster-viz">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+          <div class="callout teal">
+            <strong>💡 Key Insight:</strong> Each partition has one <strong>leader</strong> broker
+            (handles reads/writes) and zero or more <strong>follower</strong> brokers (replicate data).
+            If a leader fails, a follower is promoted — this is how Kafka achieves fault tolerance.
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 2. TOPICS & PARTITIONS ═══════════════ -->
+      <section class="section reveal" id="partitions">
+        <div class="section__header">
+          <span class="section__number">02</span>
+          <h2 class="section__title">Topics &amp; Partitions</h2>
+        </div>
+        <p class="section__desc">
+          A <strong>topic</strong> is a category or feed name. Each topic is split into
+          <strong>partitions</strong> — ordered, immutable sequences of records.
+          Partitions enable <em>parallel processing</em> — more partitions = more parallelism.
+        </p>
+
+        <div class="viz-card">
+          <div class="viz-controls">
+            <label for="slider-partitions">Partitions</label>
+            <input type="range" id="slider-partitions" min="1" max="8" value="4" />
+            <span class="viz-value" id="val-partitions">4</span>
+          </div>
+          <div class="viz-canvas">
+            <div class="partition-grid" id="partition-grid">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+          <p class="viz-hint">
+            Drag the slider to add/remove partitions. Each partition is an independent log with its own offsets.
+          </p>
+          <div class="callout">
+            <strong>📦 Each partition</strong> is an ordered, append-only log. Messages are assigned
+            a sequential <code>offset</code> — an immutable ID. Once written, messages cannot be changed.
+            Consumers track their position by offset.
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 3. PRODUCERS & MESSAGE FLOW ═══════════════ -->
+      <section class="section reveal" id="producers">
+        <div class="section__header">
+          <span class="section__number">03</span>
+          <h2 class="section__title">Producers &amp; Message Flow</h2>
+        </div>
+        <p class="section__desc">
+          <strong>Producers</strong> publish messages to topics. Messages are routed to partitions using
+          either <em>Round Robin</em> (even distribution) or <em>Key-based</em> partitioning
+          (same key → same partition, ensuring ordering for related events).
+        </p>
+
+        <div class="viz-card">
+          <div class="viz-controls">
+            <label>strategy</label>
+            <div class="strategy-toggle" id="strategy-toggle">
+              <button class="strategy-btn active" data-strategy="round-robin">Round Robin</button>
+              <button class="strategy-btn" data-strategy="key-based">Key-Based</button>
+            </div>
+            <button class="send-btn" id="btn-send-msg">Send Message</button>
+            <button class="send-btn" id="btn-send-burst" style="background: linear-gradient(135deg, var(--accent-teal), #05b388);">
+              Send 10 Messages
+            </button>
+          </div>
+          <div class="viz-canvas">
+            <div class="producer-box">📤 Producer</div>
+            <div class="partition-grid" id="producer-partitions">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+          <p class="viz-hint" id="producer-hint">
+            Click "Send Message" to see round-robin distribution across partitions.
+          </p>
+          <div class="callout">
+            <strong>🔑 Key-based routing:</strong> Messages with key <code>"user-123"</code> always
+            go to the same partition via <code>hash(key) % numPartitions</code>. This guarantees
+            all events for a given entity are ordered within one partition.
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 4. CONSUMER GROUPS ═══════════════ -->
+      <section class="section reveal" id="consumer-groups">
+        <div class="section__header">
+          <span class="section__number">04</span>
+          <h2 class="section__title">Consumer Groups &amp; Parallel Processing</h2>
+        </div>
+        <p class="section__desc">
+          A <strong>consumer group</strong> is a set of consumers that cooperatively read from a topic.
+          <strong>Each partition is assigned to exactly ONE consumer</strong> in the group. This is the
+          fundamental rule that enables both <em>parallel processing</em> and <em>ordering guarantees</em>.
+        </p>
+
+        <div class="viz-card">
+          <div class="viz-controls">
+            <label for="slider-cg-partitions">Partitions</label>
+            <input type="range" id="slider-cg-partitions" min="1" max="6" value="4" />
+            <span class="viz-value" id="val-cg-partitions">4</span>
+            <label for="slider-cg-consumers" style="margin-left: 1rem;">Consumers</label>
+            <input type="range" id="slider-cg-consumers" min="1" max="6" value="2" />
+            <span class="viz-value" id="val-cg-consumers">2</span>
+          </div>
+          <div class="viz-canvas">
+            <div class="cg-layout" id="cg-layout">
+              <div class="cg-partitions" id="cg-partitions"></div>
+              <div class="cg-arrows" id="cg-arrows">
+                <svg id="cg-svg" xmlns="http://www.w3.org/2000/svg"></svg>
+              </div>
+              <div class="cg-consumers" id="cg-consumers"></div>
+            </div>
+          </div>
+          <div class="cg-metrics" id="cg-metrics">
+            <!-- Rendered by JS -->
+          </div>
+          <p class="viz-hint">
+            Try setting consumers > partitions — extra consumers become idle (marked red).
+          </p>
+        </div>
+
+        <!-- Why only one consumer reads a partition -->
+        <div class="viz-card">
+          <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 1rem;">
+            🤔 Why can only ONE consumer read from a partition?
+          </h3>
+          <div class="callout red">
+            <strong>The Ordering Contract:</strong> If two consumers read the same partition concurrently,
+            there's no way to guarantee message processing order. One consumer might process offset 5
+            before offset 3, breaking sequential semantics. By assigning <strong>exactly one consumer per
+            partition</strong>, Kafka guarantees in-order processing within each partition.
+          </div>
+          <div class="callout" style="margin-top: 0.8rem;">
+            <strong>Offset Management:</strong> Each consumer tracks its committed offset. If two consumers
+            shared a partition, they'd conflict on offset commits — who's at offset 10 vs. 15? A single
+            consumer means a single, unambiguous read cursor per partition.
+          </div>
+          <dl class="key-insight">
+            <dt>Throughput</dt>
+            <dd>Add more partitions + consumers to scale linearly (up to partition count)</dd>
+            <dt>Max Consumers</dt>
+            <dd>= Number of partitions. Extra consumers sit idle (wasted resources)</dd>
+            <dt>Best Practice</dt>
+            <dd>Set partition count ≥ max expected consumer count in the group</dd>
+          </dl>
+        </div>
+
+        <!-- Multi-group demo -->
+        <div class="viz-card">
+          <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 1rem;">
+            📡 Multiple Consumer Groups Read Independently
+          </h3>
+          <p style="color: var(--text-secondary); margin-bottom: 1.2rem; font-size: 0.92rem;">
+            Different consumer groups maintain <strong>independent offsets</strong>. Each group reads
+            <em>all</em> messages — the partition restriction only applies <em>within</em> a group.
+          </p>
+          <div class="multi-cg" id="multi-cg">
+            <div class="multi-cg__group">
+              <div class="multi-cg__title">
+                <span class="multi-cg__badge group-a">Group A</span>
+                Analytics Service
+              </div>
+              <div class="partition-grid" id="multi-cg-a"></div>
+            </div>
+            <div class="multi-cg__group">
+              <div class="multi-cg__title">
+                <span class="multi-cg__badge group-b">Group B</span>
+                Notification Service
+              </div>
+              <div class="partition-grid" id="multi-cg-b"></div>
+            </div>
+          </div>
+          <div class="callout teal" style="margin-top: 1rem;">
+            <strong>Pub/Sub Pattern:</strong> Multiple consumer groups let Kafka act like a
+            publish-subscribe system. Each group is an independent subscriber that processes
+            all messages at its own pace.
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 5. MESSAGE ORDERING ═══════════════ -->
+      <section class="section reveal" id="ordering">
+        <div class="section__header">
+          <span class="section__number">05</span>
+          <h2 class="section__title">Message Ordering</h2>
+        </div>
+        <p class="section__desc">
+          Kafka guarantees ordering <strong>within a partition</strong> but not <strong>across partitions</strong>.
+          Messages with the same key go to the same partition, so related events stay ordered.
+        </p>
+
+        <div class="viz-card">
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-ordering-demo">Run Ordering Demo</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="ordering-demo" id="ordering-demo">
+              <div class="ordering-panel">
+                <div class="ordering-panel__title">
+                  Per-Partition Order
+                  <span class="ordering-badge guaranteed">✓ Guaranteed</span>
+                </div>
+                <div id="ordering-per-partition" class="ordering-stream"></div>
+              </div>
+              <div class="ordering-panel">
+                <div class="ordering-panel__title">
+                  Global / Cross-Partition Order
+                  <span class="ordering-badge not-guaranteed">✗ Not Guaranteed</span>
+                </div>
+                <div id="ordering-global" class="ordering-stream"></div>
+              </div>
+            </div>
+          </div>
+          <div class="callout">
+            <strong>📌 Rule of Thumb:</strong> If you need strict ordering for a set of events
+            (e.g., all actions by user-123), use <code>user-123</code> as the message key.
+            All those events land in the same partition → guaranteed order.
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 6. REPLICATION & FAULT TOLERANCE ═══════════════ -->
+      <section class="section reveal" id="replication">
+        <div class="section__header">
+          <span class="section__number">06</span>
+          <h2 class="section__title">Replication &amp; Fault Tolerance</h2>
+        </div>
+        <p class="section__desc">
+          Each partition is replicated across multiple brokers. The <strong>leader</strong> handles
+          all reads/writes; <strong>followers</strong> replicate data. If the leader fails,
+          an <strong>in-sync replica (ISR)</strong> is elected as the new leader.
+        </p>
+
+        <div class="viz-card">
+          <div class="viz-controls">
+            <label>Replication Factor: 3</label>
+            <button class="send-btn" id="btn-kill-leader" style="background: linear-gradient(135deg, var(--accent-red), #d63b5e);">
+              ⚡ Kill Leader Broker
+            </button>
+            <button class="send-btn" id="btn-restore" style="background: linear-gradient(135deg, var(--accent-teal), #05b388);">
+              🔄 Restore All
+            </button>
+          </div>
+          <div class="viz-canvas">
+            <div class="replication-grid" id="replication-grid">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+          <p class="viz-hint" id="replication-hint">
+            Click "Kill Leader" to simulate a broker failure and watch leader election happen.
+          </p>
+        </div>
+
+        <!-- Acknowledgment Levels -->
+        <div class="viz-card">
+          <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 1rem;">
+            ✅ Producer Acknowledgment Levels (<code>acks</code>)
+          </h3>
+          <div class="ack-levels" id="ack-levels">
+            <div class="ack-card" data-ack="0">
+              <div class="ack-card__title">acks=0</div>
+              <div class="ack-card__desc">Fire and forget. Don't wait for any acknowledgment.</div>
+              <div class="ack-card__speed fast">⚡ Fastest — Risk of data loss</div>
+            </div>
+            <div class="ack-card selected" data-ack="1">
+              <div class="ack-card__title">acks=1</div>
+              <div class="ack-card__desc">Wait for leader to write. Followers may not have it yet.</div>
+              <div class="ack-card__speed medium">⚖️ Balanced — Possible loss on leader crash</div>
+            </div>
+            <div class="ack-card" data-ack="all">
+              <div class="ack-card__title">acks=all</div>
+              <div class="ack-card__desc">Wait for ALL ISR replicas to write. Strongest durability.</div>
+              <div class="ack-card__speed slow">🛡️ Safest — Highest latency</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 7. HIGH THROUGHPUT ═══════════════ -->
+      <section class="section reveal" id="throughput">
+        <div class="section__header">
+          <span class="section__number">07</span>
+          <h2 class="section__title">Why Kafka Achieves High Throughput</h2>
+        </div>
+        <p class="section__desc">
+          Kafka can handle <strong>millions of messages per second</strong>. Here are the 6 key
+          architectural decisions that make this possible.
+        </p>
+
+        <!-- ─── 7a. Sequential I/O ─── -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📝 1. Sequential I/O — Why Append-Only Logs Are Fast</h3>
+          <p class="tp-viz-desc">
+            Kafka appends to log files <strong>sequentially</strong>. The disk head never jumps around.
+            Sequential writes are <strong>600x faster</strong> than random writes.
+          </p>
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-seqio">▶ Run Comparison</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="seqio-demo" id="seqio-demo">
+              <div class="seqio-lane">
+                <div class="seqio-label">Sequential Write <span class="ordering-badge guaranteed">Kafka</span></div>
+                <div class="seqio-track" id="seqio-seq-track"></div>
+                <div class="seqio-time" id="seqio-seq-time">—</div>
+              </div>
+              <div class="seqio-lane">
+                <div class="seqio-label">Random Write <span class="ordering-badge not-guaranteed">Traditional</span></div>
+                <div class="seqio-track" id="seqio-rand-track"></div>
+                <div class="seqio-time" id="seqio-rand-time">—</div>
+              </div>
+            </div>
+          </div>
+          <div class="callout teal">
+            <strong>Why?</strong> HDDs and SSDs are optimized for sequential access. The OS prefetcher reads ahead,
+            and no seek time is wasted. Kafka's append-only log turns disk into a <em>fast queue</em>.
+          </div>
+        </div>
+
+        <!-- ─── 7b. Zero-Copy Transfer ─── -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📋 2. Zero-Copy Transfer — Eliminating Data Copies</h3>
+          <p class="tp-viz-desc">
+            Traditional apps copy data 4 times across kernel/user space. Kafka uses <code>sendfile()</code>
+            to transfer data directly from disk to network — <strong>zero user-space copies</strong>.
+          </p>
+          <div class="viz-controls">
+            <label>Mode</label>
+            <div class="strategy-toggle" id="zerocopy-toggle">
+              <button class="strategy-btn" data-mode="traditional">Traditional (4 copies)</button>
+              <button class="strategy-btn active" data-mode="zerocopy">Zero-Copy (2 copies)</button>
+            </div>
+            <button class="send-btn" id="btn-zerocopy">▶ Send Data</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="zerocopy-demo" id="zerocopy-demo">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+          <div class="callout">
+            <strong>Impact:</strong> Zero-copy reduces CPU usage by ~50% and increases throughput
+            significantly. Data path: <code>Disk → Kernel Buffer → NIC Buffer → Network</code> (skipping user space entirely).
+          </div>
+        </div>
+
+        <!-- ─── 7c. Batching + Compression ─── -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📦 3. Batching + Compression — Fewer Calls, Smaller Payloads</h3>
+          <p class="tp-viz-desc">
+            Instead of sending one message at a time, producers <strong>batch</strong> messages and
+            <strong>compress</strong> them. This dramatically reduces network roundtrips.
+          </p>
+          <div class="viz-controls">
+            <label for="slider-batch">batch.size</label>
+            <input type="range" id="slider-batch" min="1" max="8" value="1" />
+            <span class="viz-value" id="val-batch">1</span>
+            <button class="send-btn" id="btn-batch-send">▶ Send 8 Messages</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="batch-demo" id="batch-demo">
+              <div class="batch-producer">
+                <div class="batch-label">Producer</div>
+                <div class="batch-buffer" id="batch-buffer"></div>
+              </div>
+              <div class="batch-network" id="batch-network">
+                <div class="batch-label">Network Calls</div>
+                <div class="batch-packets" id="batch-packets"></div>
+              </div>
+              <div class="batch-broker-col">
+                <div class="batch-label">Broker</div>
+                <div class="batch-received" id="batch-received"></div>
+              </div>
+            </div>
+          </div>
+          <div class="batch-stats" id="batch-stats"></div>
+          <div class="callout">
+            <strong>Tuning:</strong> <code>batch.size=16KB</code> (default) controls max bytes per batch.
+            <code>linger.ms</code> adds a small delay to accumulate more messages. Compression (lz4/zstd/snappy)
+            further reduces payload size by 60-80%.
+          </div>
+        </div>
+
+        <!-- ─── 7d. OS Page Cache ─── -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">💾 4. OS Page Cache — Memory-Speed Reads Without Custom Caching</h3>
+          <p class="tp-viz-desc">
+            Kafka delegates caching to the <strong>OS page cache</strong>. Recently written data stays in
+            RAM automatically. Consumers reading near the tail get <em>memory-speed</em> reads.
+          </p>
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-cache-hot" style="background:linear-gradient(135deg, var(--accent-teal), #05b388);">
+              Read Hot Data (Recent)
+            </button>
+            <button class="send-btn" id="btn-cache-cold" style="background:linear-gradient(135deg, var(--accent-blue), #3aa8d0);">
+              Read Cold Data (Old)
+            </button>
+          </div>
+          <div class="viz-canvas">
+            <div class="cache-demo" id="cache-demo">
+              <div class="cache-layer">
+                <div class="cache-block-label">OS Page Cache (RAM)</div>
+                <div class="cache-blocks" id="cache-blocks">
+                  <!-- Rendered by JS -->
+                </div>
+              </div>
+              <div class="cache-layer">
+                <div class="cache-block-label">Disk (Log Segments)</div>
+                <div class="cache-blocks" id="disk-blocks">
+                  <!-- Rendered by JS -->
+                </div>
+              </div>
+              <div class="cache-result" id="cache-result"></div>
+            </div>
+          </div>
+          <div class="callout teal">
+            <strong>Key:</strong> In normal operation, consumers read data that was just written (tail reads).
+            This data is already in the page cache → <strong>zero disk I/O</strong>.
+            Kafka intentionally avoids a JVM-level cache to prevent GC pressure and double-caching.
+          </div>
+        </div>
+
+        <!-- ─── 7e. Partitioning (Parallelism) ─── -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🔀 5. Partitioning — Linear Scalability</h3>
+          <p class="tp-viz-desc">
+            Each partition is an independent unit of parallelism. More partitions =
+            more brokers and consumers working <strong>simultaneously</strong>.
+          </p>
+          <div class="viz-controls">
+            <label for="slider-tp-partitions">Partitions</label>
+            <input type="range" id="slider-tp-partitions" min="1" max="6" value="1" />
+            <span class="viz-value" id="val-tp-partitions">1</span>
+            <button class="send-btn" id="btn-tp-race">▶ Process 12 Messages</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="parallelism-demo" id="parallelism-demo">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+          <div class="parallelism-stats" id="parallelism-stats"></div>
+          <div class="callout">
+            <strong>Rule:</strong> Throughput scales linearly with partition count. A topic with 10 partitions
+            across 10 brokers can handle 10x the throughput of a single partition (assuming consumers match).
+          </div>
+        </div>
+
+        <!-- ─── 7f. Pull-Based Consumers ─── -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🔄 6. Pull-Based Consumers — No Backpressure Problems</h3>
+          <p class="tp-viz-desc">
+            Kafka consumers <strong>pull</strong> data when ready versus being <strong>pushed</strong> data by the broker.
+            This prevents slow consumers from being overwhelmed.
+          </p>
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-pull-demo">▶ Run Push vs Pull</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="pull-demo" id="pull-demo">
+              <div class="pull-lane">
+                <div class="pull-lane-title">Push Model <span class="ordering-badge not-guaranteed">Traditional MQ</span></div>
+                <div class="pull-entities">
+                  <div class="pull-broker">Broker</div>
+                  <div class="pull-arrow-area" id="push-arrows"></div>
+                  <div class="pull-consumer-col">
+                    <div class="pull-consumer fast">Fast Consumer</div>
+                    <div class="pull-consumer slow">Slow Consumer 🐢</div>
+                  </div>
+                </div>
+                <div class="pull-status" id="push-status"></div>
+              </div>
+              <div class="pull-lane">
+                <div class="pull-lane-title">Pull Model <span class="ordering-badge guaranteed">Kafka</span></div>
+                <div class="pull-entities">
+                  <div class="pull-broker">Broker</div>
+                  <div class="pull-arrow-area" id="pull-arrows"></div>
+                  <div class="pull-consumer-col">
+                    <div class="pull-consumer fast">Fast Consumer</div>
+                    <div class="pull-consumer slow">Slow Consumer 🐢</div>
+                  </div>
+                </div>
+                <div class="pull-status" id="pull-status"></div>
+              </div>
+            </div>
+          </div>
+          <div class="callout teal">
+            <strong>Advantage:</strong> Each consumer fetches at its own rate. The slow consumer isn't
+            overwhelmed; the fast consumer isn't throttled. Consumers can also re-read old data by
+            resetting their offset — impossible in push-based systems.
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 9. CONSUMER GROUP REBALANCING ═══════════════ -->
+      <section class="section reveal" id="rebalancing">
+        <div class="section__header">
+          <span class="section__number">09</span>
+          <h2 class="section__title">Consumer Group Rebalancing</h2>
+        </div>
+        <p class="section__desc">
+          When consumers <strong>join</strong>, <strong>leave</strong>, or <strong>crash</strong>, Kafka
+          <strong>rebalances</strong> — redistributing partitions among remaining consumers.
+          This is one of the most critical operational events in Kafka.
+        </p>
+
+        <!-- Rebalancing Simulation -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🔄 Rebalancing Simulation</h3>
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-rb-add" style="background:linear-gradient(135deg, var(--accent-teal), #05b388);">
+              + Add Consumer
+            </button>
+            <button class="send-btn" id="btn-rb-remove" style="background:linear-gradient(135deg, var(--accent-blue), #3aa8d0);">
+              − Remove Consumer
+            </button>
+            <button class="send-btn" id="btn-rb-crash" style="background:linear-gradient(135deg, var(--accent-red), #d63b5e);">
+              💀 Crash Consumer
+            </button>
+            <button class="send-btn" id="btn-rb-reset">🔄 Reset</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="rb-viz" id="rb-viz">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+          <div class="rb-log" id="rb-log"></div>
+        </div>
+
+        <!-- Eager vs Cooperative -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">⚖️ Eager vs Cooperative Rebalancing</h3>
+          <div class="viz-controls">
+            <label>Strategy</label>
+            <div class="strategy-toggle" id="rb-strategy-toggle">
+              <button class="strategy-btn active" data-strategy="eager">Eager (Stop-the-World)</button>
+              <button class="strategy-btn" data-strategy="cooperative">Cooperative (Incremental)</button>
+            </div>
+            <button class="send-btn" id="btn-rb-demo">▶ Simulate Rebalance</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="rb-timeline" id="rb-timeline">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+          <div class="callout red" id="rb-eager-callout">
+            <strong>Eager (Default):</strong> ALL consumers stop, revoke ALL partitions, then reassign everything.
+            During this window, <strong>zero processing</strong> happens — even partitions that don't change owners stop.
+          </div>
+          <div class="callout teal" id="rb-coop-callout" style="display:none;">
+            <strong>Cooperative (Incremental):</strong> Only the affected partitions are revoked and reassigned.
+            Other consumers keep processing. Set <code>partition.assignment.strategy=CooperativeStickyAssignor</code>.
+          </div>
+        </div>
+
+        <!-- Config Reference -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">⚙️ Key Rebalancing Configs</h3>
+          <dl class="key-insight">
+            <dt>session.timeout.ms</dt>
+            <dd>How long before broker considers consumer dead (default: 45s). Lower = faster detection, higher = fewer false positives.</dd>
+            <dt>heartbeat.interval.ms</dt>
+            <dd>How often consumers send heartbeats (default: 3s). Must be less than session.timeout.ms.</dd>
+            <dt>max.poll.interval.ms</dt>
+            <dd>Max time between poll() calls (default: 5min). If exceeded, consumer is removed from group.</dd>
+            <dt>partition.assignment.strategy</dt>
+            <dd>RangeAssignor (default), RoundRobinAssignor, StickyAssignor, or CooperativeStickyAssignor.</dd>
+          </dl>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 10. IDEMPOTENT PRODUCERS ═══════════════ -->
+      <section class="section reveal" id="idempotency">
+        <div class="section__header">
+          <span class="section__number">10</span>
+          <h2 class="section__title">Idempotent Producers &amp; Exactly-Once</h2>
+        </div>
+        <p class="section__desc">
+          Network failures cause <strong>retries</strong>, which can produce <strong>duplicate messages</strong>.
+          Kafka's idempotent producer guarantees that retries don't create duplicates, and
+          <strong>exactly-once semantics (EOS)</strong> extends this across consume-transform-produce pipelines.
+        </p>
+
+        <!-- The Duplicate Problem -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🔁 The Duplicate Problem</h3>
+          <p class="tp-viz-desc">
+            Without idempotency: Producer sends → Broker writes → ACK lost in network →
+            Producer retries → <strong>Duplicate message!</strong>
+          </p>
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-idem-nodup">▶ Send (No Idempotency)</button>
+            <button class="send-btn" id="btn-idem-withdup" style="background:linear-gradient(135deg, var(--accent-teal), #05b388);">
+              ▶ Send (Idempotent)
+            </button>
+          </div>
+          <div class="viz-canvas">
+            <div class="idem-demo" id="idem-demo">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+          <div class="idem-result" id="idem-result"></div>
+        </div>
+
+        <!-- Delivery Guarantees -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📊 Delivery Guarantees Comparison</h3>
+          <div class="delivery-cards" id="delivery-cards">
+            <div class="delivery-card" data-level="at-most-once">
+              <div class="delivery-card__title">At-Most-Once</div>
+              <div class="delivery-card__icon">📩→💨</div>
+              <div class="delivery-card__desc">
+                Fire and forget. Message may be <strong>lost</strong> but never duplicated.
+              </div>
+              <div class="delivery-card__config">
+                <code>acks=0</code>, no retries
+              </div>
+              <div class="delivery-card__risk">⚠ Data loss possible</div>
+            </div>
+            <div class="delivery-card selected" data-level="at-least-once">
+              <div class="delivery-card__title">At-Least-Once</div>
+              <div class="delivery-card__icon">📩→📩📩</div>
+              <div class="delivery-card__desc">
+                Message is guaranteed delivered, but may be <strong>duplicated</strong> on retry.
+              </div>
+              <div class="delivery-card__config">
+                <code>acks=all</code>, retries enabled
+              </div>
+              <div class="delivery-card__risk">⚠ Duplicates possible</div>
+            </div>
+            <div class="delivery-card" data-level="exactly-once">
+              <div class="delivery-card__title">Exactly-Once</div>
+              <div class="delivery-card__icon">📩→✅</div>
+              <div class="delivery-card__desc">
+                Each message delivered <strong>exactly once</strong>. No loss, no duplicates.
+              </div>
+              <div class="delivery-card__config">
+                <code>enable.idempotence=true</code> + transactions
+              </div>
+              <div class="delivery-card__risk">✅ Strongest guarantee</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- How Idempotency Works -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🧬 How Idempotency Works Internally</h3>
+          <dl class="key-insight">
+            <dt>Producer ID (PID)</dt>
+            <dd>Unique ID assigned to each producer instance by the broker on initialization.</dd>
+            <dt>Sequence Number</dt>
+            <dd>Monotonically increasing per partition. Broker rejects messages with duplicate (PID, SeqNum).</dd>
+            <dt>enable.idempotence</dt>
+            <dd>Set to <code>true</code>. Automatically sets <code>acks=all</code>, <code>retries=MAX</code>, <code>max.in.flight.requests=5</code>.</dd>
+            <dt>Scope</dt>
+            <dd>Idempotency guarantees single-partition, single-session dedup. For cross-partition or cross-session, use Kafka Transactions.</dd>
+          </dl>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 11. KAFKA TRANSACTIONS ═══════════════ -->
+      <section class="section reveal" id="transactions">
+        <div class="section__header">
+          <span class="section__number">11</span>
+          <h2 class="section__title">Kafka Transactions</h2>
+        </div>
+        <p class="section__desc">
+          Kafka transactions enable <strong>atomic read-process-write</strong> pipelines.
+          You consume from one topic, process, and produce to another — all as a single atomic unit.
+          If any step fails, everything rolls back.
+        </p>
+
+        <!-- Read-Process-Write -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">⚛️ Atomic Read-Process-Write</h3>
+          <p class="tp-viz-desc">
+            The consume → transform → produce pattern ensures that offsets are committed
+            and output messages are produced <strong>together or not at all</strong>.
+          </p>
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-txn-success">▶ Run Transaction (Success)</button>
+            <button class="send-btn" id="btn-txn-fail" style="background:linear-gradient(135deg, var(--accent-red), #d63b5e);">
+              💥 Simulate Failure
+            </button>
+          </div>
+          <div class="viz-canvas">
+            <div class="txn-pipeline" id="txn-pipeline">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+          <div class="txn-result" id="txn-result"></div>
+        </div>
+
+        <!-- Transaction State Machine -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📐 Transaction Lifecycle</h3>
+          <div class="txn-states" id="txn-states">
+            <div class="txn-state" data-state="init">
+              <div class="txn-state__icon">🔧</div>
+              <div class="txn-state__name">Init</div>
+              <div class="txn-state__desc">initTransactions()</div>
+            </div>
+            <div class="txn-arrow">→</div>
+            <div class="txn-state" data-state="begin">
+              <div class="txn-state__icon">▶</div>
+              <div class="txn-state__name">Begin</div>
+              <div class="txn-state__desc">beginTransaction()</div>
+            </div>
+            <div class="txn-arrow">→</div>
+            <div class="txn-state" data-state="produce">
+              <div class="txn-state__icon">📤</div>
+              <div class="txn-state__name">Send</div>
+              <div class="txn-state__desc">send() + sendOffsetsToTransaction()</div>
+            </div>
+            <div class="txn-arrow">→</div>
+            <div class="txn-state" data-state="commit">
+              <div class="txn-state__icon">✅</div>
+              <div class="txn-state__name">Commit</div>
+              <div class="txn-state__desc">commitTransaction()</div>
+            </div>
+            <div class="txn-arrow">or</div>
+            <div class="txn-state abort" data-state="abort">
+              <div class="txn-state__icon">❌</div>
+              <div class="txn-state__name">Abort</div>
+              <div class="txn-state__desc">abortTransaction()</div>
+            </div>
+          </div>
+          <div class="callout">
+            <strong>Key:</strong> Set <code>transactional.id</code> on the producer. Consumers must use
+            <code>isolation.level=read_committed</code> to only see committed messages, ignoring in-flight or aborted ones.
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 12. SAGA PATTERN ═══════════════ -->
+      <section class="section reveal" id="saga">
+        <div class="section__header">
+          <span class="section__number">12</span>
+          <h2 class="section__title">Saga Pattern — Distributed Transactions</h2>
+        </div>
+        <p class="section__desc">
+          Traditional <strong>2-Phase Commit (2PC)</strong> doesn't scale in microservices.
+          The <strong>Saga Pattern</strong> breaks a distributed transaction into local transactions,
+          each publishing events to Kafka. On failure, <strong>compensating transactions</strong> undo prior steps.
+        </p>
+
+        <!-- Why Not 2PC -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🚫 Why Not 2-Phase Commit?</h3>
+          <dl class="key-insight">
+            <dt>Blocking</dt>
+            <dd>All participants lock resources during prepare phase — hurts availability and throughput.</dd>
+            <dt>Single Point of Failure</dt>
+            <dd>If the coordinator crashes between prepare and commit, all participants are stuck.</dd>
+            <dt>Not Scalable</dt>
+            <dd>Adding more services = more coordination overhead; doesn't fit microservice architecture.</dd>
+          </dl>
+        </div>
+
+        <!-- Choreography vs Orchestration -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🎭 Saga Flow — Event-Driven Microservices</h3>
+          <div class="viz-controls">
+            <label>Pattern</label>
+            <div class="strategy-toggle" id="saga-toggle">
+              <button class="strategy-btn active" data-pattern="choreography">Choreography</button>
+              <button class="strategy-btn" data-pattern="orchestration">Orchestration</button>
+            </div>
+            <button class="send-btn" id="btn-saga-success">▶ Run Success Flow</button>
+            <button class="send-btn" id="btn-saga-fail" style="background:linear-gradient(135deg, var(--accent-red), #d63b5e);">
+              💥 Simulate Failure
+            </button>
+          </div>
+          <div class="viz-canvas">
+            <div class="saga-flow" id="saga-flow">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+          <div class="saga-result" id="saga-result"></div>
+        </div>
+
+        <!-- Comparison -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📋 Choreography vs Orchestration</h3>
+          <table style="width: 100%; border-collapse: collapse; font-size: 0.88rem;">
+            <thead>
+              <tr style="border-bottom: 1px solid var(--border-card);">
+                <th style="padding: 12px; text-align: left; color: var(--text-muted); font-size: 0.78rem; text-transform: uppercase;">Aspect</th>
+                <th style="padding: 12px; text-align: left; color: var(--accent-teal); font-weight: 700;">Choreography</th>
+                <th style="padding: 12px; text-align: left; color: var(--accent-orange); font-weight: 700;">Orchestration</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom: 1px solid var(--border-subtle);">
+                <td style="padding: 12px; color: var(--text-secondary);">Coordination</td>
+                <td style="padding: 12px;">Decentralized (each service listens & emits events)</td>
+                <td style="padding: 12px;">Central orchestrator controls the flow</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--border-subtle);">
+                <td style="padding: 12px; color: var(--text-secondary);">Coupling</td>
+                <td style="padding: 12px;">Loose — services don't know about each other</td>
+                <td style="padding: 12px;">Tighter — orchestrator knows all steps</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--border-subtle);">
+                <td style="padding: 12px; color: var(--text-secondary);">Complexity</td>
+                <td style="padding: 12px;">Hard to track/debug (scattered logic)</td>
+                <td style="padding: 12px;">Easier to understand (centralized logic)</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--border-subtle);">
+                <td style="padding: 12px; color: var(--text-secondary);">Scalability</td>
+                <td style="padding: 12px;">Scales well — no bottleneck</td>
+                <td style="padding: 12px;">Orchestrator can become bottleneck</td>
+              </tr>
+              <tr>
+                <td style="padding: 12px; color: var(--text-secondary);">Best For</td>
+                <td style="padding: 12px;">Simple flows, few services</td>
+                <td style="padding: 12px;">Complex flows, many services, error handling</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 13. CONSUMER OFFSETS ═══════════════ -->
+      <section class="section reveal" id="offsets">
+        <div class="section__header">
+          <span class="section__number">13</span>
+          <h2 class="section__title">Consumer Offsets &amp; Commit Strategies</h2>
+        </div>
+        <p class="section__desc">
+          Kafka tracks consumption progress using <strong>offsets</strong> — a number per partition
+          indicating the next message to read. How and when you <strong>commit</strong> offsets
+          determines your delivery guarantee.
+        </p>
+
+        <!-- Offset Visualization -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📍 Offset Pointer — Where Am I?</h3>
+          <p class="tp-viz-desc">
+            Each consumer tracks its position in the partition. The <strong>committed offset</strong> is stored
+            in the internal <code>__consumer_offsets</code> topic.
+          </p>
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-offset-consume">▶ Consume Next</button>
+            <button class="send-btn" id="btn-offset-commit" style="background:linear-gradient(135deg, var(--accent-teal), #05b388);">
+              ✓ Commit Offset
+            </button>
+            <button class="send-btn" id="btn-offset-crash" style="background:linear-gradient(135deg, var(--accent-red), #d63b5e);">
+              💀 Crash Consumer
+            </button>
+            <button class="send-btn" id="btn-offset-reset">🔄 Reset</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="offset-demo" id="offset-demo"><!-- Rendered by JS --></div>
+          </div>
+          <div class="offset-result" id="offset-result"></div>
+        </div>
+
+        <!-- Commit Strategies -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">⚙️ Commit Strategies</h3>
+          <dl class="key-insight">
+            <dt>Auto Commit (enable.auto.commit=true)</dt>
+            <dd>Offsets committed every <code>auto.commit.interval.ms</code> (default: 5s). Fast but can lose messages or create duplicates on crash.</dd>
+            <dt>Manual Sync (commitSync())</dt>
+            <dd>Blocks until broker confirms. Slowest but safest for exactly-once processing.</dd>
+            <dt>Manual Async (commitAsync())</dt>
+            <dd>Non-blocking, higher throughput. Use callback for error handling. Risk: out-of-order commits.</dd>
+            <dt>auto.offset.reset</dt>
+            <dd><code>earliest</code> = replay from beginning; <code>latest</code> = skip to new messages only. Critical when no committed offset exists.</dd>
+          </dl>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 14. LOG COMPACTION ═══════════════ -->
+      <section class="section reveal" id="compaction">
+        <div class="section__header">
+          <span class="section__number">14</span>
+          <h2 class="section__title">Log Compaction</h2>
+        </div>
+        <p class="section__desc">
+          Instead of deleting old segments by time/size, Kafka can <strong>compact</strong> a topic —
+          keeping only the <strong>latest value per key</strong>. This turns a topic into a
+          <strong>changelog</strong> or a key-value snapshot.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🧹 Before &amp; After Compaction</h3>
+          <p class="tp-viz-desc">
+            The log cleaner thread scans closed segments, removes older values for the same key,
+            and keeps only the most recent. A <strong>null value</strong> (tombstone) deletes the key entirely.
+          </p>
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-compact">▶ Run Compaction</button>
+            <button class="send-btn" id="btn-compact-reset">🔄 Reset</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="compact-demo" id="compact-demo"><!-- Rendered by JS --></div>
+          </div>
+        </div>
+
+        <!-- Deletion vs Compaction -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📋 Deletion vs Compaction</h3>
+          <table style="width: 100%; border-collapse: collapse; font-size: 0.88rem;">
+            <thead>
+              <tr style="border-bottom: 1px solid var(--border-card);">
+                <th style="padding: 12px; text-align: left; color: var(--text-muted); font-size: 0.78rem; text-transform: uppercase;">Aspect</th>
+                <th style="padding: 12px; text-align: left; color: var(--accent-orange); font-weight: 700;">Delete (retention.ms)</th>
+                <th style="padding: 12px; text-align: left; color: var(--accent-teal); font-weight: 700;">Compact (cleanup.policy)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom: 1px solid var(--border-subtle);"><td style="padding: 12px; color: var(--text-secondary);">Trigger</td><td style="padding: 12px;">Time or size threshold</td><td style="padding: 12px;">Background cleaner thread</td></tr>
+              <tr style="border-bottom: 1px solid var(--border-subtle);"><td style="padding: 12px; color: var(--text-secondary);">Keeps</td><td style="padding: 12px;">ALL messages within window</td><td style="padding: 12px;">Only LATEST per key</td></tr>
+              <tr style="border-bottom: 1px solid var(--border-subtle);"><td style="padding: 12px; color: var(--text-secondary);">Use Case</td><td style="padding: 12px;">Event streams, logs</td><td style="padding: 12px;">Changelogs, state snapshots</td></tr>
+              <tr><td style="padding: 12px; color: var(--text-secondary);">Key Delete</td><td style="padding: 12px;">Entire segment drops</td><td style="padding: 12px;">Tombstone (null value)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 15. SCHEMA REGISTRY ═══════════════ -->
+      <section class="section reveal" id="schema">
+        <div class="section__header">
+          <span class="section__number">15</span>
+          <h2 class="section__title">Schema Registry &amp; Evolution</h2>
+        </div>
+        <p class="section__desc">
+          In production, <strong>schema changes</strong> can break consumers. The
+          <strong>Schema Registry</strong> stores Avro/Protobuf/JSON schemas and enforces
+          <strong>compatibility rules</strong> so producers and consumers can evolve independently.
+        </p>
+
+        <!-- Schema Pipeline -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🔗 Schema-Aware Pipeline</h3>
+          <div class="viz-controls">
+            <label>Compatibility</label>
+            <div class="strategy-toggle" id="schema-compat-toggle">
+              <button class="strategy-btn active" data-compat="backward">BACKWARD</button>
+              <button class="strategy-btn" data-compat="forward">FORWARD</button>
+              <button class="strategy-btn" data-compat="full">FULL</button>
+            </div>
+            <button class="send-btn" id="btn-schema-add">▶ Add Field (v2)</button>
+            <button class="send-btn" id="btn-schema-remove" style="background:linear-gradient(135deg, var(--accent-red), #d63b5e);">
+              ✂ Remove Field (v2)
+            </button>
+          </div>
+          <div class="viz-canvas">
+            <div class="schema-demo" id="schema-demo"><!-- Rendered by JS --></div>
+          </div>
+          <div class="schema-result" id="schema-result"></div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📋 Compatibility Modes</h3>
+          <dl class="key-insight">
+            <dt>BACKWARD (default)</dt>
+            <dd>New schema can read data written by old schema. <strong>Safe to add fields with defaults.</strong> Cannot remove required fields.</dd>
+            <dt>FORWARD</dt>
+            <dd>Old schema can read data written by new schema. <strong>Safe to remove fields.</strong> Cannot add required fields.</dd>
+            <dt>FULL</dt>
+            <dd>Both old and new schemas can read each other's data. Most restrictive — only add/remove optional fields with defaults.</dd>
+            <dt>NONE</dt>
+            <dd>No compatibility checks. Dangerous in production — can break consumers silently.</dd>
+          </dl>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 16. DEAD LETTER QUEUE ═══════════════ -->
+      <section class="section reveal" id="dlq">
+        <div class="section__header">
+          <span class="section__number">16</span>
+          <h2 class="section__title">Dead Letter Queue &amp; Error Handling</h2>
+        </div>
+        <p class="section__desc">
+          When a consumer fails to process a message (poison pill, bad data, transient error),
+          the <strong>Dead Letter Queue (DLQ)</strong> pattern routes failed messages to a separate topic
+          after exhausting retries — preventing the consumer from getting stuck.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">☠️ Poison Pill Handling</h3>
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-dlq-good">▶ Send Good Message</button>
+            <button class="send-btn" id="btn-dlq-poison" style="background:linear-gradient(135deg, var(--accent-red), #d63b5e);">
+              ☠ Send Poison Pill
+            </button>
+            <button class="send-btn" id="btn-dlq-reset">🔄 Reset</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="dlq-demo" id="dlq-demo"><!-- Rendered by JS --></div>
+          </div>
+          <div class="dlq-result" id="dlq-result"></div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🔁 Retry Strategy Patterns</h3>
+          <dl class="key-insight">
+            <dt>Fixed Retry</dt>
+            <dd>Retry N times with fixed delay. Simple but can overwhelm downstream on transient failures.</dd>
+            <dt>Exponential Backoff</dt>
+            <dd>Retry with increasing delays (1s, 2s, 4s, 8s...). Better for transient failures.</dd>
+            <dt>Retry Topic</dt>
+            <dd>Publish failed messages to <code>topic.retry.1</code>, <code>topic.retry.2</code>, etc. with increasing delays. Final failure → DLQ.</dd>
+            <dt>DLQ Reprocessing</dt>
+            <dd>Consumer reads from DLQ, fixes data or deployment, then replays messages back to the main topic.</dd>
+          </dl>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 17. CONSUMER LAG ═══════════════ -->
+      <section class="section reveal" id="lag">
+        <div class="section__header">
+          <span class="section__number">17</span>
+          <h2 class="section__title">Consumer Lag &amp; Monitoring</h2>
+        </div>
+        <p class="section__desc">
+          <strong>Consumer lag</strong> = how far behind the consumer is from the producer.
+          It's the #1 metric for Kafka operations. High lag means consumers can't keep up,
+          leading to stale data and potential SLA violations.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📊 Lag Visualization</h3>
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-lag-produce">📤 Produce (faster)</button>
+            <button class="send-btn" id="btn-lag-consume" style="background:linear-gradient(135deg, var(--accent-teal), #05b388);">
+              📥 Consume (catch up)
+            </button>
+            <button class="send-btn" id="btn-lag-slow" style="background:linear-gradient(135deg, var(--accent-red), #d63b5e);">
+              🐢 Slow Consumer
+            </button>
+            <button class="send-btn" id="btn-lag-reset">🔄 Reset</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="lag-demo" id="lag-demo"><!-- Rendered by JS --></div>
+          </div>
+          <div class="lag-result" id="lag-result"></div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🔑 Key Monitoring Metrics</h3>
+          <dl class="key-insight">
+            <dt>records-lag-max</dt>
+            <dd>Maximum lag across all partitions for a consumer group. Alert if consistently > threshold.</dd>
+            <dt>records-consumed-rate</dt>
+            <dd>Messages consumed per second. Compare with producer rate to detect lag growth.</dd>
+            <dt>Under-Replicated Partitions</dt>
+            <dd>Partitions where ISR < replication factor. Indicates broker health issues.</dd>
+            <dt>Consumer Group State</dt>
+            <dd>Stable, PreparingRebalance, CompletingRebalance, Dead, Empty. Monitor for unexpected state changes.</dd>
+          </dl>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 19. KAFKA STREAMS ═══════════════ -->
+      <section class="section reveal" id="streams">
+        <div class="section__header">
+          <span class="section__number">19</span>
+          <h2 class="section__title">Kafka Streams</h2>
+        </div>
+        <p class="section__desc">
+          <strong>Kafka Streams</strong> is a client library for building real-time streaming applications.
+          It processes data directly from Kafka topics with exactly-once semantics, stateful operations,
+          and windowed aggregations — without needing a separate cluster like Spark or Flink.
+        </p>
+
+        <!-- KStream vs KTable -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🔄 KStream vs KTable</h3>
+          <div class="viz-controls">
+            <div class="strategy-toggle" id="stream-toggle">
+              <button class="strategy-btn active" data-type="kstream">KStream (Event Stream)</button>
+              <button class="strategy-btn" data-type="ktable">KTable (Changelog)</button>
+            </div>
+            <button class="send-btn" id="btn-stream-send">▶ Send Events</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="stream-demo" id="stream-demo"><!-- Rendered by JS --></div>
+          </div>
+        </div>
+
+        <!-- Streams Topology -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📋 Streams Concepts</h3>
+          <dl class="key-insight">
+            <dt>KStream</dt>
+            <dd>Unbounded stream of records. Each record is an independent event. Think: "user clicked", "order placed".</dd>
+            <dt>KTable</dt>
+            <dd>Changelog stream — each new record for a key <strong>replaces</strong> the previous. Think: "user's current balance", "latest stock price".</dd>
+            <dt>Windowed Aggregations</dt>
+            <dd>Tumbling, Hopping, Sliding, and Session windows for time-based grouping (e.g., "count clicks per 5-min window").</dd>
+            <dt>State Stores</dt>
+            <dd>Local RocksDB instances backed by changelog topics. Enables joins, aggregations, and queryable state.</dd>
+            <dt>Exactly-Once</dt>
+            <dd>Built-in EOS via <code>processing.guarantee=exactly_once_v2</code>. Uses transactions internally.</dd>
+          </dl>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 20. KAFKA CONNECT ═══════════════ -->
+      <section class="section reveal" id="connect">
+        <div class="section__header">
+          <span class="section__number">20</span>
+          <h2 class="section__title">Kafka Connect</h2>
+        </div>
+        <p class="section__desc">
+          <strong>Kafka Connect</strong> is a framework for streaming data between Kafka and external systems
+          (databases, search engines, file systems) using pre-built <strong>connectors</strong> — no code required.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🔌 Source &amp; Sink Connectors</h3>
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-connect-source">▶ Run Source (DB → Kafka)</button>
+            <button class="send-btn" id="btn-connect-sink" style="background:linear-gradient(135deg, var(--accent-teal), #05b388);">
+              ▶ Run Sink (Kafka → ES)
+            </button>
+          </div>
+          <div class="viz-canvas">
+            <div class="connect-demo" id="connect-demo"><!-- Rendered by JS --></div>
+          </div>
+          <div class="connect-result" id="connect-result"></div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📋 Connect Concepts</h3>
+          <dl class="key-insight">
+            <dt>Source Connector</dt>
+            <dd>Reads from external system → writes to Kafka. Examples: Debezium (CDC), JDBC Source, S3 Source.</dd>
+            <dt>Sink Connector</dt>
+            <dd>Reads from Kafka → writes to external system. Examples: Elasticsearch Sink, S3 Sink, JDBC Sink.</dd>
+            <dt>Workers</dt>
+            <dd>Standalone (single process) or Distributed (cluster with load balancing and fault tolerance).</dd>
+            <dt>Transforms (SMTs)</dt>
+            <dd>Single Message Transforms: modify records in-flight (rename fields, add timestamps, filter).</dd>
+            <dt>CDC (Change Data Capture)</dt>
+            <dd>Capture row-level changes from databases in real-time. Debezium + Kafka = gold standard for CDC.</dd>
+          </dl>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 21. PARTITIONING STRATEGIES ═══════════════ -->
+      <section class="section reveal" id="partitioning">
+        <div class="section__header">
+          <span class="section__number">21</span>
+          <h2 class="section__title">Partitioning Strategies</h2>
+        </div>
+        <p class="section__desc">
+          How messages are distributed across partitions determines <strong>ordering</strong>,
+          <strong>parallelism</strong>, and <strong>load balance</strong>. Choosing the wrong key
+          can create <strong>hot partitions</strong> that bottleneck your entire pipeline.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🎯 Partition Assignment Demo</h3>
+          <div class="viz-controls">
+            <div class="strategy-toggle" id="part-strategy-toggle">
+              <button class="strategy-btn active" data-strat="roundrobin">Round-Robin</button>
+              <button class="strategy-btn" data-strat="keyhash">Key Hash</button>
+              <button class="strategy-btn" data-strat="hotkey">Hot Key ⚠️</button>
+            </div>
+            <button class="send-btn" id="btn-part-send">▶ Send 12 Messages</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="part-demo" id="part-demo"><!-- Rendered by JS --></div>
+          </div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📋 Strategy Comparison</h3>
+          <dl class="key-insight">
+            <dt>Round-Robin (No Key)</dt>
+            <dd>Even distribution, max throughput. <strong>No ordering guarantee</strong> across partitions.</dd>
+            <dt>Key-Based Hash</dt>
+            <dd>Same key → same partition. Guarantees ordering per key. Risk: skewed distribution if keys are uneven.</dd>
+            <dt>Custom Partitioner</dt>
+            <dd>Implement <code>Partitioner</code> interface for business logic (e.g., route VIP users to dedicated partitions).</dd>
+            <dt>Hot Partition</dt>
+            <dd>When one key has disproportionate traffic (e.g., "country=US"). Solution: add suffix to key or use sub-partitioning.</dd>
+          </dl>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 22. EVENT SOURCING & CQRS ═══════════════ -->
+      <section class="section reveal" id="eventsourcing">
+        <div class="section__header">
+          <span class="section__number">22</span>
+          <h2 class="section__title">Event Sourcing &amp; CQRS</h2>
+        </div>
+        <p class="section__desc">
+          <strong>Event Sourcing</strong> stores every state change as an immutable event in Kafka.
+          <strong>CQRS</strong> separates read and write models — writes go to the event log,
+          reads come from materialized views built by consumers.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📝 Event Store Demo</h3>
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-es-create">📦 Create Order</button>
+            <button class="send-btn" id="btn-es-update" style="background:linear-gradient(135deg, var(--accent-teal), #05b388);">
+              ✏️ Update Order
+            </button>
+            <button class="send-btn" id="btn-es-cancel" style="background:linear-gradient(135deg, var(--accent-red), #d63b5e);">
+              ❌ Cancel Order
+            </button>
+            <button class="send-btn" id="btn-es-replay">⏪ Replay Events</button>
+            <button class="send-btn" id="btn-es-reset">🔄 Reset</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="es-demo" id="es-demo"><!-- Rendered by JS --></div>
+          </div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📋 Event Sourcing + CQRS Concepts</h3>
+          <dl class="key-insight">
+            <dt>Event Store</dt>
+            <dd>Kafka topic as the source of truth. Append-only — never update or delete events.</dd>
+            <dt>Materialized View</dt>
+            <dd>Consumer builds a read-optimized projection (e.g., DB table) from the event stream.</dd>
+            <dt>Event Replay</dt>
+            <dd>Rebuild state from scratch by replaying all events from offset 0. Useful for bug fixes, new projections.</dd>
+            <dt>CQRS Benefits</dt>
+            <dd>Write model optimized for consistency; read model optimized for queries. Scale independently.</dd>
+          </dl>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 23. KAFKA SECURITY ═══════════════ -->
+      <section class="section reveal" id="security">
+        <div class="section__header">
+          <span class="section__number">23</span>
+          <h2 class="section__title">Kafka Security</h2>
+        </div>
+        <p class="section__desc">
+          Production Kafka clusters must be secured at three layers:
+          <strong>encryption</strong> (SSL/TLS), <strong>authentication</strong> (SASL),
+          and <strong>authorization</strong> (ACLs). Without these, any client can read or write any topic.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🔒 Security Layers</h3>
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-sec-unsecured">🔓 Unsecured</button>
+            <button class="send-btn" id="btn-sec-secured" style="background:linear-gradient(135deg, var(--accent-teal), #05b388);">
+              🔒 Fully Secured
+            </button>
+          </div>
+          <div class="viz-canvas">
+            <div class="sec-demo" id="sec-demo"><!-- Rendered by JS --></div>
+          </div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📋 Security Configuration</h3>
+          <dl class="key-insight">
+            <dt>SSL/TLS Encryption</dt>
+            <dd>Encrypts data in transit. Set <code>security.protocol=SSL</code> or <code>SASL_SSL</code>. Configure keystores and truststores.</dd>
+            <dt>SASL Authentication</dt>
+            <dd>Verifies client identity. Options: PLAIN, SCRAM-SHA-256/512, OAUTHBEARER, GSSAPI (Kerberos).</dd>
+            <dt>ACLs (Authorization)</dt>
+            <dd>Control who can Read, Write, Create, Delete on which topics. Set via <code>kafka-acls.sh</code>.</dd>
+            <dt>Inter-Broker Security</dt>
+            <dd>Secure broker-to-broker communication with <code>inter.broker.listener.name</code> + SSL/SASL.</dd>
+            <dt>Encryption at Rest</dt>
+            <dd>Kafka doesn't encrypt data at rest natively — use disk-level encryption (LUKS, EBS encryption).</dd>
+          </dl>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 24. KAFKA vs TRADITIONAL MQ ═══════════════ -->
+      <section class="section reveal" id="comparison">
+        <div class="section__header">
+          <span class="section__number">24</span>
+          <h2 class="section__title">Kafka vs Traditional Message Queues</h2>
+        </div>
+        <p class="section__desc">
+          Understanding what makes Kafka different from RabbitMQ, ActiveMQ, and other traditional
+          message queues helps clarify its design philosophy.
+        </p>
+
+        <div class="viz-card">
+          <table style="width: 100%; border-collapse: collapse; font-size: 0.88rem;">
+            <thead>
+              <tr style="border-bottom: 1px solid var(--border-card);">
+                <th style="padding: 12px; text-align: left; color: var(--text-muted); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.8px;">Feature</th>
+                <th style="padding: 12px; text-align: left; color: var(--accent-orange); font-weight: 700;">Apache Kafka</th>
+                <th style="padding: 12px; text-align: left; color: var(--accent-blue); font-weight: 700;">Traditional MQ</th>
+              </tr>
+            </thead>
+            <tbody id="comparison-table">
+              <tr style="border-bottom: 1px solid var(--border-subtle);">
+                <td style="padding: 12px; color: var(--text-secondary);">Model</td>
+                <td style="padding: 12px;">Distributed commit log</td>
+                <td style="padding: 12px;">Message broker (queue)</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--border-subtle);">
+                <td style="padding: 12px; color: var(--text-secondary);">Retention</td>
+                <td style="padding: 12px;">Retains messages (configurable)</td>
+                <td style="padding: 12px;">Deleted after consumption</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--border-subtle);">
+                <td style="padding: 12px; color: var(--text-secondary);">Consumer Model</td>
+                <td style="padding: 12px;">Pull-based (consumer controls pace)</td>
+                <td style="padding: 12px;">Push-based (broker pushes)</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--border-subtle);">
+                <td style="padding: 12px; color: var(--text-secondary);">Throughput</td>
+                <td style="padding: 12px;">Millions msg/sec</td>
+                <td style="padding: 12px;">Thousands msg/sec</td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--border-subtle);">
+                <td style="padding: 12px; color: var(--text-secondary);">Replay</td>
+                <td style="padding: 12px;">✅ Consumers can re-read old data</td>
+                <td style="padding: 12px;">❌ Gone after ACK</td>
+              </tr>
+              <tr>
+                <td style="padding: 12px; color: var(--text-secondary);">Ordering</td>
+                <td style="padding: 12px;">Per-partition guarantee</td>
+                <td style="padding: 12px;">Per-queue (single queue only)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <!-- ═══════════════════ FOOTER ═══════════════════ -->
+    <footer class="footer">
+      <p>Built for learning — <strong>Apache Kafka Architecture Visualizer</strong></p>
+    </footer>
+
+    <script src="index.js"></script>
+  </body>
+</html>

@@ -1,0 +1,711 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>System Design Interview Prep — Interactive Guide</title>
+    <meta name="description" content="Master system design interviews with interactive visualizations. Practice estimation, scalability, caching, load balancing, CAP theorem, and more." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <body>
+
+    <!-- ═══════════════════════ HERO ═══════════════════════ -->
+    <header class="hero" id="hero">
+      <div class="hero__bg-orbs">
+        <div class="orb orb--1"></div>
+        <div class="orb orb--2"></div>
+        <div class="orb orb--3"></div>
+      </div>
+      <div class="hero__content">
+        <span class="hero__badge">Interactive Interview Prep</span>
+        <h1 class="hero__title">
+          System <span class="gradient-text">Design</span> Mastery
+        </h1>
+        <p class="hero__subtitle">
+          Build intuition for distributed systems through live, interactive
+          visualizations — from estimation math to architecture patterns.
+        </p>
+        <a href="#framework" class="hero__cta">
+          <span>Start Learning</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+        </a>
+      </div>
+    </header>
+
+    <main>
+
+      <!-- ═══════════════ 01. THE FRAMEWORK ═══════════════ -->
+      <section class="section reveal" id="framework">
+        <div class="section__header">
+          <span class="section__number">01</span>
+          <h2 class="section__title">The Interview Framework</h2>
+        </div>
+        <p class="section__desc">
+          Every system design interview follows a <strong>structured approach</strong>.
+          Master this 6-step framework and you'll never feel lost. Click each step
+          to explore what to do during that phase.
+        </p>
+
+        <div class="viz-card">
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-fw-auto">▶ Auto Walk-Through</button>
+            <button class="send-btn" id="btn-fw-reset" style="background:linear-gradient(135deg,var(--accent-blue),#3aa8d0)">↺ Reset</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="framework-steps" id="framework-steps">
+              <div class="fw-step active" data-step="0"><div class="fw-icon">📋</div><div class="fw-label">Requirements</div><div class="fw-time">~5 min</div></div>
+              <div class="fw-arrow">→</div>
+              <div class="fw-step" data-step="1"><div class="fw-icon">🧮</div><div class="fw-label">Estimation</div><div class="fw-time">~5 min</div></div>
+              <div class="fw-arrow">→</div>
+              <div class="fw-step" data-step="2"><div class="fw-icon">🔌</div><div class="fw-label">API Design</div><div class="fw-time">~5 min</div></div>
+              <div class="fw-arrow">→</div>
+              <div class="fw-step" data-step="3"><div class="fw-icon">🗄️</div><div class="fw-label">Data Model</div><div class="fw-time">~5 min</div></div>
+              <div class="fw-arrow">→</div>
+              <div class="fw-step" data-step="4"><div class="fw-icon">🏗️</div><div class="fw-label">High-Level</div><div class="fw-time">~10 min</div></div>
+              <div class="fw-arrow">→</div>
+              <div class="fw-step" data-step="5"><div class="fw-icon">🔬</div><div class="fw-label">Deep Dive</div><div class="fw-time">~15 min</div></div>
+            </div>
+            <div class="fw-detail" id="fw-detail">
+              <h4>Step 1: Clarify Requirements</h4>
+              <ul>
+                <li>Ask functional vs non-functional requirements</li>
+                <li>Define users: who are they? how many?</li>
+                <li>Clarify scope: what's in / out for 45 min?</li>
+                <li>Identify read-heavy vs write-heavy workload</li>
+                <li>Discuss consistency vs availability trade-offs</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 02. ESTIMATION ═══════════════ -->
+      <section class="section reveal" id="estimation">
+        <div class="section__header">
+          <span class="section__number">02</span>
+          <h2 class="section__title">Back-of-the-Envelope Estimation</h2>
+        </div>
+        <p class="section__desc">
+          Quickly estimate <strong>QPS</strong>, <strong>storage</strong>, <strong>bandwidth</strong>,
+          and <strong>server count</strong>. Interviewers love seeing you do this math confidently.
+          Type numbers below to see instant results.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🧮 Quick Calculator</h3>
+          <div class="est-presets">
+            <button class="est-preset active" data-preset="twitter">Twitter</button>
+            <button class="est-preset" data-preset="instagram">Instagram</button>
+            <button class="est-preset" data-preset="uber">Uber</button>
+            <button class="est-preset" data-preset="whatsapp">WhatsApp</button>
+            <button class="est-preset" data-preset="custom">Custom</button>
+          </div>
+          <div class="est-grid">
+            <div class="est-input-group">
+              <label for="est-dau">Daily Active Users (DAU)</label>
+              <input class="est-input" type="number" id="est-dau" value="300000000" />
+            </div>
+            <div class="est-input-group">
+              <label for="est-actions">Actions per User / Day</label>
+              <input class="est-input" type="number" id="est-actions" value="5" />
+            </div>
+            <div class="est-input-group">
+              <label for="est-size">Avg Payload Size (KB)</label>
+              <input class="est-input" type="number" id="est-size" value="2" />
+            </div>
+            <div class="est-input-group">
+              <label for="est-peak">Peak Multiplier (x)</label>
+              <input class="est-input" type="number" id="est-peak" value="3" step="0.5" />
+            </div>
+          </div>
+          <div class="est-results" id="est-results">
+            <!-- Rendered by JS -->
+          </div>
+          <div class="callout teal" style="margin-top:1.5rem">
+            <strong>💡 Pro Tip:</strong> Use powers of 2 for quick math.
+            <code>1 day ≈ 86,400s ≈ 10⁵s</code>. Round aggressively — interviewers
+            care about order-of-magnitude, not precision.
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 03. SCALABILITY ═══════════════ -->
+      <section class="section reveal" id="scalability">
+        <div class="section__header">
+          <span class="section__number">03</span>
+          <h2 class="section__title">Scalability Patterns</h2>
+        </div>
+        <p class="section__desc">
+          <strong>Vertical scaling</strong> = bigger machine. <strong>Horizontal scaling</strong> = more machines.
+          See how load distribution changes with each approach.
+        </p>
+
+        <div class="viz-card">
+          <div class="viz-controls">
+            <label for="slider-load">Incoming Load</label>
+            <input type="range" id="slider-load" min="1" max="10" value="3" />
+            <span class="viz-value" id="val-load">3x</span>
+            <button class="send-btn" id="btn-scale-v" style="background:linear-gradient(135deg,var(--accent-purple),#7c3fc2)">⬆ Scale Vertically</button>
+            <button class="send-btn" id="btn-scale-h" style="background:linear-gradient(135deg,var(--accent-teal),#05b388)">⬌ Scale Horizontally</button>
+            <button class="send-btn" id="btn-scale-reset" style="background:linear-gradient(135deg,var(--accent-blue),#3aa8d0)">↺ Reset</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="scale-demo" id="scale-demo">
+              <div class="scale-panel" id="scale-vertical">
+                <div class="scale-panel__title">
+                  <span>⬆ Vertical Scaling</span>
+                </div>
+                <div class="scale-servers" id="scale-v-servers"></div>
+                <div class="scale-load-bar"><div class="scale-load-fill" id="scale-v-load" style="width:30%"></div></div>
+              </div>
+              <div class="scale-panel" id="scale-horizontal">
+                <div class="scale-panel__title">
+                  <span>⬌ Horizontal Scaling</span>
+                </div>
+                <div class="scale-servers" id="scale-h-servers"></div>
+                <div class="scale-load-bar"><div class="scale-load-fill" id="scale-h-load" style="width:30%"></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="callout">
+            <strong>📌 Interview Answer:</strong> "Start vertically for simplicity, but design
+            for horizontal scaling from day one. Stateless services + load balancer
+            make horizontal scaling seamless."
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 04. LOAD BALANCING ═══════════════ -->
+      <section class="section reveal" id="load-balancing">
+        <div class="section__header">
+          <span class="section__number">04</span>
+          <h2 class="section__title">Load Balancing</h2>
+        </div>
+        <p class="section__desc">
+          A <strong>load balancer</strong> distributes incoming requests across multiple servers.
+          Different algorithms suit different use cases. Try each strategy below.
+        </p>
+
+        <div class="viz-card">
+          <div class="viz-controls">
+            <label>Algorithm</label>
+            <div class="strategy-toggle" id="lb-strategy-toggle">
+              <button class="strategy-btn active" data-strategy="round-robin">Round Robin</button>
+              <button class="strategy-btn" data-strategy="weighted">Weighted</button>
+              <button class="strategy-btn" data-strategy="least-conn">Least Connections</button>
+              <button class="strategy-btn" data-strategy="ip-hash">IP Hash</button>
+            </div>
+            <button class="send-btn" id="btn-lb-send">Send Request</button>
+            <button class="send-btn" id="btn-lb-burst" style="background:linear-gradient(135deg,var(--accent-teal),#05b388)">Send 10 Requests</button>
+            <button class="send-btn" id="btn-lb-reset" style="background:linear-gradient(135deg,var(--accent-blue),#3aa8d0)">↺ Reset</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="lb-demo" id="lb-demo">
+              <div class="lb-client">
+                <div class="lb-client-icon">👤</div>
+                <div class="lb-client-label">Clients</div>
+              </div>
+              <div class="lb-middle">
+                <div class="lb-balancer" id="lb-balancer">⚖️ Load Balancer<br><small id="lb-algo-name">Round Robin</small></div>
+              </div>
+              <div class="lb-servers" id="lb-servers">
+                <!-- Rendered by JS -->
+              </div>
+            </div>
+          </div>
+          <div class="callout teal">
+            <strong>🔑 When to use what:</strong> Round Robin for equal servers,
+            Weighted for unequal capacity, Least Connections for varying request times,
+            IP Hash for session affinity.
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 05. CACHING ═══════════════ -->
+      <section class="section reveal" id="caching">
+        <div class="section__header">
+          <span class="section__number">05</span>
+          <h2 class="section__title">Caching Strategies</h2>
+        </div>
+        <p class="section__desc">
+          Caching dramatically reduces latency and database load. But choosing the
+          <strong>right strategy</strong> matters — each has trade-offs around consistency,
+          durability, and complexity.
+        </p>
+
+        <div class="viz-card">
+          <div class="viz-controls">
+            <label>Strategy</label>
+            <div class="strategy-toggle" id="cache-strategy-toggle">
+              <button class="strategy-btn active" data-strategy="cache-aside">Cache-Aside</button>
+              <button class="strategy-btn" data-strategy="read-through">Read-Through</button>
+              <button class="strategy-btn" data-strategy="write-through">Write-Through</button>
+              <button class="strategy-btn" data-strategy="write-behind">Write-Behind</button>
+            </div>
+            <button class="send-btn" id="btn-cache-read">📖 Read Request</button>
+            <button class="send-btn" id="btn-cache-write" style="background:linear-gradient(135deg,var(--accent-teal),#05b388)">✏️ Write Request</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="cache-flow" id="cache-flow">
+              <div class="cache-node app"><div class="cache-node__icon">💻</div><div class="cache-node__label">Application</div></div>
+              <div class="cache-arrow" id="cache-arrow-1">→</div>
+              <div class="cache-node cache-box"><div class="cache-node__icon">⚡</div><div class="cache-node__label">Cache (Redis)</div></div>
+              <div class="cache-arrow" id="cache-arrow-2">→</div>
+              <div class="cache-node db"><div class="cache-node__icon">🗄️</div><div class="cache-node__label">Database</div></div>
+            </div>
+            <div class="cache-status" id="cache-status"></div>
+            <div class="cache-log" id="cache-log"></div>
+          </div>
+          <div class="callout">
+            <strong>📌 Interview Answer:</strong> "I'd use <code>Cache-Aside</code> for read-heavy
+            workloads with eventual consistency, and <code>Write-Through</code> when strong
+            consistency between cache and DB is required."
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 06. DATABASE SELECTION ═══════════════ -->
+      <section class="section reveal" id="databases">
+        <div class="section__header">
+          <span class="section__number">06</span>
+          <h2 class="section__title">Database Selection — SQL vs NoSQL</h2>
+        </div>
+        <p class="section__desc">
+          Choosing the right database is a <strong>critical design decision</strong>.
+          Click scenarios below to see which database type fits best.
+        </p>
+
+        <div class="viz-card">
+          <div class="viz-canvas">
+            <div class="db-compare" id="db-compare">
+              <div class="db-panel" id="db-sql">
+                <div class="db-panel__title"><span class="db-panel__icon">🏛️</span> SQL (Relational)</div>
+                <ul class="db-features">
+                  <li><span class="check">✓</span> ACID transactions</li>
+                  <li><span class="check">✓</span> Strong consistency</li>
+                  <li><span class="check">✓</span> Complex joins & queries</li>
+                  <li><span class="check">✓</span> Structured schema</li>
+                  <li><span class="cross">✗</span> Horizontal scaling harder</li>
+                  <li><span class="cross">✗</span> Schema changes are costly</li>
+                </ul>
+              </div>
+              <div class="db-panel" id="db-nosql">
+                <div class="db-panel__title"><span class="db-panel__icon">🔥</span> NoSQL (Non-Relational)</div>
+                <ul class="db-features">
+                  <li><span class="check">✓</span> Horizontal scalability</li>
+                  <li><span class="check">✓</span> Flexible schema</li>
+                  <li><span class="check">✓</span> High write throughput</li>
+                  <li><span class="check">✓</span> Low-latency reads</li>
+                  <li><span class="cross">✗</span> Eventually consistent (usually)</li>
+                  <li><span class="cross">✗</span> Limited join support</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <h3 class="tp-viz-title" style="margin-top:1.5rem">🎯 Click a Scenario</h3>
+          <div class="db-scenarios" id="db-scenarios">
+            <button class="db-scenario" data-scenario="banking">💰 Banking System</button>
+            <button class="db-scenario" data-scenario="social">📱 Social Media Feed</button>
+            <button class="db-scenario" data-scenario="iot">📡 IoT Sensor Data</button>
+            <button class="db-scenario" data-scenario="ecommerce">🛒 E-Commerce Catalog</button>
+            <button class="db-scenario" data-scenario="chat">💬 Chat Application</button>
+            <button class="db-scenario" data-scenario="analytics">📊 Real-time Analytics</button>
+          </div>
+          <div class="db-recommendation" id="db-recommendation">
+            Click a scenario above to see the recommended database type and reasoning.
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 07. SHARDING ═══════════════ -->
+      <section class="section reveal" id="sharding">
+        <div class="section__header">
+          <span class="section__number">07</span>
+          <h2 class="section__title">Database Sharding & Partitioning</h2>
+        </div>
+        <p class="section__desc">
+          <strong>Sharding</strong> splits data across multiple databases. Each shard holds
+          a subset of data. This enables <em>horizontal scaling</em> for databases.
+        </p>
+
+        <div class="viz-card">
+          <div class="viz-controls">
+            <label for="slider-shards">Shards</label>
+            <input type="range" id="slider-shards" min="1" max="6" value="3" />
+            <span class="viz-value" id="val-shards">3</span>
+            <label>Strategy</label>
+            <div class="strategy-toggle" id="shard-strategy-toggle">
+              <button class="strategy-btn active" data-strategy="hash">Hash-Based</button>
+              <button class="strategy-btn" data-strategy="range">Range-Based</button>
+            </div>
+            <button class="send-btn" id="btn-shard-add">+ Add Data</button>
+            <button class="send-btn" id="btn-shard-burst" style="background:linear-gradient(135deg,var(--accent-teal),#05b388)">+ Add 10 Records</button>
+            <button class="send-btn" id="btn-shard-reset" style="background:linear-gradient(135deg,var(--accent-blue),#3aa8d0)">↺ Reset</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="shard-demo">
+              <div class="shard-container" id="shard-container">
+                <!-- Rendered by JS -->
+              </div>
+            </div>
+          </div>
+          <div class="shard-stats" id="shard-stats"></div>
+          <div class="callout red" style="margin-top:1rem">
+            <strong>⚠️ Hot-Spot Problem:</strong> With range-based sharding, popular ranges
+            (e.g., recent dates) can overwhelm a single shard. Hash-based distributes
+            evenly but loses range query efficiency.
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 08. CAP THEOREM ═══════════════ -->
+      <section class="section reveal" id="cap">
+        <div class="section__header">
+          <span class="section__number">08</span>
+          <h2 class="section__title">CAP Theorem</h2>
+        </div>
+        <p class="section__desc">
+          In a distributed system, you can only guarantee <strong>two of three</strong>:
+          <strong>Consistency</strong>, <strong>Availability</strong>, <strong>Partition Tolerance</strong>.
+          Click any two nodes to explore.
+        </p>
+
+        <div class="viz-card">
+          <div class="viz-canvas">
+            <div class="cap-container" id="cap-container">
+              <div class="cap-triangle">
+                <div class="cap-lines">
+                  <svg viewBox="0 0 320 280">
+                    <line id="cap-line-ca" x1="160" y1="45" x2="45" y2="235"/>
+                    <line id="cap-line-cp" x1="160" y1="45" x2="275" y2="235"/>
+                    <line id="cap-line-ap" x1="45" y1="235" x2="275" y2="235"/>
+                  </svg>
+                </div>
+                <div class="cap-node c-node" data-cap="C">
+                  <span class="cap-letter">C</span>
+                  <span class="cap-word">Consistency</span>
+                </div>
+                <div class="cap-node a-node" data-cap="A">
+                  <span class="cap-letter">A</span>
+                  <span class="cap-word">Availability</span>
+                </div>
+                <div class="cap-node p-node" data-cap="P">
+                  <span class="cap-letter">P</span>
+                  <span class="cap-word">Partition Tol.</span>
+                </div>
+              </div>
+              <div class="cap-result" id="cap-result">
+                <div class="cap-result__title">Click two nodes to explore</div>
+                <p style="color:var(--text-secondary);font-size:.9rem">
+                  Select any two CAP properties to see which databases prioritize
+                  that combination and what trade-offs are involved.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 09. MESSAGE QUEUES ═══════════════ -->
+      <section class="section reveal" id="message-queues">
+        <div class="section__header">
+          <span class="section__number">09</span>
+          <h2 class="section__title">Message Queues & Async Processing</h2>
+        </div>
+        <p class="section__desc">
+          <strong>Message queues</strong> decouple producers from consumers, enabling
+          <em>asynchronous processing</em>, buffering, and fault tolerance.
+        </p>
+
+        <div class="viz-card">
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-mq-produce">📤 Produce Message</button>
+            <button class="send-btn" id="btn-mq-produce5" style="background:linear-gradient(135deg,var(--accent-purple),#7c3fc2)">📤 Produce 5</button>
+            <button class="send-btn" id="btn-mq-consume" style="background:linear-gradient(135deg,var(--accent-teal),#05b388)">📥 Consume Message</button>
+            <button class="send-btn" id="btn-mq-reset" style="background:linear-gradient(135deg,var(--accent-blue),#3aa8d0)">↺ Reset</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="mq-demo">
+              <div class="mq-pipeline" id="mq-pipeline">
+                <div class="mq-producer"><div class="mq-producer__icon">📤</div><div class="mq-producer__label">Producer</div></div>
+                <div class="mq-queue" id="mq-queue"></div>
+                <div class="mq-consumer"><div class="mq-consumer__icon">📥</div><div class="mq-consumer__label">Consumer</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="viz-hint" id="mq-hint">Produce messages to fill the queue, then consume them one by one.</div>
+
+          <h3 class="tp-viz-title" style="margin-top:1.5rem">⚡ Sync vs Async Comparison</h3>
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-mq-compare">▶ Run Comparison</button>
+          </div>
+          <div class="mq-compare" id="mq-compare">
+            <div class="mq-compare-panel">
+              <div class="mq-compare-panel__title">🐌 Synchronous</div>
+              <p style="font-size:.8rem;color:var(--text-muted)">Process one-by-one, blocking</p>
+              <div class="mq-compare-bar"><div class="mq-compare-fill sync" id="mq-sync-bar" style="width:0%"></div></div>
+            </div>
+            <div class="mq-compare-panel">
+              <div class="mq-compare-panel__title">⚡ Asynchronous (Queue)</div>
+              <p style="font-size:.8rem;color:var(--text-muted)">Accept immediately, process later</p>
+              <div class="mq-compare-bar"><div class="mq-compare-fill async" id="mq-async-bar" style="width:0%"></div></div>
+            </div>
+          </div>
+          <div class="callout">
+            <strong>📌 Use MQ when:</strong> Email notifications, image processing, order processing,
+            analytics events — anything that doesn't need an immediate response.
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 10. CDN ═══════════════ -->
+      <section class="section reveal" id="cdn">
+        <div class="section__header">
+          <span class="section__number">10</span>
+          <h2 class="section__title">CDN & Edge Computing</h2>
+        </div>
+        <p class="section__desc">
+          A <strong>Content Delivery Network</strong> caches content at edge servers worldwide.
+          Users get data from the nearest edge instead of the faraway origin server.
+        </p>
+
+        <div class="viz-card">
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-cdn-without">🌐 Request (No CDN)</button>
+            <button class="send-btn" id="btn-cdn-with" style="background:linear-gradient(135deg,var(--accent-teal),#05b388)">⚡ Request (With CDN)</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="cdn-demo">
+              <div class="cdn-world" id="cdn-world">
+                <div class="cdn-origin" title="Origin Server">🏢</div>
+                <!-- Edge nodes & users rendered by JS -->
+              </div>
+            </div>
+          </div>
+          <div class="cdn-latency" id="cdn-latency">
+            <div class="cdn-latency-card">
+              <div class="cdn-latency-value slow" id="cdn-no-val">—</div>
+              <div class="cdn-latency-label">Without CDN</div>
+            </div>
+            <div class="cdn-latency-card">
+              <div class="cdn-latency-value fast" id="cdn-yes-val">—</div>
+              <div class="cdn-latency-label">With CDN</div>
+            </div>
+          </div>
+          <div class="callout teal">
+            <strong>💡 Key Insight:</strong> CDN reduces latency by 50-90%. Use for static assets
+            (images, CSS, JS), video streaming, and even API responses via edge caching.
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 11. RATE LIMITING ═══════════════ -->
+      <section class="section reveal" id="rate-limiting">
+        <div class="section__header">
+          <span class="section__number">11</span>
+          <h2 class="section__title">Rate Limiting & API Design</h2>
+        </div>
+        <p class="section__desc">
+          <strong>Rate limiting</strong> protects your APIs from abuse and ensures fair usage.
+          The <strong>Token Bucket</strong> algorithm is the most commonly used approach.
+        </p>
+
+        <div class="viz-card">
+          <div class="viz-controls">
+            <label for="slider-rl-rate">Tokens/sec</label>
+            <input type="range" id="slider-rl-rate" min="1" max="10" value="3" />
+            <span class="viz-value" id="val-rl-rate">3</span>
+            <label for="slider-rl-capacity">Bucket Capacity</label>
+            <input type="range" id="slider-rl-capacity" min="3" max="15" value="8" />
+            <span class="viz-value" id="val-rl-capacity">8</span>
+            <button class="send-btn" id="btn-rl-send">📨 Send Request</button>
+            <button class="send-btn" id="btn-rl-burst" style="background:linear-gradient(135deg,var(--accent-red),#d63b5e)">🔥 Send Burst (15)</button>
+          </div>
+          <div class="viz-canvas" style="display:flex;flex-direction:column;align-items:center">
+            <div class="rl-bucket-top"></div>
+            <div class="rl-bucket" id="rl-bucket">
+              <div class="rl-bucket-water" id="rl-water" style="height:66%"></div>
+              <div class="rl-tokens" id="rl-tokens">
+                <!-- Rendered by JS -->
+              </div>
+            </div>
+            <div class="rl-requests" id="rl-requests"></div>
+          </div>
+          <div class="callout">
+            <strong>📌 Algorithms:</strong> <code>Token Bucket</code> (allows bursts),
+            <code>Sliding Window</code> (smooth), <code>Fixed Window</code> (simple),
+            <code>Leaky Bucket</code> (constant rate output).
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 12. CHEAT SHEET ═══════════════ -->
+      <section class="section reveal" id="cheatsheet">
+        <div class="section__header">
+          <span class="section__number">12</span>
+          <h2 class="section__title">Design Patterns Cheat Sheet</h2>
+        </div>
+        <p class="section__desc">
+          Quick reference cards for common system design problems.
+          Click to expand and see the architecture summary.
+        </p>
+
+        <div class="cheat-grid" id="cheat-grid">
+          <!-- Rendered by JS -->
+        </div>
+      </section>
+
+      <!-- ═══════════════ 13. CONSISTENT HASHING ═══════════════ -->
+      <section class="section reveal" id="consistent-hashing">
+        <div class="section__header">
+          <span class="section__number">13</span>
+          <h2 class="section__title">Consistent Hashing</h2>
+        </div>
+        <p class="section__desc">
+          <strong>Consistent hashing</strong> solves the re-distribution nightmare of naive hashing.
+          When nodes are added or removed, only <strong>K/N</strong> keys need to move (K = keys, N = nodes)
+          — instead of remapping <em>everything</em>.
+        </p>
+
+        <!-- The Problem: Naive mod N -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">❌ The Problem: Naive <code>hash(key) % N</code></h3>
+          <p class="tp-viz-desc">
+            With simple modular hashing, adding or removing a single server causes
+            <strong>almost all keys to remap</strong>. Watch what happens below.
+          </p>
+          <div class="viz-controls">
+            <label>Servers</label>
+            <div class="strategy-toggle" id="naive-toggle">
+              <button class="strategy-btn active" data-count="3">3 Servers</button>
+              <button class="strategy-btn" data-count="4">4 Servers (add one)</button>
+            </div>
+          </div>
+          <div class="viz-canvas">
+            <div class="ch-naive-grid" id="ch-naive-grid">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+          <div class="ch-naive-stats" id="ch-naive-stats"></div>
+          <div class="callout red">
+            <strong>💥 Impact:</strong> Adding 1 server with <code>hash % N</code> causes ~75% of keys
+            to remap to different servers. This means a massive cache miss storm — all those
+            keys now hit the database simultaneously.
+          </div>
+        </div>
+
+        <!-- Interactive Hash Ring -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🔄 Consistent Hash Ring</h3>
+          <p class="tp-viz-desc">
+            Servers and keys are placed on a circular ring using a hash function.
+            Each key is assigned to the <strong>next server clockwise</strong>.
+            Adding/removing a server only affects neighboring keys.
+          </p>
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-ch-add-node" style="background:linear-gradient(135deg,var(--accent-teal),#05b388)">+ Add Server</button>
+            <button class="send-btn" id="btn-ch-remove-node" style="background:linear-gradient(135deg,var(--accent-red),#d63b5e)">− Remove Server</button>
+            <button class="send-btn" id="btn-ch-add-key">+ Add Key</button>
+            <button class="send-btn" id="btn-ch-add5" style="background:linear-gradient(135deg,var(--accent-purple),#7c3fc2)">+ Add 5 Keys</button>
+            <button class="send-btn" id="btn-ch-reset" style="background:linear-gradient(135deg,var(--accent-blue),#3aa8d0)">↺ Reset</button>
+          </div>
+          <div class="viz-canvas" style="display:flex;justify-content:center">
+            <div class="ch-ring-wrapper">
+              <canvas id="ch-ring-canvas" width="420" height="420"></canvas>
+            </div>
+          </div>
+          <div class="ch-ring-legend" id="ch-ring-legend"></div>
+          <div class="ch-ring-log" id="ch-ring-log"></div>
+        </div>
+
+        <!-- Virtual Nodes -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">👻 Virtual Nodes (VNodes)</h3>
+          <p class="tp-viz-desc">
+            Problem: servers can be unevenly spaced on the ring, causing <strong>hot spots</strong>.
+            Solution: each physical server gets multiple <strong>virtual positions</strong> on the ring.
+          </p>
+          <div class="viz-controls">
+            <label for="slider-vnodes">Virtual Nodes per Server</label>
+            <input type="range" id="slider-vnodes" min="1" max="8" value="1" />
+            <span class="viz-value" id="val-vnodes">1</span>
+          </div>
+          <div class="ch-vnode-bars" id="ch-vnode-bars">
+            <!-- Rendered by JS -->
+          </div>
+          <div class="callout teal">
+            <strong>💡 Why VNodes?</strong> With 1 position, Server A might own 60% of the ring.
+            With 150+ virtual nodes, each server owns ~<code>1/N</code> of keys (<strong>near-perfect balance</strong>).
+            Real systems use 100-200 virtual nodes per physical server.
+          </div>
+        </div>
+
+        <!-- Use Cases -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🏗️ Real-World Use Cases</h3>
+          <div class="ch-usecases" id="ch-usecases">
+            <div class="ch-usecase">
+              <div class="ch-usecase__icon">⚡</div>
+              <div class="ch-usecase__title">Amazon DynamoDB</div>
+              <div class="ch-usecase__desc">Partition data across storage nodes. When a node fails, only its portion moves to the next node on the ring.</div>
+            </div>
+            <div class="ch-usecase">
+              <div class="ch-usecase__icon">🗄️</div>
+              <div class="ch-usecase__title">Apache Cassandra</div>
+              <div class="ch-usecase__desc">Uses consistent hashing with virtual nodes (VNodes) for even data distribution across the cluster. Each node owns multiple token ranges.</div>
+            </div>
+            <div class="ch-usecase">
+              <div class="ch-usecase__icon">📦</div>
+              <div class="ch-usecase__title">Memcached / Redis Cluster</div>
+              <div class="ch-usecase__desc">Distribute cache keys across multiple nodes. Adding a new cache node doesn't invalidate the entire cache — only ~1/N keys move.</div>
+            </div>
+            <div class="ch-usecase">
+              <div class="ch-usecase__icon">⚖️</div>
+              <div class="ch-usecase__title">Load Balancers (Nginx)</div>
+              <div class="ch-usecase__desc">Route requests to upstream servers using consistent hashing on request URL or IP. Ensures same client hits same server (session affinity).</div>
+            </div>
+            <div class="ch-usecase">
+              <div class="ch-usecase__icon">🌐</div>
+              <div class="ch-usecase__title">CDN (Akamai)</div>
+              <div class="ch-usecase__desc">Map content to edge servers. When an edge node goes down, its content shifts to the next closest node — minimal disruption.</div>
+            </div>
+            <div class="ch-usecase">
+              <div class="ch-usecase__icon">🔍</div>
+              <div class="ch-usecase__title">Discord / Chat Systems</div>
+              <div class="ch-usecase__desc">Assign chat rooms to servers. Consistent hashing ensures a room stays on the same server unless that server fails.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Interview Key Points -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🎯 Interview Key Points</h3>
+          <dl class="key-insight">
+            <dt>When to mention it</dt>
+            <dd>Anytime you're distributing data/load across multiple nodes (cache, DB, microservices)</dd>
+            <dt>Naive hash problems</dt>
+            <dd><code>hash(key) % N</code> causes massive remapping when N changes — cache stampede, DB overload</dd>
+            <dt>How it works</dt>
+            <dd>Hash both servers and keys onto a circular ring (0 to 2³²). Each key walks clockwise to find its server.</dd>
+            <dt>Virtual nodes</dt>
+            <dd>Each physical server gets 100-200 virtual positions on the ring for even distribution</dd>
+            <dt>Key benefit</dt>
+            <dd>Adding/removing a node only moves <code>K/N</code> keys (where K = total keys, N = total nodes)</dd>
+            <dt>Trade-off</dt>
+            <dd>More virtual nodes = better balance but more memory for the ring metadata. Usually negligible.</dd>
+          </dl>
+        </div>
+      </section>
+
+    </main>
+
+    <footer>
+      <p>System Design Interview Prep — Interactive Guide &copy; 2026</p>
+    </footer>
+
+    <script src="index.js"></script>
+  </body>
+</html>
