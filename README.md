@@ -1,6 +1,6 @@
 # 🏗️ System Design & Architecture Learning
 
-
+🚀 **[Interactive Learning Hub](https://samargupta096.github.io/software-engineering/)** - Access visualizers, case studies, and interactive demos!
 
 > A comprehensive guide to becoming a System Architect
 
@@ -9,7 +9,7 @@
 ## 📚 Learning Path
 
 ```mermaid
-flowchart TD
+flowchart LR
     CS(CS Fundamentals) --> SD(System Design)
     SD --> CC(Core Components)
     CC --> CA(Cloud & AWS)
