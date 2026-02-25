@@ -1,3 +1,125 @@
+Redis = Fast cache + atomic ops
+
+Patterns:
+- Cache aside
+- Write through
+- Write behind
+
+Problems:
+- Stampede
+- Avalanche
+- Penetration
+
+Features:
+- TTL
+- Pub/Sub
+- Locks
+- Persistence
+- Cluster
+
+We used a Bloom filter in front of Redis and database to prevent cache penetration from invalid keys. It reduced unnecessary DB calls during traffic spikes and protected backend systems.
+
+What is a Bloom Filter (Interview Definition)
+
+👉 A Bloom Filter is a probabilistic data structure used to test whether an element is in a set.
+
+It can:
+
+✅ Tell you “definitely not present”
+✅ Tell you “probably present”
+
+It cannot:
+
+❌ Guarantee presence (false positives possible)
+
+🎯 One-liner for interviews
+
+Bloom filter is used to quickly check membership while saving memory, commonly used to prevent cache penetration.
+
+⚙️ How It Works (Intuition)
+
+1️⃣ Take input (e.g., user ID)
+2️⃣ Run multiple hash functions
+3️⃣ Set bits in a bit array
+
+When checking:
+
+If any bit is 0 → not present
+
+If all bits 1 → probably present
+
+🪄 Simple Analogy
+
+Think of multiple guards checking entry logs:
+
+If any guard says “not seen” → definitely not
+
+If all say “seen” → probably
+
+📊 Why Use Bloom Filter?
+Benefit	Why Important
+Memory efficient	Uses bits instead of objects
+Fast lookup	O(k) hash checks
+Prevents DB overload	Filters invalid requests
+Scales well	Good for large systems
+
+✅ git commit --amend — Meaning
+
+git commit --amend lets you modify the most recent commit instead of creating a new one.
+
+You can:
+
+Fix commit message
+
+Add/remove files
+
+Update changes
+
+Clean history
+
+👉 It rewrites commit history (new commit hash).
+
+🧠 Simple Explanation
+
+Think:
+
+Last commit → edit it → replace it
+
+Instead of:
+
+New commit added
+
+🧠 When Do You Need Force Push?
+✅ 1. After Interactive Rebase
+git rebase -i HEAD~3
+
+You changed commit history → remote must be overwritten.
+
+✅ 2. Squashing Commits Before PR
+git rebase -i main
+
+Clean history:
+
+fix typo
+fix typo
+fix typo
+
+→
+
+Add login feature
+✅ 3. Amend Last Commit
+git commit --amend
+git push --force-with-lease
+✅ 4. Remove Sensitive Data
+
+Example:
+
+API key committed
+
+Large file added
+
+Rewrite history → force push.
+
 Consistent hashing distributes keys across nodes using a hash ring so that when nodes are added or removed, only a small subset of keys need to move. It improves scalability and reduces rebalancing overhead. Virtual nodes are used to ensure even load distribution. It’s commonly used in distributed caches and databases like Cassandra and Dynamo.
 
 Message queue distributes tasks so that each message is processed by one worker, while pub/sub broadcasts events to multiple consumers. Kafka supports both — using a single consumer group gives queue semantics, while multiple consumer groups provide pub/sub. This makes Kafka ideal for both job processing and event-driven architectures.
