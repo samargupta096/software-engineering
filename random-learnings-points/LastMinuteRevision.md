@@ -1,3 +1,7 @@
+Consistent hashing distributes keys across nodes using a hash ring so that when nodes are added or removed, only a small subset of keys need to move. It improves scalability and reduces rebalancing overhead. Virtual nodes are used to ensure even load distribution. It’s commonly used in distributed caches and databases like Cassandra and Dynamo.
+
+Message queue distributes tasks so that each message is processed by one worker, while pub/sub broadcasts events to multiple consumers. Kafka supports both — using a single consumer group gives queue semantics, while multiple consumer groups provide pub/sub. This makes Kafka ideal for both job processing and event-driven architectures.
+
 GC Roots are starting points like stack variables and static fields used to determine object reachability. Minor GC cleans the Young Generation, while Major GC cleans the Old Generation. Objects move from Eden to Survivor to Old based on their lifespan. G1 is the default GC in Java 11+, offering balanced performance. For low-latency large heap systems, ZGC is preferred. GC tuning involves configuring heap size and pause time goals.
 
 Pattern matching reduces casting boilerplate. Sealed classes restrict inheritance and improve domain modeling. Records provide a concise way to define immutable data carriers. Together, they enable safer, more expressive, and maintainable object-oriented design in modern Java.
