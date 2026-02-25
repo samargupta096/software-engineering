@@ -17,6 +17,8 @@
 | **G** | [DevOps & CI/CD](#-g--devops--cicd) | Git, Argo CD, JFrog, Deployment Strategies |
 | **H** | [Networking & Security](#-h--networking--security) | SSL Termination, Istio, mTLS |
 | **I** | [AWS Troubleshooting Scenarios](#-i--aws-troubleshooting-scenarios-20-real-world-problems) | 20 Production Debugging Questions |
+| **J** | [Databases & Caching](#-j--databases--caching) | Redis as DB, Cache, Broker |
+| **K** | [Design Patterns](#-k--design-patterns) | Observer Pattern |
 
 ---
 ---
@@ -539,3 +541,82 @@ Most AWS production failures relate to:
 | **Lack of idempotency** | Duplicate Lambda invocations |
 
 > **30-Second Summary**: In AWS production systems, most real-world issues stem from concurrency scaling, misconfigured networking, improper IAM roles, or lack of resilience patterns like retries, idempotency, and circuit breakers.
+
+
+# 🗄️ J — Databases & Caching
+
+## Redis Use Cases in Spring Boot
+
+Redis is a distributed in-memory datastore with persistence, rich data structures, pub/sub, and clustering — ideal for microservices. Consider Ehcache for local caching and Redis for shared distributed caching.
+
+### 1️⃣ Redis as a Database (Primary Store)
+👉 Redis stores application data directly. Avoid using as the *only* database in enterprise systems.
+
+- **Use Cases**: User sessions, shopping carts, leaderboards, feature flags, real-time counters, rate limiting state.
+- **Spring Boot Support**: `spring-data-redis` using `@RedisHash`.
+- **Pros**: Ultra fast, flexible schema, simple scaling.
+- **Cons**: Not ideal for relational queries, limited transactions, memory cost, durability weaker than RDBMS.
+
+### 2️⃣ Redis as a Cache (Most Common)
+👉 The primary usage in microservices. 
+
+- **Pattern**: `DB → Redis cache → Application` (Cache aside, Write through, Write behind).
+- **Spring Boot Config**: Enable caching using `@EnableCaching`, configure Redis as the cache provider, use annotations like `@Cacheable`, `@CachePut`, and `@CacheEvict`. Configure TTL and JSON serialization for production.
+- **Pros**: Reduces DB load, faster responses, horizontal scaling, shared across instances.
+
+### 3️⃣ Redis as a Message Broker
+👉 Lightweight messaging via Pub/Sub or Streams.
+
+| Option | Use When | Limitations / Pros |
+|--------|----------|--------------------|
+| **Pub/Sub** (Simple) | Notifications, real-time updates | ❌ No persistence, message loss possible, no replay |
+| **Streams** (Modern) | Event processing, reliable delivery | ✅ Consumer groups, reliable delivery (Better alternative to Pub/Sub) |
+
+> ⚠️ **When NOT to use Redis for messaging**: Avoid if you need exactly-once delivery, long retention, event replay, or high durability. Use **Kafka** instead.
+
+---
+---
+
+# 🎨 K — Design Patterns
+
+## Observer Pattern
+
+Defines a **one-to-many relationship** where dependent objects (Observers) are automatically notified when the state of one object (Subject) changes.
+Also known as **Publish–Subscribe** or **Event Listener** pattern.
+
+- **Real-World Examples**: Stock price updates, Kafka consumers, UI event listeners, Spring Application Events.
+- **Microservices Example**: Order Service publishes `OrderCreated` event. Payment, Notification, and Inventory services (Observers) listen and react.
+
+### Pros & Cons
+| ✅ Pros | ❌ Cons |
+|---------|---------|
+| Loose coupling | Too many notifications |
+| Easy to add subscribers | Memory leaks if observers not removed |
+| Event-driven design | Hard to debug chained events |
+| Scalable | |
+
+### General Structure
+
+```text
+Subject (Publisher)
+   ↓ notify
+Observer1
+Observer2
+Observer3
+```
+
+### Implementation in Spring Boot
+Spring Boot makes the Observer pattern simple with its built-in event mechanism.
+
+**Publisher:**
+```java
+applicationEventPublisher.publishEvent(new OrderCreatedEvent());
+```
+
+**Listener:**
+```java
+@EventListener
+public void handle(OrderCreatedEvent event) { }
+```
+
+> **Senior Insight**: The Observer pattern is the architectural foundation for Event-Driven Architectures, Reactive Systems, Kafka Messaging, CQRS, and Domain Events. Use it whenever a state change requires downstream notification with loose coupling.
