@@ -20,6 +20,7 @@ flowchart LR
     IP --> HP(Hands-On Projects)
     HP --> GA(GenAI & LLM)
     GA --> FM(Frontend Mastery)
+    FM --> BK(Books & Learning)
 
     style CS fill:#f96,stroke:#333,stroke-width:2px
     style SD fill:#69f,stroke:#333,stroke-width:2px
@@ -66,8 +67,15 @@ flowchart LR
 </tr>
 <tr>
 <td valign="top"><div align="center"><img src="./assets/animations/projects.png" width="200" alt="Projects"></div><br><b>Practical Learning:</b><br><ul><li>📨 <a href="./projects/kafka-learning-project/README.md">Kafka Learning Project</a> ⭐</li><li>🤖 <a href="./projects/llm-finetuning-project/README.md">LLM Fine-Tuning</a></li><li>🔌 <a href="./projects/mcp-server-project/README.md">MCP Server Project</a></li><li>📚 <a href="./projects/rag-api-project/README.md">RAG API Project</a> ⭐</li></ul></td>
-<td valign="top"><div align="center"><img src="./assets/animations/genai.png" width="200" alt="GenAI"></div><br><b>AI/ML Engineering:</b><br><ul><li>🧠 <a href="./interview-prep/system-design/components/genai/ml-fundamentals.md">ML & DL Fundamentals</a> ⭐</li><li>🧠 <a href="./interview-prep/system-design/components/genai/genai-fundamentals.md">GenAI Fundamentals</a></li><li>📚 <a href="./interview-prep/system-design/components/genai/rag-deep-dive.md">RAG Deep Dive</a> ⭐</li><li>🤖 <a href="./interview-prep/system-design/components/genai/agentic-ai-guide.md">Agentic AI</a> ⭐</li><li>⚡ <a href="./interview-prep/system-design/components/genai/fastapi-guide.md">FastAPI for GenAI</a></li><li>☁️ <a href="./interview-prep/system-design/components/genai/aws-genai-mlops.md">AWS GenAI/MLOps</a></li><li>📖 <a href="./ai-engineering/README.md">AI Engineering Book Guide</a> ⭐🆕</li></ul></td>
+<td valign="top"><div align="center"><img src="./assets/animations/genai.png" width="200" alt="GenAI"></div><br><b>AI/ML Engineering:</b><br><ul><li>🧠 <a href="./interview-prep/system-design/components/genai/ml-fundamentals.md">ML & DL Fundamentals</a> ⭐</li><li>🧠 <a href="./interview-prep/system-design/components/genai/genai-fundamentals.md">GenAI Fundamentals</a></li><li>📚 <a href="./interview-prep/system-design/components/genai/rag-deep-dive.md">RAG Deep Dive</a> ⭐</li><li>🤖 <a href="./interview-prep/system-design/components/genai/agentic-ai-guide.md">Agentic AI</a> ⭐</li><li>⚡ <a href="./interview-prep/system-design/components/genai/fastapi-guide.md">FastAPI for GenAI</a></li><li>☁️ <a href="./interview-prep/system-design/components/genai/aws-genai-mlops.md">AWS GenAI/MLOps</a></li></ul></td>
 <td valign="top"><div align="center"><img src="./assets/animations/frontend-mastery.png" width="200" alt="Frontend"></div><br><b>Frontend Mastery:</b><br><ul><li>📜 <a href="./frontend/javascript-es6-guide.md">JS ES6+ Complete</a> ⭐</li><li>📘 <a href="./frontend/typescript-guide.md">TypeScript Mastery</a> ⭐</li><li>⚛️ <a href="./frontend/react-guide.md">React.js Guide</a> ⭐</li><li>🅰️ <a href="./frontend/angular-guide.md">Angular Guide</a></li></ul></td>
+</tr>
+<tr>
+<th>13. Books & Learning 📘</th>
+<th colspan="2"></th>
+</tr>
+<tr>
+<td valign="top" colspan="3"><div align="center"><img src="./assets/animations/books-learning.png" width="200" alt="Books"></div><br><b>Engineering Books Collection:</b><br><ul><li>🧠 <a href="./books/ai-engineering/README.md">AI Engineering</a> — Chip Huyen (10 chapters + quick reference) ⭐</li><li>⚡ <a href="./books/event-driven-architecture/README.md">Event-Driven Architecture</a> — EDA Patterns & CQRS (12 chapters + quick reference) ⭐</li><li>📕 <a href="./books/pragmatic-programmer.md">The Pragmatic Programmer</a> — Engineering mindset & habits</li><li>📗 <a href="./books/clean-code.md">Clean Code</a> — Writing maintainable code</li><li>📘 <a href="./books/designing-data-intensive-apps.md">Designing Data-Intensive Apps</a> — Distributed systems bible ⭐</li><li>📙 <a href="./books/refactoring.md">Refactoring</a> — Improving existing code safely</li><li>📕 <a href="./books/domain-driven-design.md">Domain-Driven Design</a> — Modeling business domains ⭐</li><li>📗 <a href="./books/software-architecture-hard-parts.md">Architecture: The Hard Parts</a> — Trade-offs in distributed design</li><li>📘 <a href="./books/head-first-design-patterns.md">Head First Design Patterns</a> — Patterns with examples</li><li>📙 <a href="./books/building-microservices.md">Building Microservices</a> — Microservices patterns & design</li></ul></td>
 </tr>
 </table>
 
@@ -137,6 +145,7 @@ flowchart LR
 | 🔟 | [**Hands-On Projects**](./projects/) | Kafka, RAG API, LLM Fine-tuning |
 | 1️⃣1️⃣ | [**GenAI & LLM**](./interview-prep/system-design/components/genai/genai-fundamentals.md) | ML/DL, RAG, AI Engineering, Agentic AI |
 | 1️⃣2️⃣ | [**Frontend Mastery**](./frontend/javascript-es6-guide.md) | JS ES6+, TypeScript, React, Angular |
+| 1️⃣3️⃣ | [**Books & Learning**](./books/README.md) | AI Engineering, EDA, Clean Code, DDD, DDIA & more |
 
 <p align="center">
   <img src="https://komarev.com/ghpvc/?username=Samarpitgupta&repo=software-engineering&label=Visitors&color=0e75b6&style=flat" alt="Visitors" />
