@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
             title: 'LLM Generation Parameters',
             desc: 'Interactive playground to understand Temperature, Top-P, Top-K, and repetition penalties.',
             path: './llm-parameters-visualizer/index.html',
-            category: 'algorithms',
+            category: 'ai',
             tags: ['AI', 'LLM', 'GPT'],
             icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"></path><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>`
         },
@@ -108,10 +108,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     ];
 
+    // Category display config — defines group order, labels, and icons
+    const categoryConfig = [
+        { key: 'cloud',        label: '☁️ Cloud & Infrastructure',  color: '#ff9f43' },
+        { key: 'database',     label: '🗄️ Databases & Storage',     color: '#0abde3' },
+        { key: 'architecture', label: '🏗️ Architecture & Systems',  color: '#ee5a24' },
+        { key: 'algorithms',   label: '🧮 Algorithms & DSA',        color: '#6c5ce7' },
+        { key: 'ai',           label: '🤖 AI & Machine Learning',   color: '#00d2d3' }
+    ];
+
     let currentFilter = 'all';
     let searchQuery = '';
 
-    // Function to render cards
+    // Function to render cards, grouped by category
     function renderVisualizers() {
         visualizerGrid.innerHTML = '';
         visualizerGrid.classList.remove('loaded');
@@ -131,36 +140,58 @@ document.addEventListener('DOMContentLoaded', () => {
             emptyState.style.display = 'block';
         } else {
             emptyState.style.display = 'none';
-            
-            filtered.forEach((vis, index) => {
-                const tagsHtml = vis.tags.map(tag => `<span class="tag">${tag}</span>`).join('');
-                
-                const card = document.createElement('a');
-                card.href = vis.path;
-                card.className = 'vis-card';
-                // Intercept click to load in iframe
-                card.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    openVisualizerApp(vis.path, vis.title);
-                });
-                
-                // Stagger animations based on index
-                card.style.animationDelay = `${index * 0.1}s`;
-                card.style.animation = 'popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both';
-                
-                card.innerHTML = `
-                    <div class="card-icon">${vis.icon}</div>
-                    <h2 class="card-title">${vis.title}</h2>
-                    <p class="card-desc">${vis.desc}</p>
-                    <div class="card-tags">
-                        ${tagsHtml}
-                    </div>
-                    <div class="card-arrow">
-                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-                    </div>
+
+            let globalIndex = 0;
+
+            categoryConfig.forEach(cat => {
+                const groupItems = filtered.filter(v => v.category === cat.key);
+                if (groupItems.length === 0) return;
+
+                // Section header
+                const sectionHeader = document.createElement('div');
+                sectionHeader.className = 'category-section-header';
+                sectionHeader.innerHTML = `
+                    <h2 class="category-title" style="--cat-color: ${cat.color}">
+                        <span class="category-label">${cat.label}</span>
+                        <span class="category-count">${groupItems.length}</span>
+                    </h2>
                 `;
-                
-                visualizerGrid.appendChild(card);
+                visualizerGrid.appendChild(sectionHeader);
+
+                // Cards wrapper for this group
+                const groupWrapper = document.createElement('div');
+                groupWrapper.className = 'category-cards';
+                visualizerGrid.appendChild(groupWrapper);
+
+                groupItems.forEach((vis) => {
+                    const tagsHtml = vis.tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+                    
+                    const card = document.createElement('a');
+                    card.href = vis.path;
+                    card.className = 'vis-card';
+                    card.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        openVisualizerApp(vis.path, vis.title);
+                    });
+                    
+                    card.style.animationDelay = `${globalIndex * 0.08}s`;
+                    card.style.animation = 'popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both';
+                    
+                    card.innerHTML = `
+                        <div class="card-icon">${vis.icon}</div>
+                        <h2 class="card-title">${vis.title}</h2>
+                        <p class="card-desc">${vis.desc}</p>
+                        <div class="card-tags">
+                            ${tagsHtml}
+                        </div>
+                        <div class="card-arrow">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                        </div>
+                    `;
+                    
+                    groupWrapper.appendChild(card);
+                    globalIndex++;
+                });
             });
         }
 
