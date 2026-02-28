@@ -8,75 +8,143 @@
 
 ### The Inference Problem
 
-- Foundation models are **expensive** and **slow** at inference
-- **Latency** and **cost** are the two primary bottlenecks
-- Users expect fast responses — high latency = poor UX
-- At scale, inference costs dominate total AI spend
+```mermaid
+flowchart LR
+    subgraph PROBLEM["The Two Enemies"]
+        direction TB
+        Latency["⏱️ LATENCY<br/>Users expect < 1s responses"]
+        Cost["💸 COST<br/>At scale, inference dominates spend"]
+    end
 
-### Understanding Inference Costs
+    Latency --> UX["Bad UX → users leave"]
+    Cost --> Budget["Blows through budget"]
 
-```
-Cost Drivers:
-┌──────────────────┬──────────────────────────────┐
-│ Input Tokens     │ Processing the prompt         │
-│ Output Tokens    │ Generating the response       │
-│ Model Size       │ Larger model = more compute   │
-│ Hardware         │ GPU type and availability      │
-│ Batch Size       │ Requests processed together    │
-│ Concurrency      │ Parallel requests overhead     │
-└──────────────────┴──────────────────────────────┘
+    style PROBLEM fill:#ffcdd2,stroke:#c62828
 ```
 
-### Optimization Techniques
+### Optimization Priority Ladder
 
-#### Model-Level Optimizations
+```mermaid
+flowchart TD
+    subgraph QUICK["🥇 Quick Wins (Day 1)"]
+        Cache["🗃️ Response Caching"]
+        Smaller["📐 Right-size Model"]
+        Tokens["✂️ Reduce Token Usage"]
+    end
 
-| Technique | How It Works | Trade-off |
-|-----------|-------------|-----------|
-| **Quantization** | Reduce precision (FP32→FP16→INT8→INT4) | Small quality loss, big speed gain |
-| **Distillation** | Train smaller model to mimic larger model | Smaller model, some quality loss |
-| **Pruning** | Remove unimportant weights/neurons | Faster inference, potential quality loss |
-| **Sparse models** | Activate only relevant parts (MoE) | Faster per-token, complex routing |
+    subgraph MEDIUM["🥈 Medium Effort (Week 1)"]
+        Quant["📊 Quantization"]
+        Batch["📦 Batching"]
+        Stream["🌊 Streaming"]
+    end
 
-#### Inference-Level Optimizations
+    subgraph ADVANCED["🥉 Advanced (Month 1)"]
+        Spec["🔮 Speculative Decoding"]
+        Route["🔀 Model Routing"]
+        KV["💾 KV-Cache / Prompt Caching"]
+    end
 
-| Technique | How It Works | Impact |
-|-----------|-------------|--------|
-| **KV-Cache** | Cache key-value pairs for attention | Avoid recomputation, faster generation |
-| **Batching** | Process multiple requests together | Better GPU utilization |
-| **Continuous Batching** | Add new requests to in-progress batch | Reduce queue wait time |
-| **Speculative Decoding** | Small model drafts, large model verifies | 2-3x speedup on generation |
-| **Flash Attention** | Memory-efficient attention computation | Less memory, faster training/inference |
+    QUICK --> MEDIUM --> ADVANCED
 
-#### System-Level Optimizations
+    style QUICK fill:#c8e6c9,stroke:#388e3c
+    style MEDIUM fill:#fff3e0,stroke:#ff9800
+    style ADVANCED fill:#e8eaf6,stroke:#3f51b5
+```
 
-- **Model parallelism**: Split model across multiple GPUs
-- **Pipeline parallelism**: Different layers on different GPUs
-- **Response caching**: Cache common queries/responses
-- **Prompt caching**: Reuse prefill computation for shared prefixes
-- **Streaming**: Send tokens as they're generated for perceived speed
+### Quantization — Precision Trade-offs
+
+```mermaid
+flowchart LR
+    FP32["FP32<br/>Baseline"] --> FP16["FP16<br/>50% less memory<br/>~0% quality loss"]
+    FP16 --> INT8["INT8<br/>75% less memory<br/><1% quality loss"]
+    INT8 --> INT4["INT4<br/>87% less memory<br/>1-3% quality loss"]
+
+    style FP32 fill:#ffcdd2,stroke:#c62828
+    style FP16 fill:#fff3e0,stroke:#ff9800
+    style INT8 fill:#c8e6c9,stroke:#388e3c
+    style INT4 fill:#bbdefb,stroke:#1976d2
+```
+
+| Precision | Memory Savings | Speed Gain | Quality Loss | Best For |
+| :--- | :---: | :---: | :---: | :--- |
+| **FP32** | Baseline | Baseline | None | Research only |
+| **FP16** | 50% | ~1.5x | Negligible | Default for serving |
+| **INT8** | 75% | ~2x | <1% | Production serving |
+| **INT4** | 87% | ~3x | 1-3% | Edge, cost-sensitive |
+
+### Model Routing — The 80/20 Rule
+
+```mermaid
+flowchart LR
+    Query(["User Query"]) --> Classifier{"🔀 Complexity<br/>Classifier"}
+    Classifier -- "Easy (80%)" --> Small["Small Model<br/>Llama 3 8B<br/>💰 $0.10/1M tokens"]
+    Classifier -- "Hard (20%)" --> Large["Large Model<br/>GPT-4o<br/>💰 $5.00/1M tokens"]
+    Small --> Response(["Response"])
+    Large --> Response
+
+    style Small fill:#c8e6c9,stroke:#388e3c
+    style Large fill:#ffcdd2,stroke:#c62828
+```
+
+> **💡 Real-World Tip:** Even a simple keyword-based classifier can route 60-80% of queries to a smaller model. You don't need a perfect classifier — even crude routing saves massive costs.
+
+### Inference-Level Optimizations
+
+```mermaid
+flowchart TD
+    subgraph KV_CACHE["💾 KV-Cache"]
+        direction LR
+        KC1["Cache attention key-values"]
+        KC2["Avoid recomputation<br/>for previous tokens"]
+    end
+
+    subgraph BATCHING["📦 Continuous Batching"]
+        direction LR
+        CB1["Add new requests to<br/>in-progress batches"]
+        CB2["Better GPU utilization"]
+    end
+
+    subgraph SPEC["🔮 Speculative Decoding"]
+        direction LR
+        SD1["Small model drafts tokens"]
+        SD2["Large model verifies<br/>(2-3x speedup)"]
+    end
+
+    subgraph FLASH["⚡ Flash Attention"]
+        direction LR
+        FA1["Memory-efficient attention"]
+        FA2["Less VRAM, faster"]
+    end
+```
 
 ### Choosing the Right Model Size
 
+```mermaid
+flowchart TD
+    Task["What's your task<br/>complexity?"] --> Simple{"Simple?<br/>Classification,<br/>extraction"}
+    Simple -- Yes --> S["✅ Small (1-8B)<br/>Cheap & fast"]
+    Simple -- No --> Medium{"Medium?<br/>Summarization,<br/>Q&A"}
+    Medium -- Yes --> M["✅ Medium (13-34B)<br/>Good balance"]
+    Medium -- No --> Complex{"Complex?<br/>Reasoning,<br/>code gen"}
+    Complex -- Yes --> L["✅ Large (70B+)<br/>Best quality"]
+    Complex -- No --> API["✅ API provider<br/>(GPT-4, Claude)"]
+
+    style S fill:#c8e6c9,stroke:#388e3c
+    style M fill:#fff3e0,stroke:#ff9800
+    style L fill:#ffcdd2,stroke:#c62828
 ```
-Task Complexity vs. Model Size Decision Matrix:
 
-Simple Tasks ─── Small Model (7B)  ← Cheaper, faster
-     │                │
-  Medium Tasks ── Medium Model (13-34B) ← Good balance
-     │                │
-Complex Tasks ── Large Model (70B+) ← Best quality, expensive
-     │
-  Consider: Can you achieve "good enough" with a smaller model + better prompting?
-```
+### Cost Optimization Checklist
 
-### Cost Optimization Strategies
-
-1. **Right-size your model** — don't use GPT-4 for simple classification
-2. **Cache aggressively** — many queries are similar or repeated
-3. **Reduce token usage** — shorter prompts, concise outputs
-4. **Use tiered routing** — easy queries → small model, hard → large model
-5. **Batch when possible** — non-real-time tasks can be batched
+| Strategy | Impact | Effort |
+| :--- | :---: | :---: |
+| Cache common queries (exact + semantic) | 🔥🔥🔥 | Low |
+| Right-size model (don't over-engineer) | 🔥🔥🔥 | Low |
+| Reduce token usage (shorter prompts) | 🔥🔥 | Low |
+| Model routing (cheap model for easy tasks) | 🔥🔥🔥 | Medium |
+| Batch non-real-time requests | 🔥🔥 | Medium |
+| Quantize self-hosted models | 🔥🔥 | Medium |
+| Speculative decoding | 🔥 | High |
 
 ---
 
@@ -111,7 +179,6 @@ Complex Tasks ── Large Model (70B+) ← Best quality, expensive
 - [ ] Implement response caching for a simple API
 - [ ] Set up model routing: classifier → small model vs. large model
 - [ ] Measure cost per query across different model providers
-
 
 ---
 

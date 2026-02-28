@@ -6,116 +6,219 @@
 
 ## 🎯 Core Concepts
 
-### Production AI Architecture
+### End-to-End Production Architecture
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                        USERS                                │
-│                          │                                  │
-│                    ┌─────▼─────┐                            │
-│                    │ API / UI  │                             │
-│                    └─────┬─────┘                             │
-│                          │                                  │
-│    ┌─────────────────────▼──────────────────────┐           │
-│    │              GUARDRAILS                     │           │
-│    │  Input Validation │ Content Filtering       │           │
-│    │  Rate Limiting    │ PII Detection           │           │
-│    └─────────────────────┬──────────────────────┘           │
-│                          │                                  │
-│    ┌─────────────────────▼──────────────────────┐           │
-│    │          CONTEXT CONSTRUCTION               │           │
-│    │  RAG Retrieval │ User History │ System Prompt│           │
-│    └─────────────────────┬──────────────────────┘           │
-│                          │                                  │
-│    ┌─────────────────────▼──────────────────────┐           │
-│    │            MODEL INFERENCE                  │           │
-│    │  Model Router │ LLM │ Caching │ Fallbacks   │           │
-│    └─────────────────────┬──────────────────────┘           │
-│                          │                                  │
-│    ┌─────────────────────▼──────────────────────┐           │
-│    │           OUTPUT GUARDRAILS                 │           │
-│    │  Hallucination Check │ Format Validation    │           │
-│    │  Safety Filtering    │ Fact Verification    │           │
-│    └─────────────────────┬──────────────────────┘           │
-│                          │                                  │
-│    ┌─────────────────────▼──────────────────────┐           │
-│    │           OBSERVABILITY                     │           │
-│    │  Logging │ Tracing │ Metrics │ Alerts       │           │
-│    └─────────────────────┬──────────────────────┘           │
-│                          │                                  │
-│                    ┌─────▼─────┐                            │
-│                    │ FEEDBACK  │──── Continuous Improvement  │
-│                    └───────────┘                             │
-└─────────────────────────────────────────────────────────────┘
-```
+```mermaid
+flowchart TD
+    User(["👤 User"]) --> LB["⚖️ Load Balancer"]
+    LB --> IG["🛡️ Input Guardrails"]
 
-### Guardrails
+    subgraph INPUT_CHECKS["Input Safety Layer"]
+        PII["PII Detection"]
+        Inject["Injection Detection"]
+        Rate["Rate Limiting"]
+        Valid["Input Validation"]
+    end
+    IG -.-> INPUT_CHECKS
 
-#### Input Guardrails
-- **Prompt injection detection**: Prevent manipulation attempts
-- **PII detection/redaction**: Protect sensitive user data
-- **Content filtering**: Block harmful or off-topic inputs
-- **Rate limiting**: Prevent abuse and manage costs
-- **Input validation**: Check format, length, language
+    IG --> Context["📄 Context Construction"]
 
-#### Output Guardrails
-- **Hallucination detection**: Fact-check against source documents
-- **Safety filtering**: Block harmful, biased, or inappropriate outputs
-- **Format validation**: Ensure output matches expected schema
-- **Confidence scoring**: Flag low-confidence responses for human review
+    subgraph CTX_BUILD["Context Building"]
+        RAG["RAG Retrieval"]
+        History["Conversation History"]
+        SysP["System Prompt"]
+    end
+    Context -.-> CTX_BUILD
 
-### Observability & Monitoring
+    Context --> Router{"🔀 Model Router"}
+    Router -- Simple --> Small["📦 Small Model"]
+    Router -- Complex --> Large["📦 Large Model"]
+    Router -- Specialized --> Domain["📦 Domain Model"]
 
-| What to Monitor | Why |
-|-----------------|-----|
-| **Latency** (p50, p95, p99) | User experience, SLA compliance |
-| **Token usage** | Cost tracking and optimization |
-| **Error rates** | System reliability |
-| **Content quality scores** | Output quality trends |
-| **User satisfaction** | Business impact |
-| **Guardrail trigger rates** | Security and safety health |
-| **Model performance drift** | Detect degradation over time |
+    Small --> OG["🛡️ Output Guardrails"]
+    Large --> OG
+    Domain --> OG
 
-### User Feedback Loops
+    subgraph OUTPUT_CHECKS["Output Safety Layer"]
+        Halluc["Hallucination Check"]
+        Safety["Toxicity Filter"]
+        Format["Format Validation"]
+        Facts["Fact Verification"]
+    end
+    OG -.-> OUTPUT_CHECKS
 
-```
-         ┌──────────┐
-         │ Collect   │ ← Thumbs up/down, ratings, corrections
-         │ Feedback  │    edits, task completion, implicit signals
-         └────┬─────┘
-              │
-         ┌────▼─────┐
-         │ Analyze   │ ← Identify failure patterns, cluster issues
-         │ Patterns  │    priority by impact × frequency
-         └────┬─────┘
-              │
-         ┌────▼──────┐
-         │ Improve    │ ← Update prompts, add to eval set
-         │ System     │    finetune, fix retrieval, add guardrails
-         └────┬──────┘
-              │
-         ┌────▼──────┐
-         │ Validate   │ ← Evaluate improvements against baseline
-         │ Changes    │    A/B test in production
-         └────┬──────┘
-              │
-              └──────────▶ (repeat)
+    OG --> Stream["🌊 Stream to User"]
+    Stream --> Obs["📊 Observability"]
+
+    subgraph MONITORING["Monitoring Stack"]
+        Log["Structured Logging"]
+        Trace["Distributed Tracing"]
+        Metrics["Latency / Cost / Quality"]
+        Alert["Alerting"]
+    end
+    Obs -.-> MONITORING
+
+    Obs --> FB["🔄 Feedback Loop"]
+    FB --> Improve["♻️ Continuous Improvement"]
+    Improve -.-> Context
+
+    style User fill:#e3f2fd,stroke:#1976d2
+    style IG fill:#ffcdd2,stroke:#c62828
+    style OG fill:#ffcdd2,stroke:#c62828
+    style FB fill:#c8e6c9,stroke:#388e3c
 ```
 
-### Security Considerations
+### Input Guardrails — Defense in Depth
 
-- **Prompt injection**: Direct and indirect injection attacks
-- **Data leakage**: Model revealing training data or user data
-- **Model extraction**: Protecting proprietary models
-- **Adversarial inputs**: Crafted inputs that cause unexpected behavior
-- **Supply chain**: Risks from third-party models and data
+```mermaid
+flowchart LR
+    Input(["Raw User Input"]) --> S1["1️⃣ Rate Limiting<br/>Prevent abuse"]
+    S1 --> S2["2️⃣ Input Validation<br/>Format, length, lang"]
+    S2 --> S3["3️⃣ PII Detection<br/>Redact sensitive data"]
+    S3 --> S4["4️⃣ Prompt Injection<br/>Detection"]
+    S4 --> S5["5️⃣ Content Filtering<br/>Block harmful/off-topic"]
+    S5 --> Safe(["✅ Safe Input"])
+
+    style Input fill:#ffcdd2,stroke:#c62828
+    style Safe fill:#c8e6c9,stroke:#388e3c
+```
+
+### Output Guardrails
+
+| Check | Description | Action on Failure |
+| :--- | :--- | :--- |
+| **Hallucination Check** | Verify claims against source docs | Flag or regenerate |
+| **Safety Filter** | Block harmful/biased content | Replace with safe response |
+| **Format Validation** | Ensure output matches schema | Parse and reformat |
+| **Confidence Scoring** | Low confidence → human review | Route to human agent |
+| **PII Leakage** | Check output doesn't leak PII | Redact and log |
+
+### Observability — What to Monitor
+
+```mermaid
+flowchart TD
+    subgraph PERF["⚡ Performance"]
+        P1["P50 Latency < 1s"]
+        P2["P99 Latency < 5s"]
+        P3["Error Rate < 0.1%"]
+        P4["Throughput (req/s)"]
+    end
+
+    subgraph QUALITY["📊 Quality"]
+        Q1["AI Judge Scores"]
+        Q2["User Satisfaction (👍/👎)"]
+        Q3["Task Completion Rate"]
+        Q4["Hallucination Rate"]
+    end
+
+    subgraph COST["💰 Cost"]
+        C1["Cost per Query"]
+        C2["Token Usage Trends"]
+        C3["Model Mix (small vs large)"]
+    end
+
+    subgraph SAFETY["🛡️ Safety"]
+        S1["Guardrail Trigger Rate"]
+        S2["Injection Attempts"]
+        S3["PII Leak Incidents"]
+    end
+
+    style PERF fill:#e3f2fd,stroke:#1976d2
+    style QUALITY fill:#e8f5e9,stroke:#4caf50
+    style COST fill:#fff3e0,stroke:#ff9800
+    style SAFETY fill:#ffcdd2,stroke:#c62828
+```
+
+### The Feedback Flywheel
+
+```mermaid
+flowchart TD
+    Deploy["🚀 Deploy"] --> Collect["📥 Collect Feedback"]
+    Collect --> Analyze["🔍 Analyze<br/>Cluster failure patterns"]
+    Analyze --> Prioritize["📊 Prioritize<br/>Impact × Frequency"]
+    Prioritize --> Fix["🔧 Fix"]
+
+    subgraph FIX_OPTIONS["Improvement Actions"]
+        direction LR
+        F1["Update Prompts"]
+        F2["Fix RAG Data"]
+        F3["Add to Eval Set"]
+        F4["Finetune"]
+        F5["Add Guardrails"]
+    end
+    Fix -.-> FIX_OPTIONS
+
+    Fix --> Eval["✅ Evaluate vs Baseline"]
+    Eval --> Deploy
+
+    style Deploy fill:#4CAF50,color:white
+    style Collect fill:#2196F3,color:white
+    style Analyze fill:#FF9800,color:white
+```
+
+### Feedback Signal Types
+
+| Signal | How to Collect | Value |
+| :--- | :--- | :--- |
+| **Explicit** | 👍/👎 buttons, star ratings | Direct but sparse |
+| **Corrections** | User edits AI output | Very high — free training data |
+| **Implicit** | Copy-paste, time on page, follow-ups | Abundant but noisy |
+| **Escalations** | User contacts support after failure | High signal for critical bugs |
+
+### Security Threat Model
+
+```mermaid
+flowchart TD
+    subgraph THREATS["🚨 Threat Categories"]
+        direction TB
+        T1["💉 Prompt Injection<br/>Direct & indirect manipulation"]
+        T2["📤 Data Leakage<br/>Model reveals training/user data"]
+        T3["🕵️ Model Extraction<br/>Stealing proprietary models"]
+        T4["🎭 Adversarial Inputs<br/>Crafted to cause errors"]
+        T5["📦 Supply Chain<br/>Risks from 3rd-party models"]
+    end
+
+    subgraph DEFENSES["🛡️ Defenses"]
+        direction TB
+        D1["Input sanitization + detection"]
+        D2["Output filtering + PII redaction"]
+        D3["Rate limiting + access control"]
+        D4["Adversarial testing + monitoring"]
+        D5["Model provenance + auditing"]
+    end
+
+    T1 --> D1
+    T2 --> D2
+    T3 --> D3
+    T4 --> D4
+    T5 --> D5
+
+    style THREATS fill:#ffcdd2,stroke:#c62828
+    style DEFENSES fill:#c8e6c9,stroke:#388e3c
+```
 
 ### Building a Defensible AI System
 
-- **Data flywheel**: User interactions → better data → better model → more users
-- **Workflow integration**: Deeply embed into user workflows
-- **Customization**: Personalize to user/org needs
-- **Evaluation infrastructure**: Continuously improve with rigorous measurement
+```mermaid
+mindmap
+  root((Defensible AI))
+    Data Flywheel
+      User interactions improve data
+      Better data improves model
+      Better model attracts users
+    Workflow Integration
+      Deep embedding in user workflow
+      High switching costs
+      Custom integrations
+    Evaluation Infrastructure
+      Automated testing pipeline
+      Continuous monitoring
+      Fast iteration cycles
+    Customization
+      Per-user personalization
+      Per-org configuration
+      Domain-specific tuning
+```
 
 ---
 
@@ -149,10 +252,9 @@
 
 - [ ] Design a complete AI architecture diagram for your application
 - [ ] Implement input + output guardrails for a simple AI API
-- [ ] Set up logging and tracing using LangSmith/Langfuse/custom solution
+- [ ] Set up logging and tracing (LangSmith / Langfuse / custom)
 - [ ] Build a feedback collection mechanism (thumbs up/down + free text)
-- [ ] Run a red-team exercise: try to break your AI system with adversarial inputs
-
+- [ ] Run a red-team exercise: try to break your AI system
 
 ---
 

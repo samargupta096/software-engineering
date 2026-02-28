@@ -6,74 +6,113 @@
 
 ## 🎯 Core Concepts
 
-### When to Finetune (and When NOT to)
+### Should You Finetune? (Decision Flowchart)
+
+```mermaid
+flowchart TD
+    Start(["🤔 Considering Finetuning?"]) --> Q1{"Have you maxed out<br/>prompt engineering?"}
+    Q1 -- No --> MaxPE["⏸️ Go back and optimize<br/>your prompts first"]
+    Q1 -- Yes --> Q2{"Do you have 500+<br/>high-quality examples?"}
+    Q2 -- No --> Synth["🔄 Generate synthetic data<br/>or collect more examples"]
+    Q2 -- Yes --> Q3{"Goal: style/format or<br/>domain adaptation?"}
+    Q3 -- Yes --> FT["✅ Finetune!<br/>Start with LoRA"]
+    Q3 -- No --> Q4{"Cost reduction via<br/>smaller model?"}
+    Q4 -- Yes --> Distill["✅ Distillation:<br/>Large → Small"]
+    Q4 -- No --> Skip["❌ Probably don't need<br/>finetuning"]
+
+    style FT fill:#4CAF50,color:white
+    style Distill fill:#4CAF50,color:white
+    style MaxPE fill:#FF9800,color:white
+    style Skip fill:#f44336,color:white
+```
+
+### When to Finetune vs. When NOT To
 
 | ✅ Finetune When | ❌ Don't Finetune When |
-|-----------------|----------------------|
-| Consistent style/format needed | Prompt engineering works well enough |
-| Domain-specific language | Small dataset (< hundreds of examples) |
+| :--- | :--- |
+| Need consistent style/format | Prompt engineering works well enough |
+| Domain-specific language/jargon | Small dataset (< 200 examples) |
 | Significant quality gap with prompting | Task changes frequently |
 | Need to reduce prompt length/cost | Limited compute budget |
 | Proprietary data can't be sent to APIs | You're just starting to explore |
 
 ### Types of Finetuning
 
-#### Full Finetuning
-- Update **all model parameters**
-- Requires significant compute (multiple GPUs)
-- Best quality but most expensive
-- Risk of catastrophic forgetting
+```mermaid
+flowchart TD
+    FT["Finetuning Methods"] --> Full["📦 Full Finetuning<br/>Update ALL parameters"]
+    FT --> PEFT["⚡ Parameter-Efficient (PEFT)<br/>Update SMALL subset"]
 
-#### Parameter-Efficient Finetuning (PEFT)
+    PEFT --> LoRA["LoRA<br/>Low-Rank Adaptation"]
+    PEFT --> QLoRA["QLoRA<br/>LoRA + 4-bit quantization"]
+    PEFT --> Prefix["Prefix Tuning<br/>Virtual token prefixes"]
+    PEFT --> Adapter["Adapters<br/>Insert small trainable layers"]
 
-| Method | Description | Parameters Updated |
-|--------|------------|-------------------|
-| **LoRA** | Low-Rank Adaptation — add small trainable matrices | ~0.1-1% of original |
-| **QLoRA** | LoRA + quantized base model (4-bit) | Same as LoRA, less VRAM |
-| **Prefix Tuning** | Learn virtual tokens prepended to input | Very few parameters |
-| **Adapters** | Insert small trainable layers | ~1-5% of original |
+    style Full fill:#ffcdd2,stroke:#c62828
+    style PEFT fill:#c8e6c9,stroke:#388e3c
+    style LoRA fill:#bbdefb,stroke:#1976d2
+```
 
-#### LoRA Deep Dive
+### PEFT Methods Compared
+
+| Method | Trainable Params | VRAM Needed | Quality | Speed |
+| :--- | :---: | :---: | :---: | :---: |
+| **Full Finetuning** | 100% | Very High (80GB+) | ⭐⭐⭐⭐⭐ | Slow |
+| **LoRA** | ~0.1-1% | Medium (16-24GB) | ⭐⭐⭐⭐ | Fast |
+| **QLoRA** | ~0.1-1% | Low (8-12GB) | ⭐⭐⭐⭐ | Fast |
+| **Prefix Tuning** | ~0.01% | Low | ⭐⭐⭐ | Very Fast |
+| **Adapters** | ~1-5% | Medium | ⭐⭐⭐⭐ | Fast |
+
+### How LoRA Works
+
+```mermaid
+flowchart LR
+    X["Input x"] --> W["W (d×d)<br/>❄️ FROZEN"]
+    X --> A["A (d×r)<br/>🔥 Trainable"]
+    A --> B["B (r×d)<br/>🔥 Trainable"]
+    W --> Plus(("+"))
+    B --> Plus
+    Plus --> Y["Output y"]
+
+    style W fill:#e3f2fd,stroke:#1976d2
+    style A fill:#fff3e0,stroke:#ff9800
+    style B fill:#fff3e0,stroke:#ff9800
+```
 
 ```
-Original Weight Matrix W (frozen)
-           │
-    ┌──────▼──────┐
-    │  W (d × d)  │   ← Frozen (not updated)
-    └─────────────┘
-           +
-    ┌──────▼──────┐
-    │  A (d × r)  │   ← Trainable (r << d)
-    │      ×      │
-    │  B (r × d)  │   ← Trainable
-    └─────────────┘
-    
-    Output = W·x + A·B·x
-    (rank r is typically 4, 8, 16, 32)
+Output = W·x + A·B·x
+Where rank r (4, 8, 16, 32) << d
+Result: Train 0.1% of parameters, get ~95% of full finetune quality
 ```
 
 ### Finetuning Pipeline
 
-1. **Data preparation** — Format data for the task (instruction, input, output)
-2. **Choose base model** — Open-source model appropriate for your task
-3. **Set hyperparameters** — Learning rate, epochs, batch size, LoRA rank
-4. **Train** — Monitor loss, avoid overfitting
-5. **Evaluate** — Compare against baseline (prompting-only)
-6. **Merge & deploy** — Merge LoRA weights or serve adapter alongside base
+```mermaid
+flowchart LR
+    Data["1️⃣ Data Prep<br/>Format as<br/>instruction/output"] --> Base["2️⃣ Choose Base<br/>Model<br/>(Llama, Mistral)"]
+    Base --> Hyper["3️⃣ Set Hyperparams<br/>LR, epochs,<br/>LoRA rank"]
+    Hyper --> Train["4️⃣ Train<br/>Monitor loss,<br/>avoid overfitting"]
+    Train --> Eval["5️⃣ Evaluate<br/>Compare vs.<br/>baseline"]
+    Eval --> Deploy["6️⃣ Merge & Deploy"]
+
+    style Data fill:#e8eaf6,stroke:#3f51b5
+    style Deploy fill:#c8e6c9,stroke:#388e3c
+```
 
 ### Alignment Techniques
 
-- **SFT (Supervised Fine-Tuning)**: Train on curated instruction-response pairs
-- **RLHF (Reinforcement Learning from Human Feedback)**: Train a reward model, optimize with PPO
-- **DPO (Direct Preference Optimization)**: Simpler alternative to RLHF, no reward model needed
-- **Constitutional AI**: Self-improvement with AI feedback
+```mermaid
+flowchart TD
+    SFT["📋 SFT<br/>Supervised Fine-Tuning<br/>Train on instruction-response pairs"] --> RLHF["🏆 RLHF<br/>Reinforcement Learning<br/>from Human Feedback"]
+    SFT --> DPO["⚡ DPO<br/>Direct Preference Optimization<br/>Simpler than RLHF, no reward model"]
 
-### Data Quality for Finetuning
+    RLHF --> RM["Train Reward Model"] --> PPO["Optimize with PPO"]
+    DPO --> Pref["Learn directly from<br/>preference pairs"]
 
-- Quality > quantity — 1,000 high-quality examples can outperform 100,000 noisy ones
-- Diversity matters — cover the range of expected inputs
-- Label consistency — ambiguous labels hurt more than small datasets
-- Deduplication — remove near-duplicates
+    style SFT fill:#e3f2fd,stroke:#1976d2
+    style DPO fill:#c8e6c9,stroke:#388e3c
+    style RLHF fill:#fff3e0,stroke:#ff9800
+```
 
 ---
 
@@ -108,7 +147,6 @@ Original Weight Matrix W (frozen)
 - [ ] Compare finetuned model vs. few-shot prompting on the same eval set
 - [ ] Experiment with different LoRA ranks (4, 8, 16, 32) and measure impact
 - [ ] Try DPO alignment on a preference dataset
-
 
 ---
 
