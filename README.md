@@ -66,7 +66,7 @@ flowchart LR
 </tr>
 <tr>
 <td valign="top"><div align="center"><img src="./assets/animations/projects.png" width="200" alt="Projects"></div><br><b>Practical Learning:</b><br><ul><li>📨 <a href="./projects/kafka-learning-project/README.md">Kafka Learning Project</a> ⭐</li><li>🤖 <a href="./projects/llm-finetuning-project/README.md">LLM Fine-Tuning</a></li><li>🔌 <a href="./projects/mcp-server-project/README.md">MCP Server Project</a></li><li>📚 <a href="./projects/rag-api-project/README.md">RAG API Project</a> ⭐</li></ul></td>
-<td valign="top"><div align="center"><img src="./assets/animations/genai.png" width="200" alt="GenAI"></div><br><b>AI/ML Engineering:</b><br><ul><li>🧠 <a href="./interview-prep/system-design/components/genai/ml-fundamentals.md">ML & DL Fundamentals</a> ⭐</li><li>🧠 <a href="./interview-prep/system-design/components/genai/genai-fundamentals.md">GenAI Fundamentals</a></li><li>📚 <a href="./interview-prep/system-design/components/genai/rag-deep-dive.md">RAG Deep Dive</a> ⭐</li><li>🤖 <a href="./interview-prep/system-design/components/genai/agentic-ai-guide.md">Agentic AI</a> ⭐</li><li>⚡ <a href="./interview-prep/system-design/components/genai/fastapi-guide.md">FastAPI for GenAI</a></li><li>☁️ <a href="./interview-prep/system-design/components/genai/aws-genai-mlops.md">AWS GenAI/MLOps</a></li></ul></td>
+<td valign="top"><div align="center"><img src="./assets/animations/genai.png" width="200" alt="GenAI"></div><br><b>AI/ML Engineering:</b><br><ul><li>🧠 <a href="./interview-prep/system-design/components/genai/ml-fundamentals.md">ML & DL Fundamentals</a> ⭐</li><li>🧠 <a href="./interview-prep/system-design/components/genai/genai-fundamentals.md">GenAI Fundamentals</a></li><li>📚 <a href="./interview-prep/system-design/components/genai/rag-deep-dive.md">RAG Deep Dive</a> ⭐</li><li>🤖 <a href="./interview-prep/system-design/components/genai/agentic-ai-guide.md">Agentic AI</a> ⭐</li><li>⚡ <a href="./interview-prep/system-design/components/genai/fastapi-guide.md">FastAPI for GenAI</a></li><li>☁️ <a href="./interview-prep/system-design/components/genai/aws-genai-mlops.md">AWS GenAI/MLOps</a></li><li>📖 <a href="./ai-engineering/README.md">AI Engineering Book Guide</a> ⭐🆕</li></ul></td>
 <td valign="top"><div align="center"><img src="./assets/animations/frontend-mastery.png" width="200" alt="Frontend"></div><br><b>Frontend Mastery:</b><br><ul><li>📜 <a href="./frontend/javascript-es6-guide.md">JS ES6+ Complete</a> ⭐</li><li>📘 <a href="./frontend/typescript-guide.md">TypeScript Mastery</a> ⭐</li><li>⚛️ <a href="./frontend/react-guide.md">React.js Guide</a> ⭐</li><li>🅰️ <a href="./frontend/angular-guide.md">Angular Guide</a></li></ul></td>
 </tr>
 </table>
@@ -135,7 +135,7 @@ flowchart LR
 | 8️⃣ | [**Real-World Designs**](./interview-prep/system-design/real-systems/00-interview-roadmap.md) | Real-world case studies |
 | 9️⃣ | [**Interview Prep Hub**](./interview-prep/) | Company-specific preparation |
 | 🔟 | [**Hands-On Projects**](./projects/) | Kafka, RAG API, LLM Fine-tuning |
-| 1️⃣1️⃣ | [**GenAI & LLM**](./interview-prep/system-design/components/genai/genai-fundamentals.md) | ML/DL, RAG, Fine-tuning, Agentic AI |
+| 1️⃣1️⃣ | [**GenAI & LLM**](./interview-prep/system-design/components/genai/genai-fundamentals.md) | ML/DL, RAG, AI Engineering, Agentic AI |
 | 1️⃣2️⃣ | [**Frontend Mastery**](./frontend/javascript-es6-guide.md) | JS ES6+, TypeScript, React, Angular |
 
 <p align="center">
