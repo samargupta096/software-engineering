@@ -27,7 +27,7 @@ To stay relevant, you must balance deep technical skills with broad strategic ca
 
 ### I. AI & Agentic Architecture (The New Core)
 *   **Multi-Agent Orchestration**: Designing systems where autonomous agents collaborate (using patterns like Supervisor, Hierarchical Teams).
-*   **[Model Context Protocol (MCP)](https://modelcontextprotocol.io)**: Mastering standard interfaces for connecting AI models to data and tools.
+*   **[Model Context Protocol (MCP)](../genai/Model-Context-Protocol-MCP-Practical-Guide.md)**: Mastering standard interfaces for connecting AI models to data and tools.
 *   **RAG & Knowledge Strategy**: Architecting vector databases and knowledge graphs to ground AI and prevent hallucinations.
 *   **AI Security**: Guarding against prompt injection, data leakage, and excessive agent autonomy.
 

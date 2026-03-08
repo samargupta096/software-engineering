@@ -398,17 +398,17 @@ sequenceDiagram
 | Redis | [Redis Deep Dive](./caching/redis-deep-dive.md) |
 | Elasticsearch | [Elasticsearch Deep Dive](./search/elasticsearch-deep-dive.md) |
 | Apache Kafka | [Kafka Deep Dive](./messaging/kafka-deep-dive.md) |
-| GenAI Fundamentals | [Neural Networks, Transformers, LLMs](./genai/genai-fundamentals.md) |
-| Fine-Tuning | [LoRA, QLoRA, RLHF, DPO](./genai/fine-tuning-guide.md) |
-| RAG | [Retrieval-Augmented Generation](./genai/rag-deep-dive.md) |
-| Agentic AI & MCP | [AI Agents, Tool Use, MCP Protocol](./genai/agentic-ai-guide.md) |
-| AWS GenAI & MLOps | [SageMaker, Bedrock, MLflow](./genai/aws-genai-mlops.md) |
-| FastAPI for GenAI | [Production ML APIs](./genai/fastapi-guide.md) |
+| GenAI Fundamentals | [Neural Networks, Transformers, LLMs](../../../genai/genai-fundamentals.md) |
+| Fine-Tuning | [LoRA, QLoRA, RLHF, DPO](../../../genai/fine-tuning-guide.md) |
+| RAG | [Retrieval-Augmented Generation](../../../genai/rag-deep-dive.md) |
+| Agentic AI & MCP | [AI Agents, Tool Use, MCP Protocol](../../../genai/agentic-ai-guide.md) |
+| AWS GenAI & MLOps | [SageMaker, Bedrock, MLflow](../../../genai/aws-genai-mlops.md) |
+| FastAPI for GenAI | [Production ML APIs](../../../genai/fastapi-guide.md) |
 | Security & IAM | [OAuth2, OIDC, JWT, mTLS](./security/security-deep-dive.md) |
 | Resiliency Patterns | [Circuit Breaker, Rate Limiting, Retry](./resiliency/resiliency-patterns.md) |
 | Communication Patterns | [WebHooks, Polling, SSE, WebSockets](./communication/communication-patterns.md) |
-| CI/CD & GitOps | [GitHub Actions, Jenkins, ArgoCD](./devops/cicd-deep-dive.md) |
-| Docker & Kubernetes | [Containers, K8s, Helm](./devops/docker-k8s-deep-dive.md) |
+| CI/CD & GitOps | [GitHub Actions, Jenkins, ArgoCD](../../../devops/cicd-deep-dive.md) |
+| Docker & Kubernetes | [Containers, K8s, Helm](../../../devops/docker-k8s-deep-dive.md) |
 
 ---
 

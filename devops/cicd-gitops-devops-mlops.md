@@ -1,4 +1,4 @@
-[🏠 Home](../README.md) | [⬅️ Docker & K8s](../interview-prep/system-design/components/devops/docker-k8s-deep-dive.md)
+[🏠 Home](../README.md) | [⬅️ Docker & K8s](./docker-k8s-deep-dive.md)
 
 # CI/CD, GitOps, DevOps & MLOps Deep Dive
 
@@ -883,4 +883,4 @@ mlflow server --backend-store-uri sqlite:///mlflow.db
 
 ---
 
-[🏠 Home](../README.md) | [⬅️ Docker & K8s](../interview-prep/system-design/components/devops/docker-k8s-deep-dive.md)
+[🏠 Home](../README.md) | [⬅️ Docker & K8s](./docker-k8s-deep-dive.md)

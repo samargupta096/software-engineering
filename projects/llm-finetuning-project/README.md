@@ -124,11 +124,11 @@ python scripts/train_sagemaker.py \
 
 ## 📚 Resources
 
-- [Fine-Tuning Guide](../../interview-prep/system-design/components/genai/fine-tuning-guide.md)
-- [AWS GenAI & MLOps Guide](../../interview-prep/system-design/components/genai/aws-genai-mlops.md)
+- [Fine-Tuning Guide](../../genai/fine-tuning-guide.md)
+- [AWS GenAI & MLOps Guide](../../genai/aws-genai-mlops.md)
 - [LoRA Paper](https://arxiv.org/abs/2106.09685)
 - [QLoRA Paper](https://arxiv.org/abs/2305.14314)
 
 ---
 
-*Part of the [GenAI Learning Curriculum](../../assets/animations/genai.png)*
+*Part of the [GenAI Learning Curriculum](../../genai/RAG-FineTuning-LLM-Mastery.md)*

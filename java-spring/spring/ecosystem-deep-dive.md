@@ -1,4 +1,4 @@
-[🏠 Home](../../README.md) | [⬅️ Spring Boot Guide](./spring-boot-guide.md) | [➡️ Docker & K8s](../../interview-prep/system-design/components/devops/docker-k8s-deep-dive.md)
+[🏠 Home](../../README.md) | [⬅️ Spring Boot Guide](./spring-boot-guide.md) | [➡️ Docker & K8s](../../devops/docker-k8s-deep-dive.md)
 
 # 🌿 Spring Ecosystem Deep Dive (2026 Edition)
 

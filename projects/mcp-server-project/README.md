@@ -123,9 +123,9 @@ python src/server.py
 ## 📚 Resources
 
 - [MCP Documentation](https://modelcontextprotocol.io/)
-- [Agentic AI Guide](../../interview-prep/system-design/components/genai/agentic-ai-guide.md)
+- [Agentic AI Guide](../../genai/agentic-ai-guide.md)
 - [MCP Python SDK](https://github.com/modelcontextprotocol/python-sdk)
 
 ---
 
-*Part of the [GenAI Learning Curriculum](../../assets/animations/genai.png)*
+*Part of the [GenAI Learning Curriculum](../../genai/Model-Context-Protocol-MCP-Practical-Guide.md)*
