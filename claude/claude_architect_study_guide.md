@@ -5,9 +5,23 @@
 | Detail | Value |
 |---|---|
 | **Questions** | 60 multiple-choice |
-| **Passing Score** | 720 / 1000 |
+| **Time** | 120 minutes |
+| **Passing Score** | 720 / 1000 (scaled) |
 | **Format** | Scenario-based (4 of 6 scenarios randomly selected) |
 | **Prerequisites** | ~6 months hands-on experience with Claude APIs, Agent SDK, Claude Code, MCP |
+| **Cost** | $99 (free for first 5,000 partner employees) |
+| **Validity** | 6 months |
+| **Proctored** | Yes — no external resources, no breaks |
+
+### Domain Weights
+
+| Domain | Weight | ~Questions |
+|---|---|---|
+| 1. Agentic Architecture & Orchestration | **27%** | ~16 |
+| 2. Tool Design & MCP Integration | **18%** | ~11 |
+| 3. Claude Code Configuration & Workflows | **20%** | ~12 |
+| 4. Prompt Engineering & Structured Output | **20%** | ~12 |
+| 5. Context Management & Reliability | **15%** | ~9 |
 
 ### 6 Possible Exam Scenarios
 1. Building a customer support resolution agent
