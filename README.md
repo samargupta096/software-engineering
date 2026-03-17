@@ -152,20 +152,20 @@ flowchart LR
 | 1️⃣4️⃣ | [**Books & Learning**](./books/README.md) | AI Engineering, EDA, Clean Code, DDD, DDIA & more |
 
 <p align="center">
-  <img src="https://komarev.com/ghpvc/?username=Samarpitgupta&repo=software-engineering&label=Visitors&color=0e75b6&style=flat" alt="Visitors" />
-  <img src="https://img.shields.io/github/stars/Samarpitgupta/SystemDesign?style=flat&color=yellow" alt="Stars" />
-  <img src="https://img.shields.io/github/forks/Samarpitgupta/SystemDesign?style=flat&color=blue" alt="Forks" />
-  <img src="https://img.shields.io/github/last-commit/Samarpitgupta/SystemDesign?style=flat&color=green" alt="Last Commit" />
-  <img src="https://img.shields.io/github/repo-size/Samarpitgupta/SystemDesign?style=flat&color=orange" alt="Repo Size" />
+  <img src="https://komarev.com/ghpvc/?username=samargupta096&repo=software-engineering&label=Visitors&color=0e75b6&style=flat" alt="Visitors" />
+  <img src="https://img.shields.io/github/stars/samargupta096/software-engineering?style=flat&color=yellow" alt="Stars" />
+  <img src="https://img.shields.io/github/forks/samargupta096/software-engineering?style=flat&color=blue" alt="Forks" />
+  <img src="https://img.shields.io/github/last-commit/samargupta096/software-engineering?style=flat&color=green" alt="Last Commit" />
+  <img src="https://img.shields.io/github/repo-size/samargupta096/software-engineering?style=flat&color=orange" alt="Repo Size" />
 </p>
 
 <p align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=Samarpitgupta&show_icons=true&theme=tokyonight&hide_border=true&count_private=true" alt="GitHub Stats" />
+  <img src="https://github-readme-stats.vercel.app/api?username=samargupta096&show_icons=true&theme=tokyonight&hide_border=true&count_private=true" alt="GitHub Stats" />
 </p>
 
 <p align="center">
   <a href="https://git.io/streak-stats">
-    <img src="https://streak-stats.demolab.com/?user=Samarpitgupta&theme=tokyonight&hide_border=true" alt="GitHub Streak" />
+    <img src="https://streak-stats.demolab.com/?user=samargupta096&theme=tokyonight&hide_border=true" alt="GitHub Streak" />
   </a>
 </p>
 
