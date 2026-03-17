@@ -71,11 +71,13 @@ flowchart LR
 <td valign="top"><div align="center"><img src="./assets/animations/frontend-mastery.png" width="200" alt="Frontend"></div><br><b>Frontend Mastery:</b><br><ul><li>📜 <a href="./frontend/javascript-es6-guide.md">JS ES6+ Complete</a> ⭐</li><li>📘 <a href="./frontend/typescript-guide.md">TypeScript Mastery</a> ⭐</li><li>⚛️ <a href="./frontend/react-guide.md">React.js Guide</a> ⭐</li><li>🅰️ <a href="./frontend/angular-guide.md">Angular Guide</a></li></ul></td>
 </tr>
 <tr>
-<th>13. Books & Learning 📘</th>
-<th colspan="2"></th>
+<th>13. Claude Certified Architect 🆕</th>
+<th>14. Books & Learning 📘</th>
+<th></th>
 </tr>
 <tr>
-<td valign="top" colspan="3"><div align="center"><img src="./assets/animations/books-learning.png" width="200" alt="Books"></div><br><b>Engineering Books Collection:</b><br><ul><li>🧠 <a href="./books/ai-engineering/README.md">AI Engineering</a> — Chip Huyen (10 chapters + quick reference) ⭐</li><li>⚡ <a href="./books/event-driven-architecture/README.md">Event-Driven Architecture</a> — EDA Patterns & CQRS (12 chapters + quick reference) ⭐</li><li>📕 <a href="./books/pragmatic-programmer.md">The Pragmatic Programmer</a> — Engineering mindset & habits</li><li>📗 <a href="./books/clean-code.md">Clean Code</a> — Writing maintainable code</li><li>📘 <a href="./books/designing-data-intensive-apps.md">Designing Data-Intensive Apps</a> — Distributed systems bible ⭐</li><li>📙 <a href="./books/refactoring.md">Refactoring</a> — Improving existing code safely</li><li>📕 <a href="./books/domain-driven-design.md">Domain-Driven Design</a> — Modeling business domains ⭐</li><li>📗 <a href="./books/software-architecture-hard-parts.md">Architecture: The Hard Parts</a> — Trade-offs in distributed design</li><li>📘 <a href="./books/head-first-design-patterns.md">Head First Design Patterns</a> — Patterns with examples</li><li>📙 <a href="./books/building-microservices.md">Building Microservices</a> — Microservices patterns & design</li></ul></td>
+<td valign="top"><div align="center">🏗️🎓</div><br><b>Exam Prep Materials:</b><br><ul><li>📖 <a href="./claude/learning/README.md">Learning Materials Hub</a> ⭐</li><li>📋 <a href="./claude/claude_architect_study_guide.md">Study Guide</a></li><li>🎯 <a href="./claude/claude_architect_cheat_sheet.md">Cheat Sheet</a></li><li>📝 <a href="./claude/claude_architect_practice_questions.md">Practice Questions (Set 1)</a></li><li>🔥 <a href="./claude/claude_architect_advanced_questions.md">Advanced Questions (Set 2)</a></li></ul><b>Deep-Dive Topics:</b><br><ul><li>🏗️ <a href="./claude/learning/01_agentic_architecture.md">Agentic Architecture (27%)</a></li><li>🔧 <a href="./claude/learning/02_tool_design_mcp.md">Tool Design & MCP (18%)</a></li><li>⚙️ <a href="./claude/learning/03_claude_code_config.md">Claude Code Config (20%)</a></li><li>💬 <a href="./claude/learning/04_prompt_engineering.md">Prompt Engineering (20%)</a></li><li>🛡️ <a href="./claude/learning/05_context_management.md">Context Management (15%)</a></li><li>⚠️ <a href="./claude/learning/06_exam_strategy.md">Exam Strategy & Traps</a></li></ul></td>
+<td valign="top" colspan="2"><div align="center"><img src="./assets/animations/books-learning.png" width="200" alt="Books"></div><br><b>Engineering Books Collection:</b><br><ul><li>🧠 <a href="./books/ai-engineering/README.md">AI Engineering</a> — Chip Huyen (10 chapters + quick reference) ⭐</li><li>⚡ <a href="./books/event-driven-architecture/README.md">Event-Driven Architecture</a> — EDA Patterns & CQRS (12 chapters + quick reference) ⭐</li><li>📕 <a href="./books/pragmatic-programmer.md">The Pragmatic Programmer</a> — Engineering mindset & habits</li><li>📗 <a href="./books/clean-code.md">Clean Code</a> — Writing maintainable code</li><li>📘 <a href="./books/designing-data-intensive-apps.md">Designing Data-Intensive Apps</a> — Distributed systems bible ⭐</li><li>📙 <a href="./books/refactoring.md">Refactoring</a> — Improving existing code safely</li><li>📕 <a href="./books/domain-driven-design.md">Domain-Driven Design</a> — Modeling business domains ⭐</li><li>📗 <a href="./books/software-architecture-hard-parts.md">Architecture: The Hard Parts</a> — Trade-offs in distributed design</li><li>📘 <a href="./books/head-first-design-patterns.md">Head First Design Patterns</a> — Patterns with examples</li><li>📙 <a href="./books/building-microservices.md">Building Microservices</a> — Microservices patterns & design</li></ul></td>
 </tr>
 </table>
 
@@ -145,7 +147,8 @@ flowchart LR
 | 🔟 | [**Hands-On Projects**](./projects/) | Kafka, RAG API, LLM Fine-tuning |
 | 1️⃣1️⃣ | [**GenAI & LLM**](./genai/genai-fundamentals.md) | RAG, Fine-Tuning, Vector DBs, MCP, Agentic AI |
 | 1️⃣2️⃣ | [**Frontend Mastery**](./frontend/javascript-es6-guide.md) | JS ES6+, TypeScript, React, Angular |
-| 1️⃣3️⃣ | [**Books & Learning**](./books/README.md) | AI Engineering, EDA, Clean Code, DDD, DDIA & more |
+| 1️⃣3️⃣ | [**Claude Certified Architect**](./claude/learning/README.md) | Agentic Architecture, MCP, Prompt Engineering, Exam Prep 🆕 |
+| 1️⃣4️⃣ | [**Books & Learning**](./books/README.md) | AI Engineering, EDA, Clean Code, DDD, DDIA & more |
 
 <p align="center">
   <img src="https://komarev.com/ghpvc/?username=Samarpitgupta&repo=software-engineering&label=Visitors&color=0e75b6&style=flat" alt="Visitors" />
