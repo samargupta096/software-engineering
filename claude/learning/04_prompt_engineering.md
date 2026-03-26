@@ -115,6 +115,41 @@ Be explicit about what MUST exist. Don't require everything — fields that migh
 
 **Why:** Lets downstream systems decide which fields need human review based on confidence thresholds.
 
+### 🧱 Anti-Hallucination Schema Defenses — At a Glance
+
+```mermaid
+graph TB
+    subgraph ANTI_HALLUCINATION["🛡️ Anti-Hallucination Schema Patterns"]
+        direction LR
+        subgraph PAT1["🔳 Nullable Fields"]
+            N1["type: string or null"]
+            N2["Missing data = null"]
+            N3["Prevents invented values"]
+        end
+        subgraph PAT2["📊 Enum + Other"]
+            E1["Known categories + other"]
+            E2["detail field for unknowns"]
+            E3["Flexible yet structured"]
+        end
+        subgraph PAT3["⭐ Required vs Optional"]
+            R1["Only require what MUST exist"]
+            R2["Optional = no pressure"]
+            R3["Reduces fabrication"]
+        end
+        subgraph PAT4["🎯 Confidence Scores"]
+            C1["Per-field confidence"]
+            C2["Threshold-based review"]
+            C3["Human review routing"]
+        end
+    end
+
+    style PAT1 fill:#2196F3,color:#fff
+    style PAT2 fill:#FF9800,color:#fff
+    style PAT3 fill:#9C27B0,color:#fff
+    style PAT4 fill:#4CAF50,color:#fff
+    style ANTI_HALLUCINATION fill:#1a1a2e,color:#fff
+```
+
 ---
 
 ## 📘 Topic 4.3: The Validation-Retry Loop (Pydantic Pattern)
@@ -162,6 +197,26 @@ This is a critical architectural pattern tested on the exam:
 ✅ **Right:** Send the validation error back to Claude and request a corrected extraction
 
 **WHY?** Claude may have fundamentally **misread the source document**. A negative total might mean Claude was reading the wrong column, or confusing a credit with a debit. Silently "fixing" it hides the real problem. Sending the error back lets Claude re-examine the source and correct its understanding.
+
+### 🔄 Validation-Retry Loop — State Diagram
+
+```mermaid
+stateDiagram-v2
+    [*] --> SendToClaudePrompt: Send request with schema
+    SendToClaudePrompt --> ReceiveOutput: Claude generates structured data
+    ReceiveOutput --> Validate: Run schema validation
+
+    Validate --> Valid: All fields pass✅
+    Validate --> Invalid: Validation errors found
+
+    Invalid --> CheckRetries: Check retry count
+    CheckRetries --> SendErrorsBack: retries < max_N
+    CheckRetries --> Escalate: retries >= max_N
+
+    SendErrorsBack --> ReceiveOutput: Claude corrects output
+    Valid --> [*]: Return validated data
+    Escalate --> [*]: Flag for human review
+```
 
 ---
 
@@ -283,6 +338,43 @@ For complex multi-page contracts:
 
 The **four-pass approach** is the best answer for complex extraction tasks on the exam.
 
+### 🧱 Multi-Pass Architecture — Pipeline View
+
+```mermaid
+graph TB
+    subgraph PIPELINE["🔄 Prompt Chaining Pipeline"]
+        direction LR
+        subgraph PASS1["📥 Pass 1: Extract"]
+            P1A["Raw data extraction"]
+            P1B["Text, numbers, dates"]
+            P1C["Narrow focus"]
+        end
+        subgraph PASS2["🏷️ Pass 2: Classify"]
+            P2A["Categorize items"]
+            P2B["Apply labels"]
+            P2C["Clean context"]
+        end
+        subgraph PASS3["✅ Pass 3: Validate"]
+            P3A["Cross-reference"]
+            P3B["Consistency check"]
+            P3C["Flag conflicts"]
+        end
+        subgraph PASS4["📤 Pass 4: Output"]
+            P4A["Final structured JSON"]
+            P4B["Confidence scores"]
+            P4C["Production-ready"]
+        end
+    end
+
+    PASS1 --> PASS2 --> PASS3 --> PASS4
+
+    style PASS1 fill:#2196F3,color:#fff
+    style PASS2 fill:#9C27B0,color:#fff
+    style PASS3 fill:#FF9800,color:#fff
+    style PASS4 fill:#4CAF50,color:#fff
+    style PIPELINE fill:#1a1a2e,color:#fff
+```
+
 ---
 
 ## 📘 Topic 4.6: Prompt Design Principles
@@ -302,6 +394,29 @@ The **four-pass approach** is the best answer for complex extraction tasks on th
 **Wrong:** "Use vague prompts to be flexible"
 **Right:** Vague prompts cause **inconsistent** results. Be explicit about criteria, expected format, and edge case handling.
 
+### 👤 Building a Data Extraction System — Journey Map
+
+```mermaid
+journey
+    title Developer Journey: Building Extraction Pipeline
+    section Design Phase
+      Define output schema: 5: Dev
+      Add nullable fields: 4: Dev
+      Add enum + other pattern: 4: Dev
+    section Implementation
+      Force tool use for output: 5: Dev
+      Build validation layer: 3: Dev
+      Wire up retry loop: 3: Dev
+    section Testing
+      Run against test docs: 4: Dev
+      Calibrate confidence scores: 2: Dev
+      Fix schema mismatches: 3: Dev
+    section Production
+      Monitor field accuracy: 4: Ops
+      Set per-field thresholds: 5: Ops
+      Route low-confidence to humans: 5: Ops
+```
+
 ---
 
 ## 🧠 Think Like an Architect: Domain 4 Scenarios
@@ -317,6 +432,36 @@ The **four-pass approach** is the best answer for complex extraction tasks on th
 **Answer:** Send the validation error back to Claude for re-extraction.
 
 **Not:** Take the absolute value (hides a potentially serious misreading of the source document).
+
+---
+
+## 📊 Visual Summary: Domain 4 at a Glance
+
+```mermaid
+mindmap
+  root(("💬 Domain 4: Prompt Engineering 20%"))
+    Structured Output
+      Forced tool use
+      tool_choice specific
+      JSON schema in tool definition
+    Anti-Hallucination Schemas
+      Nullable fields
+      Enum + other pattern
+      Confidence scores
+    Validation-Retry Loop
+      Pydantic validation
+      Never silently fix
+      Send errors back to Claude
+    Few-Shot Prompting
+      3-5 examples
+      Include edge cases
+      Show format clearly
+    Prompt Chaining
+      Multi-pass architecture
+      Each pass = focused job
+      Code review example
+      Contract extraction example
+```
 
 ---
 

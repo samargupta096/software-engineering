@@ -52,6 +52,24 @@ LOW   ████████████████████████�
 
 ## 📘 Topic 5.2: Token Budget Strategies
 
+### Managing Context Window Usage
+
+```mermaid
+flowchart TD
+    LONG["📄 Long Context Building Up"] --> Q1{"Can we trim outputs?"}
+    Q1 -->|"Yes"| TRIM["✂️ Trim tool outputs<br/>Ask for summaries"]
+    Q1 -->|"No"| Q2{"Can we summarize?"}
+    Q2 -->|"Yes"| COMPACT["📦 /compact<br/>Progressive summarization"]
+    Q2 -->|"No"| Q3{"Complex subtask?"}
+    Q3 -->|"Yes"| SUB["🤖 Delegate to subagent<br/>Independent context"]
+    Q3 -->|"No"| CHUNK["✂️ Chunk the work"]
+
+    style TRIM fill:#4CAF50,color:#fff
+    style COMPACT fill:#2196F3,color:#fff
+    style SUB fill:#9C27B0,color:#fff
+    style CHUNK fill:#FF9800,color:#fff
+```
+
 ### The Problem
 
 Context windows are finite. Long conversations, verbose tool outputs, and large documents eat tokens fast. When the context fills up, Claude starts losing information.
@@ -66,6 +84,51 @@ Context windows are finite. Long conversations, verbose tool outputs, and large 
 | **Progressive summarization** | Compress older context, keep recent in full | Long-running sessions |
 | **Scratchpad files** | Save notes to disk, retrieve on demand | Deep analysis with many intermediate results |
 | **Subagent delegation** | Offload deep work to subagents with own context | Complex tasks that need deep exploration |
+
+### 🧱 Token Budget Strategies — Toolkit View
+
+```mermaid
+graph TB
+    subgraph STRATEGIES["📦 6 Token Budget Strategies"]
+        direction LR
+        subgraph S1["✂️ Trim Outputs"]
+            T1["Extract only\nrelevant fields"]
+            T2["1000 lines →\n5 fields"]
+        end
+        subgraph S2["📋 Structured\nExtraction"]
+            SE1["Prose → key-value"]
+            SE2["Summarize long\ndocuments"]
+        end
+        subgraph S3["📍 Position-Aware\nOrdering"]
+            PO1["Critical info at\nSTART and END"]
+            PO2["Free optimization"]
+        end
+    end
+    subgraph STRATEGIES2["📦 Continued"]
+        direction LR
+        subgraph S4["📦 Progressive\nSummarization"]
+            PS1["Compress older\ncontext"]
+            PS2["Keep recent\nin full detail"]
+        end
+        subgraph S5["📝 Scratchpad\nFiles"]
+            SF1["Save notes to disk"]
+            SF2["Retrieve on demand"]
+        end
+        subgraph S6["🤖 Subagent\nDelegation"]
+            SD1["Each subagent gets\nown context window"]
+            SD2["Deep exploration\nwithout pollution"]
+        end
+    end
+
+    style S1 fill:#4CAF50,color:#fff
+    style S2 fill:#2196F3,color:#fff
+    style S3 fill:#FF9800,color:#fff
+    style S4 fill:#9C27B0,color:#fff
+    style S5 fill:#795548,color:#fff
+    style S6 fill:#f44336,color:#fff
+    style STRATEGIES fill:#1a1a2e,color:#fff
+    style STRATEGIES2 fill:#1a1a2e,color:#fff
+```
 
 ### Progressive Summarization in Detail
 
@@ -112,6 +175,35 @@ This is a common exam question pattern: "Should the agent escalate or handle aut
 **Right:** Only escalate for policy gaps, conflicts, exhausted retries, and high-impact actions.
 
 Transient errors (timeouts, rate limits) should be **retried**, not escalated. Standard procedures should be **followed**, not escalated.
+
+### 🧱 Escalate vs Handle — Comparison View
+
+```mermaid
+graph TB
+    subgraph DECISION["📦 Escalation Decision Box"]
+        direction LR
+        subgraph ESCALATE["✅ ESCALATE to Human"]
+            E1["📜 Policy gap — no rule exists"]
+            E2["👤 Customer requests human"]
+            E3["🔄 N attempts exhausted"]
+            E4["⚠️ High-impact / irreversible"]
+            E5["❌ Conflicting information"]
+            E6["🔍 Suspicious patterns"]
+        end
+        subgraph AUTONOMOUS["❌ Handle AUTONOMOUSLY"]
+            A1["✅ Clear procedure exists"]
+            A2["🔄 Standard repeatable task"]
+            A3["⏳ Transient error → retry"]
+            A4["⬇️ Low-risk, reversible"]
+            A5["📄 Unambiguous data"]
+            A6["📈 Normal patterns"]
+        end
+    end
+
+    style ESCALATE fill:#f44336,color:#fff
+    style AUTONOMOUS fill:#4CAF50,color:#fff
+    style DECISION fill:#1a1a2e,color:#fff
+```
 
 ### Pattern Detection Example
 
@@ -228,6 +320,37 @@ Three subagents return research findings:
 | Batch data extraction | Interactive conversations |
 | Non-urgent PR reviews | Security-critical real-time reviews |
 
+### 📊 Batch API Cost Savings
+
+```mermaid
+pie title API Cost Distribution (200 PRs/day)
+    "Real-time Security Reviews" : 20
+    "Batched Doc Reviews (50% cheaper)" : 40
+    "Batched Style Reviews (50% cheaper)" : 30
+    "Real-time Urgent Fixes" : 10
+```
+
+### 📊 Escalation Decision — Quadrant Chart
+
+```mermaid
+quadrantChart
+    title When to Escalate vs Handle Autonomously
+    x-axis "Clear Procedure" --> "No Procedure (Policy Gap)"
+    y-axis "Low Risk" --> "High Risk"
+    quadrant-1 "ALWAYS ESCALATE"
+    quadrant-2 "ESCALATE"
+    quadrant-3 "HANDLE AUTONOMOUSLY"
+    quadrant-4 "CONFIRM THEN ACT"
+    "Password reset": [0.15, 0.2]
+    "FAQ response": [0.1, 0.1]
+    "Refund under $50": [0.2, 0.3]
+    "Account deletion": [0.3, 0.9]
+    "Suspicious pattern": [0.7, 0.85]
+    "No matching policy": [0.9, 0.6]
+    "Compliance question": [0.85, 0.95]
+    "Plan upgrade": [0.2, 0.15]
+```
+
 ### ⚠️ Critical Exam Traps
 
 **Trap 1: "Resubmit entire batch for 15 failures"**
@@ -274,6 +397,31 @@ For critical workflows (like customer support), enforce sequence programmaticall
 
 **Key:** Restrict available tools based on current state. In the VERIFY IDENTITY state, only identity-related tools are available. The agent cannot skip to PROCESS REQUEST.
 
+### 🔄 Customer Support — State Diagram
+
+```mermaid
+stateDiagram-v2
+    [*] --> VerifyIdentity: Customer contacts support
+
+    state "Verify Identity\n🔧 verify_id, check_pin" as VerifyIdentity
+    state "Check Account\n🔧 get_account, check_balance" as CheckAccount
+    state "Process Request\n🔧 apply_change, process_refund" as ProcessRequest
+    state "Confirm Action\n🔧 send_confirm, update_record" as ConfirmAction
+    state "Escalate\n🔧 route_to_human" as Escalate
+
+    VerifyIdentity --> CheckAccount: Identity verified
+    VerifyIdentity --> VerifyIdentity: Verification failed, retry
+
+    CheckAccount --> ProcessRequest: Account in good standing
+    CheckAccount --> Escalate: Account flagged
+
+    ProcessRequest --> ConfirmAction: Standard request
+    ProcessRequest --> Escalate: Policy gap or high-impact
+
+    ConfirmAction --> [*]: Action confirmed, close ticket
+    Escalate --> [*]: Routed to human agent
+```
+
 **This is better than:**
 - Just telling Claude the sequence in the prompt (unreliable)
 - Using few-shot examples (inconsistent)
@@ -319,6 +467,41 @@ This is better than:
 
 **Answer:** Beginning and end (U-shaped attention pattern).
 **Not:** Middle (that's where attention is lowest).
+
+---
+
+## 📊 Visual Summary: Domain 5 at a Glance
+
+```mermaid
+mindmap
+  root(("🛡️ Domain 5: Context & Reliability 15%"))
+    Lost-in-the-Middle
+      U-shaped attention
+      Put critical info at start/end
+      Flag-plant technique
+    Token Strategies
+      Trim tool outputs
+      Progressive summarization
+      Subagent delegation  
+    Escalation Rules
+      Policy gaps
+      Customer request
+      Exhausted retries
+      High impact
+      Suspicious patterns
+    Confidence Scoring
+      Per-field scores
+      Stratified thresholds
+      Nullable for low confidence
+    Provenance
+      Source tracking
+      No cross-contamination
+    Batch API
+      50% cheaper
+      custom_id tracking
+      No multi-turn
+      24h SLA
+```
 
 ---
 

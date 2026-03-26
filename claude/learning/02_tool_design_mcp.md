@@ -8,6 +8,23 @@
 
 ### The Flow — Step by Step
 
+```mermaid
+sequenceDiagram
+    participant U as 👤 User
+    participant A as 🏗️ Your App
+    participant C as 🧠 Claude API
+    participant T as 🔧 Tool
+
+    U->>A: "Look up customer C-123"
+    A->>C: Send message + tools
+    C->>A: stop_reason: "tool_use"<br/>name: "get_customer"
+    A->>T: Execute get_customer(C-123)
+    T->>A: {name: "Jane", plan: "enterprise"}
+    A->>C: Send tool_result
+    C->>A: stop_reason: "end_turn"<br/>"Jane Smith is on Enterprise plan..."
+    A->>U: Display response
+```
+
 When Claude decides it needs to perform an action, it doesn't execute anything itself. Instead, it says "I want to use this tool with these inputs." Your code then executes the tool and returns the result.
 
 **Think of it like a doctor ordering a blood test:**
@@ -68,9 +85,72 @@ After executing the tool, send the result back:
 
 Claude then processes this result and either calls another tool or provides a final response.
 
+### 👤 Error Handling — Developer Journey
+
+```mermaid
+journey
+    title Debugging with Proper Error Handling
+    section Transient Error
+      Tool returns timeout: 3: Dev
+      Retry with backoff: 4: System
+      Second attempt succeeds: 5: System
+    section Business Logic Error
+      "User not found" returned: 2: Dev
+      Error sent back to Claude: 4: System
+      Claude asks for correct ID: 5: Claude
+    section Permission Error
+      403 Forbidden received: 1: Dev
+      Escalated to human: 3: System
+      Admin fixes permissions: 5: Admin
+```
+
 ---
 
 ## 📘 Topic 2.2: `tool_choice` — Controlling Tool Selection
+
+### 🏗️ Tool Call API Structure
+
+```mermaid
+classDiagram
+    class APIRequest {
+        +String model
+        +Message[] messages
+        +Tool[] tools
+        +ToolChoice tool_choice
+    }
+    class Message {
+        +String role
+        +Content[] content
+    }
+    class Tool {
+        +String name
+        +String description
+        +JSONSchema input_schema
+    }
+    class APIResponse {
+        +String stop_reason
+        +Content[] content
+    }
+    class ToolUseContent {
+        +String type = "tool_use"
+        +String id
+        +String name
+        +Object input
+    }
+    class ToolResult {
+        +String type = "tool_result"
+        +String tool_use_id
+        +Object content
+        +Boolean is_error
+    }
+
+    APIRequest --> Message
+    APIRequest --> Tool
+    APIRequest --> APIResponse: sends
+    APIResponse --> ToolUseContent: contains
+    ToolUseContent --> ToolResult: matched by id
+    ToolResult --> APIRequest: fed back into
+```
 
 The `tool_choice` parameter lets you control HOW Claude uses tools.
 
@@ -80,6 +160,41 @@ The `tool_choice` parameter lets you control HOW Claude uses tools.
 | `"any"` | Claude **must** use at least one tool | When you need **guaranteed action** — don't let Claude skip tool use | "Always search before answering" |
 | `{"type":"tool","name":"X"}` | Claude **must** use a **specific** tool | **Structured output extraction** — force a schema | Data extraction pipelines |
 | `"none"` | Claude **cannot** use any tools | When you need **pure text** response | Summarization, explanation |
+
+### 🧱 tool_choice — Side-by-Side Comparison
+
+```mermaid
+graph TB
+    subgraph CHOICES["📦 tool_choice Options at a Glance"]
+        direction LR
+        subgraph AUTO["🤖 auto"]
+            A1["Claude DECIDES\nwhether to use tools"]
+            A2["Default behavior"]
+            A3["Most flexible"]
+        end
+        subgraph ANY["⚡ any"]
+            B1["Claude MUST use\nat least one tool"]
+            B2["Guaranteed action"]
+            B3["No skipping"]
+        end
+        subgraph SPECIFIC["🎯 specific"]
+            C1["Claude MUST use\na NAMED tool"]
+            C2["Structured output"]
+            C3["Schema enforcement"]
+        end
+        subgraph NONE["🔇 none"]
+            D1["Claude CANNOT\nuse any tools"]
+            D2["Pure text only"]
+            D3["Summarization"]
+        end
+    end
+
+    style AUTO fill:#4CAF50,color:#fff
+    style ANY fill:#2196F3,color:#fff
+    style SPECIFIC fill:#FF9800,color:#fff
+    style NONE fill:#9E9E9E,color:#fff
+    style CHOICES fill:#1a1a2e,color:#fff
+```
 
 ### When to Use Each — Decision Tree
 
@@ -105,11 +220,62 @@ Error handling is heavily tested. You must know the **three categories** and the
 
 ### The Three Error Categories
 
+```mermaid
+flowchart TD
+    ERR["🚨 Error Occurred"] --> Q1{"Is it transient?"}
+    Q1 -->|"Timeout, Rate Limit, 503"| R["🔄 Retry with Backoff"]
+    Q1 -->|"No"| Q2{"Is it business logic?"}
+    Q2 -->|"User not found, Insufficient balance"| BL["🧠 Return to Claude"]
+    Q2 -->|"No"| Q3{"Is it permission?"}
+    Q3 -->|"403, Invalid API Key"| ESC["🚫 Escalate - Never Retry"]
+    Q3 -->|"No"| LOG["📝 Log + Handle Gracefully"]
+
+    style R fill:#2196F3,color:#fff
+    style BL fill:#FF9800,color:#fff
+    style ESC fill:#f44336,color:#fff
+    style LOG fill:#9E9E9E,color:#fff
+```
+
 | Category | What It Means | Examples | Correct Action |
 |---|---|---|---|
 | 🔄 **Transient** | Temporary failure, will likely succeed if retried | Network timeout, API rate limit, 503 errors, connection reset | **Retry with exponential backoff** |
 | 🧠 **Business Logic** | The operation worked, but the data doesn't exist or the rules prevent it | "User not found", "Insufficient balance", "Order already shipped" | **Return to Claude** for intelligent decision-making |
 | 🚫 **Permission** | Access is denied at a fundamental level | "403 Forbidden", "API key invalid", "Insufficient permissions" | **Escalate** — never retry, never ignore |
+
+### 🧱 Error Categories — Component View
+
+```mermaid
+graph TB
+    subgraph ERROR_HANDLING["🚨 Error Handling Decision Box"]
+        direction LR
+        subgraph TRANSIENT["🔄 TRANSIENT"]
+            T1["Timeout"]
+            T2["Rate limit"]
+            T3["503 errors"]
+            T4{"Action"}
+            T4 --> T5["⏳ Retry with\nexponential backoff"]
+        end
+        subgraph BUSINESS["🧠 BUSINESS LOGIC"]
+            B1["User not found"]
+            B2["Low balance"]
+            B3["Already shipped"]
+            B4{"Action"}
+            B4 --> B5["🤖 Return to Claude\nfor decision"]
+        end
+        subgraph PERMISSION["🚫 PERMISSION"]
+            P1["403 Forbidden"]
+            P2["Invalid API key"]
+            P3["Access denied"]
+            P4{"Action"}
+            P4 --> P5["👤 Escalate to human\nNEVER retry"]
+        end
+    end
+
+    style TRANSIENT fill:#2196F3,color:#fff
+    style BUSINESS fill:#FF9800,color:#fff
+    style PERMISSION fill:#f44336,color:#fff
+    style ERROR_HANDLING fill:#1a1a2e,color:#fff
+```
 
 ### Why This Matters
 
@@ -195,6 +361,29 @@ More tools = more confusion. If you need 15 tools, use subagents with 4-5 tools 
 
 ### What is MCP?
 
+```mermaid
+graph TD
+    AGENT["🤖 Claude Agent"] --> MCP["🔌 MCP Protocol"]
+    MCP --> S1["📦 GitHub Server"]
+    MCP --> S2["📦 Jira Server"]
+    MCP --> S3["📦 Custom Server"]
+    S1 --> T1["🔧 Tools: create_issue, merge_pr"]
+    S1 --> R1["📖 Resources: list_repos, get_file"]
+    S2 --> T2["🔧 Tools: update_ticket"]
+    S2 --> R2["📖 Resources: list_projects"]
+    S3 --> T3["🔧 Tools: deploy, rollback"]
+    S3 --> P1["📝 Prompts: investigation_template"]
+
+    style AGENT fill:#9C27B0,color:#fff
+    style MCP fill:#FF9800,color:#fff
+    style T1 fill:#f44336,color:#fff
+    style T2 fill:#f44336,color:#fff
+    style T3 fill:#f44336,color:#fff
+    style R1 fill:#4CAF50,color:#fff
+    style R2 fill:#4CAF50,color:#fff
+    style P1 fill:#2196F3,color:#fff
+```
+
 MCP (Model Context Protocol) is a standard for connecting AI agents to external tools and data sources. Think of it as a **universal adapter** — instead of building custom integrations for every service, you build MCP servers that follow a standard protocol.
 
 ### The Three MCP Primitives
@@ -206,6 +395,41 @@ This is a critical distinction tested on the exam:
 | **Tools** | Perform actions | ✅ Yes (mutations) | A **power drill** — it changes things |
 | **Resources** | Provide data | ❌ No (read-only) | A **bookshelf** — you browse and read |
 | **Prompts** | Reusable templates | ❌ No | A **recipe card** — structured pattern |
+
+### 🧱 MCP Three Primitives — Component View
+
+```mermaid
+graph TB
+    subgraph MCP_PRIMITIVES["🔌 MCP Three Primitives"]
+        direction LR
+        subgraph TOOLS_BOX["🔧 TOOLS"]
+            TB1["Perform ACTIONS"]
+            TB2["✅ Has side effects"]
+            TB3["create_issue"]
+            TB4["update_page"]
+            TB5["delete_branch"]
+        end
+        subgraph RESOURCES_BOX["📖 RESOURCES"]
+            RB1["Provide DATA"]
+            RB2["❌ No side effects"]
+            RB3["list_repos"]
+            RB4["get_file"]
+            RB5["search_issues"]
+        end
+        subgraph PROMPTS_BOX["📝 PROMPTS"]
+            PB1["Reusable TEMPLATES"]
+            PB2["❌ No side effects"]
+            PB3["investigation_template"]
+            PB4["review_workflow"]
+            PB5["onboarding_guide"]
+        end
+    end
+
+    style TOOLS_BOX fill:#f44336,color:#fff
+    style RESOURCES_BOX fill:#4CAF50,color:#fff
+    style PROMPTS_BOX fill:#2196F3,color:#fff
+    style MCP_PRIMITIVES fill:#1a1a2e,color:#fff
+```
 
 ### 🎯 The Golden Rule
 
@@ -234,6 +458,18 @@ Does it modify, create, or delete anything?
 | "Investigation workflow" | **Prompt** | Reusable interaction pattern |
 
 ### MCP Configuration Scoping
+
+```mermaid
+flowchart TD
+    Q{"Who uses this config?"}
+    Q -->|"Shared with team"| PROJ["📂 .mcp.json (project root)"]
+    Q -->|"Personal credentials"| USER["👤 ~/.claude/.mcp.json"]
+    PROJ -->|"✅ Committed to repo"| EX1["GitHub MCP Server"]
+    USER -->|"❌ NOT committed"| EX2["Personal Confluence Token"]
+
+    style PROJ fill:#2196F3,color:#fff
+    style USER fill:#FF9800,color:#fff
+```
 
 | Scope | File Location | What Goes Here | Committed to Repo? |
 |---|---|---|---|
@@ -280,6 +516,40 @@ Does it modify, create, or delete anything?
 - `${VAR_NAME}` syntax for environment variable expansion
 - Can connect to **multiple MCP servers** simultaneously
 - Better descriptions → better tool adoption
+
+---
+
+## 📊 Visual Summary: Domain 2 at a Glance
+
+```mermaid
+mindmap
+  root(("🔧 Domain 2: Tool Design & MCP 18%"))
+    Tool Calling
+      tool_use stop_reason
+      tool_result response
+      tool_choice options
+        auto
+        any
+        specific
+        none
+    Error Handling
+      Transient → Retry
+      Business Logic → Return to Claude
+      Permission → Escalate
+      isError flag
+    MCP Protocol
+      Three Primitives
+        Tools = Write/Act
+        Resources = Read
+        Prompts = Templates
+      Config Scoping
+        Project .mcp.json
+        User ~/.claude/.mcp.json
+    Tool Design
+      Clear descriptions
+      4-5 tools per agent
+      Split by purpose
+```
 
 ---
 

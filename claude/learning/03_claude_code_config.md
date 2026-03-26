@@ -10,6 +10,20 @@
 
 CLAUDE.md files form a hierarchy where **more specific rules override broader ones**:
 
+```mermaid
+graph TD
+    G["🌍 ~/.claude/CLAUDE.md<br/>Global - Lowest Priority"] --> P["📁 ./CLAUDE.md<br/>Project Root"]
+    P --> D["📂 ./src/CLAUDE.md<br/>Directory-Specific"]
+    D --> R["🎯 .claude/rules/*.md<br/>Path-Scoped - Highest Priority"]
+
+    style G fill:#9E9E9E,color:#fff
+    style P fill:#2196F3,color:#fff
+    style D fill:#FF9800,color:#fff
+    style R fill:#4CAF50,color:#fff
+```
+
+> ⬆️ **Specificity increases downward.** More specific rules override broader ones.
+
 ```
 ~/.claude/CLAUDE.md              ← Layer 1: GLOBAL (lowest priority)
                                     Applies to ALL projects on your machine
@@ -45,6 +59,43 @@ Think of it like CSS — more specific selectors win:
 | Reference existing files | Embed long code snippets |
 | Use `@import` for modularity | Dump everything in one file |
 | Use path-scoped rules for targeted config | Put everything in global CLAUDE.md |
+
+### 🧱 Configuration Specificity Tower
+
+```mermaid
+graph TB
+    subgraph TOWER["🏢 CLAUDE.md Specificity Tower"]
+        direction TB
+        subgraph L4["🎯 HIGHEST PRIORITY"]
+            R1[".claude/rules/*.md"]
+            R2["Path-scoped with YAML globs"]
+            R3["Auto-loads for matching files"]
+        end
+        subgraph L3["📂 DIRECTORY"]
+            D1["./src/CLAUDE.md"]
+            D2["Loaded when Claude works here"]
+            D3["Section-specific rules"]
+        end
+        subgraph L2["📁 PROJECT"]
+            P1["./CLAUDE.md"]
+            P2["Shared with entire team"]
+            P3["Committed to repo"]
+        end
+        subgraph L1["🌍 LOWEST PRIORITY"]
+            G1["~/.claude/CLAUDE.md"]
+            G2["Applies to ALL projects"]
+            G3["Personal preferences"]
+        end
+    end
+
+    L4 --> L3 --> L2 --> L1
+
+    style L4 fill:#4CAF50,color:#fff
+    style L3 fill:#FF9800,color:#fff
+    style L2 fill:#2196F3,color:#fff
+    style L1 fill:#9E9E9E,color:#fff
+    style TOWER fill:#1a1a2e,color:#fff
+```
 
 ### The `/init` Command
 
@@ -139,18 +190,44 @@ argument-hint: "Provide the migration name or 'latest'"
 
 The `context: fork` isolates this work. `allowed-tools: [Bash, Read]` ensures the skill can only run commands and read files — it cannot Write or Edit directly.
 
+### 🔄 Skill Execution — State Diagram
+
+```mermaid
+stateDiagram-v2
+    [*] --> SkillTriggered: User invokes skill
+    SkillTriggered --> CheckContext: Read SKILL.md frontmatter
+
+    CheckContext --> ForkContext: context = fork
+    CheckContext --> MainContext: context = default
+
+    ForkContext --> RestrictTools: Apply allowed-tools
+    MainContext --> RestrictTools: Apply allowed-tools
+
+    RestrictTools --> ExecuteSteps: Run skill instructions
+    ExecuteSteps --> ReportResults: Skill completes
+    ExecuteSteps --> HandleError: Skill fails
+
+    HandleError --> ExecuteSteps: Retry within skill
+    HandleError --> ReportResults: Report failure
+    ReportResults --> [*]: Return to main context
+```
+
 ---
 
 ## 📘 Topic 3.4: Plan Mode vs Direct Execution
 
 ### The Decision Framework
 
-```
-Is it multi-file or architectural?
-├── Yes → PLAN MODE
-└── No → Is it high-risk or ambiguous?
-    ├── Yes → PLAN MODE
-    └── No → DIRECT EXECUTION
+```mermaid
+flowchart TD
+    Q1{"Multi-file or architectural?"}
+    Q1 -->|"Yes"| PLAN["📋 Plan Mode"]
+    Q1 -->|"No"| Q2{"High-risk or ambiguous?"}
+    Q2 -->|"Yes"| PLAN
+    Q2 -->|"No"| DIRECT["⚡ Direct Execution"]
+
+    style PLAN fill:#FF9800,color:#fff
+    style DIRECT fill:#4CAF50,color:#fff
 ```
 
 ### Detailed Comparison
@@ -224,12 +301,67 @@ Hooks are automated actions that trigger at specific points in Claude's workflow
 
 ### The Four Hook Types
 
+```mermaid
+sequenceDiagram
+    participant U as 👤 User
+    participant CC as 🤖 Claude Code
+    participant PRE as 🛡️ PreToolUse
+    participant TOOL as 🔧 Tool
+    participant POST as ✨ PostToolUse
+
+    U->>CC: "Write a new React component"
+    CC->>PRE: Check: Is target file allowed?
+    PRE-->>CC: ✅ Allowed
+    CC->>TOOL: Write file
+    TOOL-->>CC: File written
+    CC->>POST: Run formatter on written file
+    POST-->>CC: File formatted
+    CC->>U: "Component created and formatted"
+```
+
 | Hook Type | When It Fires | Use Cases |
 |---|---|---|
 | **PreToolUse** | **Before** a tool executes | Block dangerous commands, validate inputs |
 | **PostToolUse** | **After** a tool completes | Auto-format code, run linters |
 | **Notification** | When Claude needs user input | Send Slack/email notification |
 | **Stop** | When a session ends | Clean up resources, create audit log |
+
+### 🧱 Hook Types — When They Fire
+
+```mermaid
+graph TB
+    subgraph HOOKS["🪝 Hook Types — Component View"]
+        direction LR
+        subgraph PRE["🛡️ PreToolUse"]
+            PR1["BEFORE tool executes"]
+            PR2["✅ Validate inputs"]
+            PR3["🚫 Block dangerous ops"]
+            PR4["Gatekeeper pattern"]
+        end
+        subgraph POST["✨ PostToolUse"]
+            PO1["AFTER tool completes"]
+            PO2["🎨 Auto-format code"]
+            PO3["🔍 Run linters"]
+            PO4["Cleanup crew pattern"]
+        end
+        subgraph NOTIF["🔔 Notification"]
+            N1["When input needed"]
+            N2["📧 Send Slack alert"]
+            N3["📨 Email notification"]
+        end
+        subgraph STOP["🛑 Stop"]
+            S1["Session ends"]
+            S2["🧹 Clean up resources"]
+            S3["📝 Create audit log"]
+        end
+    end
+
+    style PRE fill:#FF9800,color:#fff
+    style POST fill:#2196F3,color:#fff
+    style NOTIF fill:#9C27B0,color:#fff
+    style STOP fill:#f44336,color:#fff
+    style HOOKS fill:#1a1a2e,color:#fff
+```
 
 ### ⚠️ Critical Exam Trap: Pre vs Post
 
@@ -270,20 +402,48 @@ Hooks are automated actions that trigger at specific points in Claude's workflow
 
 For a CI pipeline with multiple review stages:
 
-```
-Stage 1: Security Audit
-    └── claude -p --output-format json "Audit for security vulnerabilities"
-                    │
-                    ▼ (JSON output)
-Stage 2: Code Review
-    └── claude -p --output-format json "Review code quality" < stage1_output.json
-                    │
-                    ▼ (JSON output)
-Stage 3: Test Generation
-    └── claude -p --output-format json "Generate tests" < stage2_output.json
+```mermaid
+graph LR
+    PR["🔀 PR Opened"] --> S1["🔒 Security Audit<br/>claude -p --output-format json"]
+    S1 -->|"JSON"| S2["🔍 Code Review<br/>claude -p --output-format json"]
+    S2 -->|"JSON"| S3["🧪 Test Generation<br/>claude -p --output-format json"]
+    S3 --> REPORT["📊 Final Report"]
+
+    style S1 fill:#f44336,color:#fff
+    style S2 fill:#FF9800,color:#fff
+    style S3 fill:#2196F3,color:#fff
+    style REPORT fill:#4CAF50,color:#fff
 ```
 
 **Key design principle:** Each stage runs **independently** with `-p`, passing structured JSON output as input to the next stage.
+
+### 📅 CI/CD Pipeline — Gantt Chart View
+
+```mermaid
+gantt
+    title Claude CI/CD Pipeline Execution
+    dateFormat HH:mm
+    axisFormat %H:%M
+
+    section PR Submitted
+        Checkout code          :a1, 00:00, 1min
+
+    section Stage 1 - Security
+        Security audit (claude -p)   :a2, after a1, 3min
+        Parse JSON results           :a3, after a2, 1min
+
+    section Stage 2 - Code Review
+        Code review (claude -p)      :a4, after a3, 4min
+        Parse JSON results           :a5, after a4, 1min
+
+    section Stage 3 - Tests
+        Test generation (claude -p)  :a6, after a5, 3min
+        Run generated tests          :a7, after a6, 2min
+
+    section Report
+        Aggregate results            :a8, after a7, 1min
+        Post PR comment              :a9, after a8, 1min
+```
 
 **NOT:** Using `--resume` between CI stages (fragile, not designed for CI pipelines).
 
@@ -312,6 +472,40 @@ For high-volume CI (200+ PRs/day):
 **Answer:** Use a `PreToolUse` hook to block modifications to security-critical files and flag for human review.
 
 **Not:** Let Claude auto-fix silently (dangerous for security), or add to global CLAUDE.md (too broad).
+
+---
+
+## 📊 Visual Summary: Domain 3 at a Glance
+
+```mermaid
+mindmap
+  root(("⚙️ Domain 3: Claude Code Config 20%"))
+    CLAUDE.md Hierarchy
+      Global ~/.claude/CLAUDE.md
+      Project ./CLAUDE.md
+      Directory ./src/CLAUDE.md
+      Path-scoped .claude/rules/*.md
+    Configuration
+      Under 200 lines
+      Decision rules not descriptions
+      @import for modularity
+    Skills SKILL.md
+      context fork
+      allowed-tools
+      argument-hint
+    Plan Mode vs Direct
+      Multi-file → Plan
+      Single file → Direct
+    Hooks
+      PreToolUse → Validate/Block
+      PostToolUse → Format/Lint
+      Notification
+      Stop
+    CI/CD
+      -p flag
+      --output-format json
+      --json-schema
+```
 
 ---
 

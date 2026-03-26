@@ -21,9 +21,114 @@ These are the answers the exam **wants** you to fall for. Each one sounds reason
 | 9 | "Auto-escalate every error to humans" | Transient errors should be retried. Standard procedures should be followed | Only escalate policy gaps, conflicts, exhausted retries |
 | 10 | "Resubmit entire batch for 15 failures" | 99.85% already succeeded. Resubmitting wastes time and money | Track by `custom_id`, retry only failed requests |
 
+### 🧱 Anti-Pattern Categories — Overview
+
+```mermaid
+graph TB
+    subgraph ANTI["🚫 Top Anti-Patterns by Category"]
+        direction LR
+        subgraph CAT1["🧠 Context Mistakes"]
+            AP1["❌ Increase max_tokens\nfor context overflow"]
+            AP2["❌ Pass entire history\nto subagents"]
+            AP3["❌ Put all rules in\nglobal CLAUDE.md"]
+        end
+        subgraph CAT2["🔧 Error Handling"]
+            AP4["❌ Retry business\nlogic errors"]
+            AP5["❌ Auto-escalate\nevery error"]
+            AP6["❌ Silently fix\nClaude's output"]
+        end
+        subgraph CAT3["🏗️ Architecture"]
+            AP7["❌ One massive tool\ndoes everything"]
+            AP8["❌ Single threshold\nfor all fields"]
+            AP9["❌ Vague prompts\nfor flexibility"]
+        end
+        subgraph CAT4["📦 Operations"]
+            AP10["❌ Resubmit entire\nbatch for few failures"]
+        end
+    end
+
+    style CAT1 fill:#f44336,color:#fff
+    style CAT2 fill:#FF9800,color:#fff
+    style CAT3 fill:#9C27B0,color:#fff
+    style CAT4 fill:#795548,color:#fff
+    style ANTI fill:#1a1a2e,color:#fff
+```
+
 ---
 
-## 🌲 Decision Trees for Exam Questions
+## 🌲 Decision Trees for Exam Questions (Visual)
+
+### Decision Tree 1: Error Handling
+
+```mermaid
+flowchart TD
+    ERR["🚨 Error"] --> T{"Transient?"}
+    T -->|"Timeout, Rate limit, 503"| RETRY["🔄 Retry with backoff"]
+    T -->|"No"| BL{"Business logic?"}
+    BL -->|"User not found, Low balance"| CLAUDE["🧠 Return to Claude"]
+    BL -->|"No"| PERM{"Permission?"}
+    PERM -->|"403, Invalid key"| ESCALATE["🚫 Escalate - NEVER retry"]
+    PERM -->|"No"| LOG["📝 Log + handle"]
+
+    style RETRY fill:#2196F3,color:#fff
+    style CLAUDE fill:#FF9800,color:#fff
+    style ESCALATE fill:#f44336,color:#fff
+```
+
+### Decision Tree 2: Configuration Placement
+
+```mermaid
+flowchart TD
+    Q1{"Shared across ALL projects?"}
+    Q1 -->|"Yes"| GLOBAL["🌍 ~/.claude/CLAUDE.md"]
+    Q1 -->|"No"| Q2{"Shared with whole team?"}
+    Q2 -->|"Yes"| PROJECT["📁 ./CLAUDE.md or .mcp.json"]
+    Q2 -->|"No"| Q3{"For specific file paths?"}
+    Q3 -->|"Yes"| SCOPED["🎯 .claude/rules/*.md"]
+    Q3 -->|"No"| USER["👤 ~/.claude/.mcp.json"]
+
+    style GLOBAL fill:#9E9E9E,color:#fff
+    style PROJECT fill:#2196F3,color:#fff
+    style SCOPED fill:#4CAF50,color:#fff
+    style USER fill:#FF9800,color:#fff
+```
+
+### Decision Tree 3: MCP Primitive Selection
+
+```mermaid
+flowchart TD
+    Q{"Does it modify/create/delete?"}
+    Q -->|"Yes"| TOOL["🔧 TOOL"]
+    Q -->|"No"| Q2{"Provides data for reading?"}
+    Q2 -->|"Yes"| RES["📖 RESOURCE"]
+    Q2 -->|"No"| Q3{"Reusable interaction pattern?"}
+    Q3 -->|"Yes"| PROMPT["📝 PROMPT"]
+    Q3 -->|"No"| RETHINK["🔄 Redesign"]
+
+    style TOOL fill:#f44336,color:#fff
+    style RES fill:#4CAF50,color:#fff
+    style PROMPT fill:#2196F3,color:#fff
+```
+
+### Decision Tree 4: Multi-Agent Pattern
+
+```mermaid
+flowchart TD
+    Q1{"Subtasks independent?"}
+    Q1 -->|"Yes"| Q2{"Run simultaneously?"}
+    Q2 -->|"Yes"| FANOUT["✅ Parallel Fan-Out"]
+    Q2 -->|"No"| HUB["✅ Hub-and-Spoke"]
+    Q1 -->|"No"| Q3{"Output A feeds B?"}
+    Q3 -->|"Yes"| PIPE["✅ Pipeline"]
+    Q3 -->|"No"| Q4{"Iterative quality?"}
+    Q4 -->|"Yes"| EVAL["✅ Evaluator-Optimizer"]
+    Q4 -->|"No"| HUB
+
+    style FANOUT fill:#4CAF50,color:#fff
+    style HUB fill:#4CAF50,color:#fff
+    style PIPE fill:#4CAF50,color:#fff
+    style EVAL fill:#4CAF50,color:#fff
+```
 
 ### Decision Tree 1: "How should we handle this error?"
 
@@ -127,11 +232,64 @@ Every answer should reflect **what a senior architect would recommend for produc
 - **"Automatically"** → Check context — sometimes right, sometimes dangerously wrong
 - **"Simply"** → Hides complexity — usually the wrong answer for complex scenarios
 
+### 🧱 Architect vs Hackathon Mindset
+
+```mermaid
+graph TB
+    subgraph MINDSET["🧠 Production Thinking vs Hackathon Thinking"]
+        direction LR
+        subgraph HACK["❌ Hackathon Mindset"]
+            H1["Just retry it"]
+            H2["Everything in one file"]
+            H3["Give agent all tools"]
+            H4["It works on my machine"]
+            H5["Let Claude figure it out"]
+        end
+        subgraph ARCH["✅ Architect Mindset"]
+            A1["Classify error first,\nthen choose strategy"]
+            A2["Organize by concern,\nscope appropriately"]
+            A3["4-5 focused tools per agent,\nuse subagents for more"]
+            A4["Scale, failure modes,\nbad input handling"]
+            A5["Enforce critical workflows\nprogrammatically"]
+        end
+    end
+
+    style HACK fill:#f44336,color:#fff
+    style ARCH fill:#4CAF50,color:#fff
+    style MINDSET fill:#1a1a2e,color:#fff
+```
+
 ---
 
 ## 🧠 The 6 Exam Scenarios — What to Expect
 
 The exam randomly selects 4 of these 6 scenarios. You **must study all 6**.
+
+```mermaid
+graph TD
+    subgraph "4 of 6 Randomly Selected"
+        S1["📞 Customer Support Agent"]
+        S2["💻 Code Generation"]
+        S3["🔍 Multi-Agent Research"]
+        S4["🛠️ Developer Productivity"]
+        S5["🚀 CI/CD Pipeline"]
+        S6["📊 Data Extraction"]
+    end
+
+    S1 --- D1["D1 + D2 + D5"]
+    S2 --- D2B["D3 + D1"]
+    S3 --- D3B["D1 + D5"]
+    S4 --- D4B["D1 + D2 + D3"]
+    S5 --- D5B["D3 + D4"]
+    S6 --- D6B["D4 + D5"]
+
+    style S1 fill:#2196F3,color:#fff
+    style S2 fill:#9C27B0,color:#fff
+    style S3 fill:#FF9800,color:#fff
+    style S4 fill:#4CAF50,color:#fff
+    style S5 fill:#f44336,color:#fff
+    style S6 fill:#795548,color:#fff
+```
 
 | # | Scenario | Key Domains Tested | Focus Areas |
 |---|---|---|---|
@@ -141,6 +299,17 @@ The exam randomly selects 4 of these 6 scenarios. You **must study all 6**.
 | 4 | **Developer Productivity** | D1 (Agentic), D2 (Tools), D3 (Config) | Tool descriptions, session management, path-scoped rules |
 | 5 | **CI/CD with Claude Code** | D3 (Config), D4 (Prompts) | `-p` flag, hooks, multi-stage pipelines, JSON validation |
 | 6 | **Structured Data Extraction** | D4 (Prompts), D5 (Reliability) | Schema design, validation-retry, batch API, confidence scoring |
+
+### 📊 Scenario Domain Coverage
+
+```mermaid
+pie title Which Domains Are Tested Most Across All 6 Scenarios
+    "D1: Agentic Architecture" : 5
+    "D2: Tool Design & MCP" : 3
+    "D3: Claude Code Config" : 3
+    "D4: Prompt Engineering" : 2
+    "D5: Context & Reliability" : 4
+```
 
 ---
 
@@ -153,6 +322,23 @@ The exam randomly selects 4 of these 6 scenarios. You **must study all 6**.
 | **Second pass** | Flagged | 30 min | Return with fresh eyes, eliminate wrong answers |
 
 **Key:** Don't spend 5 minutes on one question. Flag it and return.
+
+### 📅 Exam Time Management — Gantt Chart
+
+```mermaid
+gantt
+    title Exam Time Strategy (120 minutes)
+    dateFormat mm
+    axisFormat %M min
+
+    section First Pass (90 min)
+        Confident answers (~45 Qs)     :a1, 00, 68min
+        Flag uncertain ones (~15 Qs)   :a2, after a1, 22min
+
+    section Second Pass (30 min)
+        Review flagged questions        :a3, after a2, 20min
+        Final check & submit            :a4, after a3, 10min
+```
 
 ---
 

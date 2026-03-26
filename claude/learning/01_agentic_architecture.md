@@ -2,6 +2,17 @@
 
 > **This is the HEAVIEST domain — ~16 questions.** Master this first.
 
+### 📊 Exam Weight Distribution
+
+```mermaid
+pie title Exam Domain Weights
+    "D1: Agentic Architecture (27%)" : 27
+    "D2: Tool Design & MCP (18%)" : 18
+    "D3: Claude Code Config (20%)" : 20
+    "D4: Prompt Engineering (20%)" : 20
+    "D5: Context & Reliability (15%)" : 15
+```
+
 ---
 
 ## 📘 Topic 1.1: The Agentic Loop — The Foundation of Everything
@@ -23,37 +34,24 @@ The loop continues until the meal is complete (`end_turn`) or something goes wro
 
 ### The Flow in Detail
 
-```
-┌──────────────────────────────────────────────┐
-│              USER REQUEST                     │
-│  "Find all orders from last week and email   │
-│   a summary to the finance team"             │
-└──────────────────┬───────────────────────────┘
-                   ▼
-┌──────────────────────────────────────────────┐
-│         SEND TO CLAUDE API                    │
-│   (system prompt + tools + user message)      │
-└──────────────────┬───────────────────────────┘
-                   ▼
-┌──────────────────────────────────────────────┐
-│         CHECK stop_reason                     │
-│                                               │
-│  ┌─────────────────────────────────────────┐ │
-│  │ "tool_use" → Execute the requested tool│ │
-│  │              Return result to Claude    │ │
-│  │              ↺ LOOP BACK UP             │ │
-│  ├─────────────────────────────────────────┤ │
-│  │ "end_turn" → Claude is done            │ │
-│  │              Return response to user    │ │
-│  ├─────────────────────────────────────────┤ │
-│  │ "max_tokens" → Output limit hit        │ │
-│  │              Handle gracefully          │ │
-│  │              (summarize, chunk, trim)   │ │
-│  ├─────────────────────────────────────────┤ │
-│  │ "refusal" → Safety guardrail           │ │
-│  │              Report to user             │ │
-│  └─────────────────────────────────────────┘ │
-└──────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    A["📋 User Request"] --> B["🧠 Send to Claude API"]
+    B --> C{"Check stop_reason"}
+    C -->|"tool_use"| D["🔧 Execute Tool"]
+    D --> E["📤 Return tool_result"]
+    E --> B
+    C -->|"end_turn"| F["✅ Return Response to User"]
+    C -->|"max_tokens"| G["⚠️ Handle Overflow"]
+    G --> H["Summarize / Chunk / Compact"]
+    H --> B
+    C -->|"refusal"| I["🚫 Safety Guardrail - Report to User"]
+
+    style A fill:#4CAF50,color:#fff
+    style F fill:#4CAF50,color:#fff
+    style I fill:#f44336,color:#fff
+    style G fill:#FF9800,color:#fff
+    style D fill:#2196F3,color:#fff
 ```
 
 ### The Four `stop_reason` Values — Know Them Cold
@@ -64,6 +62,40 @@ The loop continues until the meal is complete (`end_turn`) or something goes wro
 | `tool_use` | Claude wants to call one or more tools | Execute the tool(s), send results back, **continue the loop** |
 | `max_tokens` | The response hit the maximum output token limit | **Handle gracefully** — do NOT just "increase max_tokens." Use progressive summarization, chunk the work, or `/compact` |
 | `refusal` | Claude's safety guidelines prevented a response | Report to the user; do not retry the same request |
+
+### 🧱 Stop Reason Actions — Quick Reference Box
+
+```mermaid
+graph TB
+    subgraph STOP_REASONS["📦 stop_reason Response Actions"]
+        direction LR
+        subgraph END["✅ end_turn"]
+            E1["Return response\nto user"]
+            E2["Exit the loop"]
+        end
+        subgraph TOOL["🔧 tool_use"]
+            T1["Execute the\nrequested tool"]
+            T2["Send result back\nto Claude"]
+            T3["Continue the loop"]
+        end
+        subgraph MAX["⚠️ max_tokens"]
+            M1["DO NOT increase\nmax_tokens"]
+            M2["Use /compact or\nsubagents"]
+            M3["Break into\nsmaller chunks"]
+        end
+        subgraph REF["🚫 refusal"]
+            R1["Safety guardrail\ntriggered"]
+            R2["Report to user"]
+            R3["DO NOT retry"]
+        end
+    end
+
+    style END fill:#4CAF50,color:#fff
+    style TOOL fill:#2196F3,color:#fff
+    style MAX fill:#FF9800,color:#fff
+    style REF fill:#f44336,color:#fff
+    style STOP_REASONS fill:#1a1a2e,color:#fff
+```
 
 ### ⚠️ Critical Exam Trap: `max_tokens`
 
@@ -121,6 +153,25 @@ The agentic loop is an **infinite loop with exit conditions**. Claude is in the 
 1. Provide the right tools
 2. Handle each `stop_reason` correctly
 3. Never silently ignore `max_tokens` or `refusal`
+
+### 🔄 Agentic Loop — State Diagram
+
+```mermaid
+stateDiagram-v2
+    [*] --> ReceiveRequest: User sends request
+    ReceiveRequest --> SendToClaude: Build messages array
+    SendToClaude --> CheckStopReason: API response received
+
+    CheckStopReason --> ExecuteTool: stop_reason = tool_use
+    CheckStopReason --> ReturnResponse: stop_reason = end_turn
+    CheckStopReason --> HandleOverflow: stop_reason = max_tokens
+    CheckStopReason --> ReportSafety: stop_reason = refusal
+
+    ExecuteTool --> SendToClaude: Append tool_result
+    HandleOverflow --> SendToClaude: Summarize & compact
+    ReturnResponse --> [*]: Deliver to user
+    ReportSafety --> [*]: Notify user
+```
 
 ---
 
@@ -181,17 +232,19 @@ Multi-agent architectures solve this by dividing responsibility.
 
 #### 1. Hub-and-Spoke (Coordinator-Subagent)
 
-```
-        ┌─────────────────┐
-        │   COORDINATOR   │ ← Orchestrates everything
-        └──┬──────┬────┬──┘
-           │      │    │
-    ┌──────▼┐  ┌──▼──┐ ┌▼──────┐
-    │Search │  │Anal-│ │Writer │ ← Independent subagents
-    │Agent  │  │ysis │ │Agent  │
-    └──┬────┘  └──┬──┘ └──┬────┘
-       │         │        │
-    Summary   Results   Draft    ← Return summaries ONLY
+```mermaid
+graph TD
+    C["🎯 Coordinator Agent"] -->|"Task 1"| S1["🔍 Search Agent"]
+    C -->|"Task 2"| S2["📊 Analysis Agent"]
+    C -->|"Task 3"| S3["✍️ Writer Agent"]
+    S1 -->|"Summary"| C
+    S2 -->|"Results"| C
+    S3 -->|"Draft"| C
+
+    style C fill:#9C27B0,color:#fff
+    style S1 fill:#2196F3,color:#fff
+    style S2 fill:#2196F3,color:#fff
+    style S3 fill:#2196F3,color:#fff
 ```
 
 **When?** Multiple independent subtasks that need combining.
@@ -200,17 +253,15 @@ Multi-agent architectures solve this by dividing responsibility.
 
 #### 2. Evaluator-Optimizer
 
-```
-┌──────────────┐     ┌──────────────┐
-│  Generator   │────▶│  Evaluator   │
-│  Agent       │     │  Agent       │
-└──────────────┘     └──────┬───────┘
-       ▲                    │
-       │     Quality OK?    │
-       │     No ──────────┐│
-       └──────────────────┘│
-              Yes ──────────▼
-                     Done ✅
+```mermaid
+graph LR
+    G["✍️ Generator Agent"] -->|"Draft"| E["🔍 Evaluator Agent"]
+    E -->|"❌ Feedback"| G
+    E -->|"✅ Quality Met"| D["🎉 Done"]
+
+    style G fill:#FF9800,color:#fff
+    style E fill:#2196F3,color:#fff
+    style D fill:#4CAF50,color:#fff
 ```
 
 **When?** Quality matters more than speed. Code review, writing, design.
@@ -219,11 +270,16 @@ Multi-agent architectures solve this by dividing responsibility.
 
 #### 3. Pipeline (Sequential)
 
-```
-┌─────────┐    ┌─────────┐    ┌─────────┐    ┌─────────┐
-│ Agent A  │───▶│ Agent B  │───▶│ Agent C  │───▶│ Agent D  │
-│ Extract  │    │ Classify │    │ Validate │    │ Output  │
-└─────────┘    └─────────┘    └─────────┘    └─────────┘
+```mermaid
+graph LR
+    A["📥 Extract"] --> B["🏷️ Classify"]
+    B --> C["✓ Validate"]
+    C --> D["📤 Output"]
+
+    style A fill:#2196F3,color:#fff
+    style B fill:#9C27B0,color:#fff
+    style C fill:#FF9800,color:#fff
+    style D fill:#4CAF50,color:#fff
 ```
 
 **When?** Each step depends on the previous step's output.
@@ -232,27 +288,71 @@ Multi-agent architectures solve this by dividing responsibility.
 
 #### 4. Parallel Fan-Out
 
-```
-                    ┌──────────────┐
-                    │  Coordinator │
-                    └──┬──┬──┬──┬─┘
-            ┌─────────┘  │  │  └────────┐
-            ▼            ▼  ▼           ▼
-        ┌────────┐  ┌───────┐  ┌────────┐  ┌────────┐
-        │ Web    │  │ Code  │  │ Docs   │  │ Slack  │
-        │ Search │  │ Search│  │ Search │  │ Search │
-        └────────┘  └───────┘  └────────┘  └────────┘
-            │           │          │           │
-            └─────┬─────┘          └─────┬─────┘
-                  ▼                      ▼
-              ┌──────────────────────────────┐
-              │    Coordinator Synthesizes   │
-              └──────────────────────────────┘
+```mermaid
+graph TD
+    C["🎯 Coordinator"] --> W["🌐 Web Search"]
+    C --> CS["💻 Code Search"]
+    C --> D["📚 Docs Search"]
+    C --> SL["💬 Slack Search"]
+    W --> SYN["🔄 Synthesize Results"]
+    CS --> SYN
+    D --> SYN
+    SL --> SYN
+
+    style C fill:#9C27B0,color:#fff
+    style SYN fill:#4CAF50,color:#fff
+    style W fill:#2196F3,color:#fff
+    style CS fill:#2196F3,color:#fff
+    style D fill:#2196F3,color:#fff
+    style SL fill:#2196F3,color:#fff
 ```
 
 **When?** Independent research tasks that can run simultaneously.
 
 **Real-world analogy:** A detective sending officers to interview different witnesses at the same time.
+
+### 📊 Pattern Selection — Quadrant Chart
+
+```mermaid
+quadrantChart
+    title Multi-Agent Pattern Selection Guide
+    x-axis "Sequential" --> "Parallel"
+    y-axis "Simple" --> "Complex"
+    quadrant-1 "Parallel Fan-Out"
+    quadrant-2 "Evaluator-Optimizer"
+    quadrant-3 "Pipeline"
+    quadrant-4 "Hub-and-Spoke"
+    "Web scraping 5 sites": [0.8, 0.3]
+    "Code review pipeline": [0.2, 0.6]
+    "Research synthesis": [0.7, 0.8]
+    "Draft-review loop": [0.3, 0.7]
+    "ETL pipeline": [0.15, 0.3]
+    "Multi-source search": [0.85, 0.5]
+```
+
+### 🗺️ Visual Guide: Choosing the Right Pattern
+
+```mermaid
+flowchart TD
+    Q1{"Are subtasks independent?"}
+    Q1 -->|"Yes"| Q2{"Can they run simultaneously?"}
+    Q1 -->|"No"| Q3{"Does output A feed into B?"}
+    Q2 -->|"Yes"| P1["✅ Parallel Fan-Out"]
+    Q2 -->|"No"| P2["✅ Hub-and-Spoke"]
+    Q3 -->|"Yes"| P3["✅ Pipeline"]
+    Q3 -->|"No"| Q4{"Need iterative quality?"}
+    Q4 -->|"Yes"| P4["✅ Evaluator-Optimizer"]
+    Q4 -->|"No"| P2
+
+    style P1 fill:#4CAF50,color:#fff
+    style P2 fill:#4CAF50,color:#fff
+    style P3 fill:#4CAF50,color:#fff
+    style P4 fill:#4CAF50,color:#fff
+    style Q1 fill:#FF9800,color:#fff
+    style Q2 fill:#FF9800,color:#fff
+    style Q3 fill:#FF9800,color:#fff
+    style Q4 fill:#FF9800,color:#fff
+```
 
 ### The 5 Golden Rules of Multi-Agent Architecture
 
@@ -265,6 +365,39 @@ These rules are **heavily tested**. Know them by heart.
 | 3 | **Manifest files for crash recovery** | If a subagent crashes, the coordinator can resume from the last good state |
 | 4 | **Subagents cannot share memory** | They communicate ONLY through the coordinator |
 | 5 | **Limit tool count: 4-5 per agent** | More tools = more selection ambiguity = more errors |
+
+### 🧱 5 Golden Rules — Layered Architecture View
+
+```mermaid
+graph TB
+    subgraph ARCH["🏗️ Multi-Agent Architecture Layers"]
+        direction TB
+        subgraph LAYER1["Layer 1: Communication"]
+            L1["📨 Pass summaries, NOT histories"]
+            L1B["🚫 Subagents cannot share memory"]
+        end
+        subgraph LAYER2["Layer 2: Isolation"]
+            L2["🔒 Each subagent has its OWN context window"]
+            L2B["📋 Communicate ONLY through coordinator"]
+        end
+        subgraph LAYER3["Layer 3: Tool Design"]
+            L3["🔧 Max 4-5 tools per agent"]
+            L3B["More tools = more ambiguity = more errors"]
+        end
+        subgraph LAYER4["Layer 4: Reliability"]
+            L4["💾 Manifest files for crash recovery"]
+            L4B["Resume from last good state on failure"]
+        end
+    end
+
+    LAYER1 --> LAYER2 --> LAYER3 --> LAYER4
+
+    style LAYER1 fill:#2196F3,color:#fff
+    style LAYER2 fill:#9C27B0,color:#fff
+    style LAYER3 fill:#FF9800,color:#fff
+    style LAYER4 fill:#4CAF50,color:#fff
+    style ARCH fill:#1a1a2e,color:#fff
+```
 
 ### ⚠️ Critical Exam Trap: Context Isolation
 
@@ -287,18 +420,41 @@ These rules are **heavily tested**. Know them by heart.
 
 ### The Session Strategy Decision Tree
 
+```mermaid
+flowchart TD
+    A{"Continuing previous work?"}
+    A -->|"Yes"| B["🔄 --resume"]
+    A -->|"No"| C{"Exploring something risky?"}
+    C -->|"Yes"| D["🔀 fork_session"]
+    C -->|"No"| E{"Conversation too long?"}
+    E -->|"Yes"| F["📦 /compact"]
+    E -->|"No"| G["▶️ Continue"]
+
+    style B fill:#2196F3,color:#fff
+    style D fill:#FF9800,color:#fff
+    style F fill:#9C27B0,color:#fff
+    style G fill:#4CAF50,color:#fff
 ```
-Am I continuing previous work?
-├── Yes → --resume (maintains full context)
-└── No → New session
 
-Am I exploring something risky?
-├── Yes → fork_session (safe experimentation)
-└── No → Continue in current session
+### 🗺️ Session Lifecycle Visual
 
-Is the conversation too long?
-├── Yes → /compact (progressive summarization)
-└── No → Continue
+```mermaid
+graph LR
+    S1["🆕 New Session"] --> W["💻 Working..."]
+    W -->|"Long session"| CO["📦 /compact"]
+    CO --> W
+    W -->|"End of day"| SAVE["💾 Session Saved"]
+    SAVE -->|"Next day"| R["🔄 --resume"]
+    R --> W
+    W -->|"Try risky idea"| FORK["🔀 fork_session"]
+    FORK --> EXP["🧪 Experiment"]
+    EXP -->|"Worked!"| MERGE["✅ Apply to main"]
+    EXP -->|"Failed"| DISCARD["🗑️ Discard"]
+
+    style S1 fill:#4CAF50,color:#fff
+    style FORK fill:#FF9800,color:#fff
+    style MERGE fill:#4CAF50,color:#fff
+    style DISCARD fill:#f44336,color:#fff
 ```
 
 ### Exam Trap: Session Strategy
@@ -332,6 +488,23 @@ There are **three ways** to define subagents:
 
 ### Scenario: You're building a code review system for 500+ daily PRs.
 
+```mermaid
+graph LR
+    PR["📋 PR Submitted"] --> COORD["🎯 Coordinator"]
+    COORD --> SEC["🔒 Security Pass"]
+    COORD --> LOGIC["🧠 Logic Pass"]
+    COORD --> STYLE["🎨 Style Pass"]
+    SEC --> AGG["📊 Aggregate & Dedupe"]
+    LOGIC --> AGG
+    STYLE --> AGG
+    AGG --> REPORT["📄 Review Report"]
+
+    style SEC fill:#f44336,color:#fff
+    style LOGIC fill:#FF9800,color:#fff
+    style STYLE fill:#2196F3,color:#fff
+    style AGG fill:#4CAF50,color:#fff
+```
+
 **Think through:**
 1. Should you use a single agent or multi-agent? → Multi-agent (scale, focus)
 2. What pattern? → Pipeline (Security → Logic → Style → Aggregate)
@@ -346,6 +519,42 @@ There are **three ways** to define subagents:
 2. Solution? → Use `/compact` for progressive summarization
 3. NOT the solution? → "Increase max_tokens" (that's output limit, not context)
 4. Prevention? → Delegate deep tasks to subagents, keep coordinator context clean
+
+---
+
+## 📊 Visual Summary: Domain 1 at a Glance
+
+```mermaid
+mindmap
+  root(("🏗️ Domain 1: Agentic Architecture 27%"))
+    Agentic Loop
+      stop_reason values
+        end_turn
+        tool_use
+        max_tokens
+        refusal
+      Loop pattern
+    Agent SDK
+      query vs ClaudeSDKClient
+      Built-in tools
+      allowedTools / disallowedTools
+    Multi-Agent Patterns
+      Hub-and-Spoke
+      Evaluator-Optimizer
+      Pipeline
+      Parallel Fan-Out
+    5 Golden Rules
+      Context isolation
+      Pass summaries only
+      Manifest files
+      No shared memory
+      4-5 tools per agent
+    Session Management
+      --resume
+      fork_session
+      /compact
+      Named sessions
+```
 
 ---
 
