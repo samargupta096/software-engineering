@@ -2,6 +2,8 @@
 
 > **~9 questions.** Focus on lost-in-the-middle effect, escalation rules, confidence scoring, and batch processing.
 
+![Domain 5: Context Management & Reliability](./posters/05_context_management.png)
+
 ---
 
 ## 📘 Topic 5.1: The Lost-in-the-Middle Effect

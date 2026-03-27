@@ -2,6 +2,8 @@
 
 > **This is the HEAVIEST domain — ~16 questions.** Master this first.
 
+![Domain 1: Agentic Architecture & Orchestration](./posters/01_agentic_architecture.png)
+
 ### 📊 Exam Weight Distribution
 
 ```mermaid

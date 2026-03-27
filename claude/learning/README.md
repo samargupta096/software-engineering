@@ -2,6 +2,8 @@
 
 > **Complete topic-by-topic learning guide for the Claude Certified Architect – Foundations exam.**
 
+![Exam Complete Overview](./posters/00_exam_overview.png)
+
 These materials are designed for deep learning — not just memorization. Each guide includes:
 - 📖 **Detailed explanations** with real-world analogies
 - 📊 **Diagrams and flowcharts** for visual learners
@@ -9,6 +11,24 @@ These materials are designed for deep learning — not just memorization. Each g
 - 🌲 **Decision trees** — frameworks for reasoning through questions
 - 🧠 **"Think Like an Architect"** practice scenarios
 - 📝 **Key terms glossary** for quick reference
+
+---
+
+## New Visual Resources
+
+### 🧠 Architecture Mind Map
+![Mind Map](./posters/MindMap.png)
+
+### 🗺️ Certification Exam Blueprint
+![Blueprint](./posters/AI%20Architect%20Certification%20Exam%20Blueprint.png)
+
+<video width="100%" controls>
+  <source src="./posters/Thinking_Like_a_Claude_Architect.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+- **[Download Blueprint Presentation (PPTX)](./posters/Claude_Architect_Blueprint.pptx)**
+- **[Official Certification Exam Guide (PDF)](../Claude+Certified+Architect+–+Foundations+Certification+Exam+Guide.pdf)**
 
 ---
 

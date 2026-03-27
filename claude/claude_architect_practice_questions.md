@@ -2,6 +2,8 @@
 
 > These questions mimic the **scenario-based MCQ format** of the real exam. Each question has 4 options with one best answer. Answers with explanations are at the bottom.
 
+![Exam Strategy Quick Reference](./learning/posters/06_exam_strategy.png)
+
 ---
 
 ## Scenario A: Customer Support Resolution Agent

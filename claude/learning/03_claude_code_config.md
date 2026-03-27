@@ -2,6 +2,8 @@
 
 > **~12 questions.** Focus on the CLAUDE.md hierarchy, path-scoped rules, hooks, and CI/CD integration patterns.
 
+![Domain 3: Claude Code Configuration & Workflows](./posters/03_claude_code_config.png)
+
 ---
 
 ## 📘 Topic 3.1: CLAUDE.md Configuration Hierarchy

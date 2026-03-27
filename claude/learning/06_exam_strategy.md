@@ -2,6 +2,8 @@
 
 > **Master these and you'll avoid the most common wrong answers on exam day.**
 
+![Exam Strategy: Anti-Patterns & Decision Trees](./posters/06_exam_strategy.png)
+
 ---
 
 ## 🚫 Top 10 Anti-Patterns (Wrong Answers That Sound Right)

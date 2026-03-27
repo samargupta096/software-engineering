@@ -2,6 +2,8 @@
 
 > **Last-minute revision guide.** This covers the high-yield concepts with exact domain weights, exam traps, and decision rules you need to know cold.
 
+![Exam Day Cheat Sheet Overview](./learning/posters/00_exam_overview.png)
+
 ---
 
 ## Exam Quick Facts

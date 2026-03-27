@@ -2,6 +2,8 @@
 
 > **~11 questions.** Focus on the tool_use flow, error handling categories, and the MCP three primitives.
 
+![Domain 2: Tool Design & MCP Integration](./posters/02_tool_design_mcp.png)
+
 ---
 
 ## 📘 Topic 2.1: How Tool Calling Works

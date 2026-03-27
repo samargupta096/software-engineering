@@ -1,5 +1,19 @@
 # 🏗️ Claude Certified Architect – Foundations Study Guide
 
+![Claude Architect Study Guide Overview](./learning/posters/00_exam_overview.png)
+
+**Quick Links:**
+- [All Posters & Gallery](./learning/all_posters.md)
+- [Blueprint Presentation (PPTX)](./learning/posters/Claude_Architect_Blueprint.pptx)
+
+<video width="100%" controls>
+  <source src="./learning/posters/Thinking_Like_a_Claude_Architect.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+![Architecture Mind Map](./learning/posters/MindMap.png)
+![Claude Architect Blueprint](./learning/posters/Claude_Architect_Blueprint.png)
+
 ## Exam Overview
 
 | Detail | Value |

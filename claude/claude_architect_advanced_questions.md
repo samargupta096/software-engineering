@@ -2,6 +2,8 @@
 
 > These questions are **harder** than the first set, testing deeper tradeoffs, edge cases, and the two scenarios missing from Set 1 (CI/CD and Developer Productivity). Questions are labeled by domain weight to help you prioritize.
 
+![Exam Strategy Quick Reference](./learning/posters/06_exam_strategy.png)
+
 ---
 
 ## Scenario: Claude Code for CI/CD (NEW)

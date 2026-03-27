@@ -2,6 +2,8 @@
 
 > **~12 questions.** Focus on forced tool use for structured output, validation-retry loops, few-shot patterns, and prompt chaining.
 
+![Domain 4: Prompt Engineering & Structured Output](./posters/04_prompt_engineering.png)
+
 ---
 
 ## 📘 Topic 4.1: Getting Structured Output from Claude
