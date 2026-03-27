@@ -4,12 +4,12 @@
 
 **Quick Links:**
 - [All Posters & Gallery](./learning/all_posters.md)
-- [Blueprint Presentation (PPTX)](./learning/posters/Claude_Architect_Blueprint.pptx)
+- [Blueprint Presentation (PPTX Download)](./learning/posters/Claude_Architect_Blueprint.pptx)
 
-<video width="100%" controls>
-  <source src="./learning/posters/Thinking_Like_a_Claude_Architect.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+<iframe src="https://view.officeapps.live.com/op/embed.aspx?src=https%3A%2F%2Fraw.githubusercontent.com%2Fsamargupta096%2Fsoftware-engineering%2Fmain%2Fclaude%2Flearning%2Fposters%2FClaude_Architect_Blueprint.pptx" width="100%" height="500px" frameborder="0" title="Claude Architect Blueprint Presentation">This is an embedded <a target="_blank" href="https://office.com">Microsoft Office</a> presentation, powered by <a target="_blank" href="https://office.com/webapps">Office</a>.</iframe>
+
+**Watch the Architect Blueprint Video:**
+https://github.com/samargupta096/software-engineering/raw/main/claude/learning/posters/Thinking_Like_a_Claude_Architect.mp4
 
 ![Architecture Mind Map](./learning/posters/MindMap.png)
 ![Claude Architect Blueprint](./learning/posters/Claude_Architect_Blueprint.png)
