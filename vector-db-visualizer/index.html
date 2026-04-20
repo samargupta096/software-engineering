@@ -297,6 +297,249 @@
         </div>
       </section>
 
+      <!-- ═══════════════ 7. SEMANTIC SEARCH ═══════════════ -->
+      <section class="section reveal" id="semantic-search">
+        <div class="section__header">
+          <span class="section__number">07</span>
+          <h2 class="section__title">Use Case: Semantic Search</h2>
+        </div>
+        <p class="section__desc">
+          Traditional search uses <strong>keyword matching</strong> (e.g., SQL <code>LIKE '%shoes%'</code>).
+          Semantic search understands <em>meaning</em>. Searching "comfortable footwear" will find
+          "ergonomic running shoes" even though they share zero keywords.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🔍 Semantic vs Keyword Search</h3>
+          <p class="tp-viz-desc">
+            Type a query below. The semantic engine matches by meaning; keyword engine matches literal words.
+          </p>
+          <div class="viz-controls">
+            <input type="text" class="search-input" id="semantic-query" placeholder="Try: 'affordable laptop for students'" style="flex:1;" />
+            <button class="send-btn" id="btn-semantic-search">Search</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="dual-results">
+              <div class="result-column">
+                <h4 class="result-column__title" style="color: var(--accent-amber);">🔤 Keyword Search</h4>
+                <div class="result-list" id="keyword-results">
+                  <div class="result-empty">Enter a query above</div>
+                </div>
+              </div>
+              <div class="result-column">
+                <h4 class="result-column__title" style="color: var(--accent-cyan);">🧠 Semantic Search</h4>
+                <div class="result-list" id="semantic-results">
+                  <div class="result-empty">Enter a query above</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="callout cyan">
+            <strong>💡 Real-World:</strong> E-commerce giants use semantic search so "warm winter jacket" also returns
+            "insulated parka" and "fleece-lined coat". This dramatically improves conversion rates.
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 8. DOCUMENT CHUNKING ═══════════════ -->
+      <section class="section reveal" id="chunking">
+        <div class="section__header">
+          <span class="section__number">08</span>
+          <h2 class="section__title">Use Case: Document Chunking for RAG</h2>
+        </div>
+        <p class="section__desc">
+          Before storing documents in a vector DB, you must <strong>chunk</strong> them — split them into
+          smaller pieces. Chunk size critically affects retrieval quality. Too large = noisy context.
+          Too small = lost meaning.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">✂️ Interactive Chunking Strategies</h3>
+          <div class="viz-controls">
+            <label>Strategy:</label>
+            <div class="strategy-toggle" id="chunk-toggle">
+              <button class="strategy-btn active" data-strategy="fixed">Fixed Size</button>
+              <button class="strategy-btn" data-strategy="sentence">By Sentence</button>
+              <button class="strategy-btn" data-strategy="paragraph">By Paragraph</button>
+              <button class="strategy-btn" data-strategy="semantic">Semantic</button>
+            </div>
+          </div>
+          <div class="viz-controls" style="border-bottom: none; padding-bottom: 0;">
+            <label>Chunk Size:</label>
+            <input type="range" id="chunk-size-slider" min="50" max="500" value="200" />
+            <span class="viz-value" id="chunk-size-val">200 chars</span>
+            <label style="margin-left: 1rem;">Overlap:</label>
+            <input type="range" id="chunk-overlap-slider" min="0" max="100" value="20" />
+            <span class="viz-value" id="chunk-overlap-val">20 chars</span>
+          </div>
+          <div class="viz-canvas">
+            <div class="chunk-demo" id="chunk-demo">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+          <div class="chunk-stats" id="chunk-stats">
+            <!-- Rendered by JS -->
+          </div>
+          <div class="callout green">
+            <strong>🎯 Best Practice:</strong> Use <strong>semantic chunking</strong> (split by topic boundaries)
+            with ~200-500 token chunks and 10-20% overlap. Libraries like <code>LangChain</code> and
+            <code>LlamaIndex</code> provide built-in recursive text splitters.
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 9. RECOMMENDATION ENGINE ═══════════════ -->
+      <section class="section reveal" id="recommendations">
+        <div class="section__header">
+          <span class="section__number">09</span>
+          <h2 class="section__title">Use Case: Recommendation Engine</h2>
+        </div>
+        <p class="section__desc">
+          Vector DBs power modern recommendation systems. By embedding user preferences and items into the
+          same vector space, finding "similar items" becomes a nearest-neighbor search.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🎬 Movie Recommendation Engine</h3>
+          <p class="tp-viz-desc">
+            Select a movie you like — the vector DB finds the most similar movies by embedding proximity.
+          </p>
+          <div class="viz-controls">
+            <label>Pick a movie:</label>
+            <select class="search-input" id="movie-select" style="min-width: 200px;">
+              <option value="inception">Inception (Sci-Fi, Thriller)</option>
+              <option value="titanic">Titanic (Romance, Drama)</option>
+              <option value="avengers">Avengers (Action, Superhero)</option>
+              <option value="notebook">The Notebook (Romance)</option>
+              <option value="interstellar">Interstellar (Sci-Fi, Space)</option>
+              <option value="godfather">The Godfather (Crime, Drama)</option>
+            </select>
+            <button class="send-btn" id="btn-recommend">🎯 Get Recommendations</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="reco-container" id="reco-container">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+          <div class="callout">
+            <strong>🔗 How Netflix does it:</strong> Netflix embeds each user's viewing history and each movie's
+            features into the same vector space. Finding recommendations = finding the nearest movie vectors
+            to the user's preference vector. They process <strong>billions</strong> of vectors daily.
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 10. CHATBOT MEMORY ═══════════════ -->
+      <section class="section reveal" id="chatbot-memory">
+        <div class="section__header">
+          <span class="section__number">10</span>
+          <h2 class="section__title">Use Case: Chatbot Memory</h2>
+        </div>
+        <p class="section__desc">
+          LLMs have a <strong>limited context window</strong>. By storing past conversations in a vector DB,
+          chatbots can recall relevant history from thousands of messages — giving the illusion of long-term memory.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">💬 Chatbot with Vector Memory</h3>
+          <p class="tp-viz-desc">
+            Chat below and watch how old messages get stored and retrieved from the vector DB when relevant.
+          </p>
+          <div class="chat-container">
+            <div class="chat-messages" id="chat-messages">
+              <div class="chat-msg bot">
+                <div class="chat-msg__avatar">🤖</div>
+                <div class="chat-msg__bubble">Hi! I'm a chatbot with vector memory. Tell me something, and I'll remember it using a Vector DB!</div>
+              </div>
+            </div>
+            <div class="chat-input-area">
+              <input type="text" class="search-input chat-input" id="chat-input" placeholder="Type a message..." style="flex:1;" />
+              <button class="send-btn" id="btn-chat-send">Send</button>
+            </div>
+          </div>
+          <div class="memory-panel">
+            <h4 style="color: var(--accent-cyan); margin-bottom: 0.75rem;">🗄️ Vector Memory Store</h4>
+            <div class="memory-entries" id="memory-entries">
+              <div style="color: var(--text-secondary); font-size: 0.85rem;">No memories stored yet.</div>
+            </div>
+          </div>
+          <div class="callout cyan">
+            <strong>🧠 How it works:</strong> Each user message is embedded and stored. On new queries, the chatbot
+            searches the vector DB for the top-K most relevant past messages and injects them into the LLM prompt.
+            This is how tools like <code>ChatGPT Memory</code>, <code>Mem0</code>, and <code>Zep</code> work.
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 11. VECTOR DB COMPARISON ═══════════════ -->
+      <section class="section reveal" id="comparison">
+        <div class="section__header">
+          <span class="section__number">11</span>
+          <h2 class="section__title">Vector DB Landscape</h2>
+        </div>
+        <p class="section__desc">
+          There are many vector databases to choose from. Here's how the major players compare across
+          key dimensions.
+        </p>
+
+        <div class="viz-card">
+          <div class="comparison-grid vdb-grid" id="vdb-comparison">
+            <div class="comparison-cell header">Database</div>
+            <div class="comparison-cell header">Type</div>
+            <div class="comparison-cell header">Index</div>
+            <div class="comparison-cell header">Best For</div>
+            <div class="comparison-cell header">Hosting</div>
+
+            <div class="comparison-cell concept">Pinecone</div>
+            <div class="comparison-cell">Purpose-built Vector DB</div>
+            <div class="comparison-cell">Proprietary (HNSW-based)</div>
+            <div class="comparison-cell">Production RAG, Managed</div>
+            <div class="comparison-cell">Cloud-only (Serverless)</div>
+
+            <div class="comparison-cell concept">Weaviate</div>
+            <div class="comparison-cell">Purpose-built Vector DB</div>
+            <div class="comparison-cell">HNSW</div>
+            <div class="comparison-cell">Multi-modal search</div>
+            <div class="comparison-cell">Self-hosted / Cloud</div>
+
+            <div class="comparison-cell concept">Qdrant</div>
+            <div class="comparison-cell">Purpose-built Vector DB</div>
+            <div class="comparison-cell">HNSW</div>
+            <div class="comparison-cell">Filtering + Search</div>
+            <div class="comparison-cell">Self-hosted / Cloud</div>
+
+            <div class="comparison-cell concept">Milvus</div>
+            <div class="comparison-cell">Purpose-built Vector DB</div>
+            <div class="comparison-cell">IVF, HNSW, DiskANN</div>
+            <div class="comparison-cell">Billion-scale datasets</div>
+            <div class="comparison-cell">Self-hosted (Zilliz Cloud)</div>
+
+            <div class="comparison-cell concept">ChromaDB</div>
+            <div class="comparison-cell">Embedded Vector DB</div>
+            <div class="comparison-cell">HNSW</div>
+            <div class="comparison-cell">Prototyping, Local dev</div>
+            <div class="comparison-cell">In-process / Local</div>
+
+            <div class="comparison-cell concept" style="color: var(--accent-green);">pgvector</div>
+            <div class="comparison-cell">PostgreSQL Extension</div>
+            <div class="comparison-cell">IVFFlat, HNSW</div>
+            <div class="comparison-cell">Existing Postgres users</div>
+            <div class="comparison-cell">Wherever PG runs</div>
+
+            <div class="comparison-cell concept" style="color: var(--accent-green);">Redis Vector</div>
+            <div class="comparison-cell">Redis Module</div>
+            <div class="comparison-cell">HNSW, FLAT</div>
+            <div class="comparison-cell">Low-latency caching + search</div>
+            <div class="comparison-cell">Self-hosted / Cloud</div>
+          </div>
+          <div class="callout" style="margin-top: 1.5rem;">
+            <strong>🤔 How to choose?</strong> If you're already on Postgres → <code>pgvector</code>.
+            Quick prototype → <code>ChromaDB</code>. Production at scale with managed infra → <code>Pinecone</code>
+            or <code>Weaviate</code>. Billion-vector datasets → <code>Milvus</code>. Need fine-grained filtering → <code>Qdrant</code>.
+          </div>
+        </div>
+      </section>
+
     </main>
 
     <script src="index.js"></script>
