@@ -219,8 +219,168 @@ main { max-width: 1000px; margin: 0 auto; padding: 0 1.5rem 4rem; }
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* ═══════════ 7. SEMANTIC SEARCH ═══════════ */
+.dual-results {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;
+}
+.result-column {
+  background: #0a0b10; border-radius: 0.5rem; padding: 1rem;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+.result-column__title {
+  font-size: 1rem; font-weight: 700; margin-bottom: 1rem;
+  padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-color);
+}
+.result-item {
+  padding: 0.75rem; border-radius: 0.5rem; margin-bottom: 0.5rem;
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+  animation: fadeUp 0.3s ease both;
+}
+.result-item__title { font-weight: 600; font-size: 0.95rem; margin-bottom: 0.25rem; }
+.result-item__score {
+  font-family: "JetBrains Mono", monospace; font-size: 0.8rem;
+  padding: 0.15rem 0.5rem; border-radius: 0.25rem; display: inline-block;
+}
+.result-item__score.high { background: rgba(16,185,129,0.2); color: var(--accent-green); }
+.result-item__score.medium { background: rgba(245,158,11,0.2); color: var(--accent-amber); }
+.result-item__score.low { background: rgba(239,68,68,0.2); color: var(--accent-red); }
+.result-item__desc { color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.25rem; }
+.result-empty { color: var(--text-secondary); font-size: 0.9rem; text-align: center; padding: 2rem; }
+.no-match { color: var(--accent-red); font-size: 0.9rem; text-align: center; padding: 2rem; opacity: 0.7; }
+
+/* ═══════════ 8. CHUNKING ═══════════ */
+.chunk-demo {
+  background: #0a0b10; border-radius: 0.5rem; padding: 1.5rem;
+  border: 1px solid rgba(255,255,255,0.05);
+  font-size: 0.95rem; line-height: 1.8;
+  max-height: 350px; overflow-y: auto;
+}
+.chunk-demo .chunk {
+  display: inline;
+  padding: 2px 0; border-radius: 3px;
+  transition: background 0.3s ease;
+}
+.chunk-demo .chunk:hover { filter: brightness(1.3); }
+.chunk-demo .chunk-boundary {
+  display: inline-block; width: 3px; height: 1.2em;
+  background: var(--accent-amber); border-radius: 2px;
+  vertical-align: middle; margin: 0 2px;
+  animation: pulse 1.5s infinite;
+}
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+.chunk-stats {
+  display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 1rem;
+}
+.chunk-stat {
+  background: rgba(0,0,0,0.3); padding: 0.75rem 1rem; border-radius: 0.5rem;
+  font-family: "JetBrains Mono", monospace; font-size: 0.85rem; flex: 1; min-width: 150px;
+  text-align: center;
+}
+.chunk-stat__value { font-size: 1.5rem; font-weight: 700; color: var(--accent-cyan); display: block; }
+.chunk-stat__label { color: var(--text-secondary); font-size: 0.75rem; margin-top: 0.25rem; }
+.viz-value {
+  font-family: "JetBrains Mono", monospace; font-size: 0.85rem;
+  color: var(--accent-cyan); min-width: 70px;
+}
+
+/* ═══════════ 9. RECOMMENDATIONS ═══════════ */
+.reco-container {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem;
+  min-height: 150px;
+}
+.reco-card {
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 0.75rem; padding: 1.25rem; text-align: center;
+  transition: all 0.3s ease; animation: fadeUp 0.4s ease both;
+}
+.reco-card:hover {
+  background: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.3);
+  transform: translateY(-4px);
+}
+.reco-card__emoji { font-size: 2.5rem; margin-bottom: 0.75rem; }
+.reco-card__title { font-weight: 700; font-size: 0.95rem; margin-bottom: 0.25rem; }
+.reco-card__genre { color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 0.5rem; }
+.reco-card__score {
+  font-family: "JetBrains Mono", monospace; font-size: 0.8rem;
+  color: var(--accent-cyan); background: rgba(6,182,212,0.1);
+  padding: 0.2rem 0.6rem; border-radius: 1rem; display: inline-block;
+}
+.reco-card.source { border-color: var(--accent-amber); background: rgba(245,158,11,0.08); }
+.reco-card.source .reco-card__score { color: var(--accent-amber); background: rgba(245,158,11,0.15); }
+
+/* ═══════════ 10. CHATBOT MEMORY ═══════════ */
+.chat-container {
+  border: 1px solid var(--border-color); border-radius: 0.75rem;
+  overflow: hidden; margin-bottom: 1rem;
+}
+.chat-messages {
+  background: #0a0b10; padding: 1rem; min-height: 200px; max-height: 320px;
+  overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem;
+}
+.chat-msg { display: flex; gap: 0.75rem; animation: fadeUp 0.3s ease; }
+.chat-msg.user { flex-direction: row-reverse; }
+.chat-msg__avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; flex-shrink: 0;
+  background: rgba(255,255,255,0.05); border: 1px solid var(--border-color);
+}
+.chat-msg__bubble {
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+  padding: 0.75rem 1rem; border-radius: 1rem; max-width: 75%;
+  font-size: 0.95rem; line-height: 1.5;
+}
+.chat-msg.user .chat-msg__bubble {
+  background: rgba(59,130,246,0.15); border-color: rgba(59,130,246,0.3);
+}
+.chat-msg .retrieved-tag {
+  display: inline-block; font-size: 0.7rem; padding: 0.1rem 0.4rem;
+  background: rgba(6,182,212,0.15); color: var(--accent-cyan);
+  border-radius: 0.25rem; margin-bottom: 0.3rem;
+  font-family: "JetBrains Mono", monospace;
+}
+.chat-input-area {
+  display: flex; gap: 0.5rem; padding: 0.75rem;
+  background: rgba(30,33,44,0.5); border-top: 1px solid var(--border-color);
+}
+.memory-panel {
+  background: rgba(0,0,0,0.3); border: 1px solid var(--border-color);
+  border-radius: 0.75rem; padding: 1rem; margin-top: 1rem;
+}
+.memory-entries {
+  display: flex; flex-direction: column; gap: 0.5rem;
+  max-height: 200px; overflow-y: auto;
+}
+.memory-entry {
+  display: flex; align-items: center; gap: 0.75rem;
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+  padding: 0.6rem 0.75rem; border-radius: 0.5rem; font-size: 0.85rem;
+  animation: fadeUp 0.3s ease;
+}
+.memory-entry__vector {
+  font-family: "JetBrains Mono", monospace; font-size: 0.7rem;
+  color: var(--accent-purple); white-space: nowrap;
+}
+.memory-entry__text { color: var(--text-secondary); flex: 1; }
+.memory-entry.highlighted {
+  border-color: var(--accent-cyan);
+  background: rgba(6,182,212,0.08);
+}
+
+/* ═══════════ 11. VDB COMPARISON ═══════════ */
+.vdb-grid {
+  grid-template-columns: 1fr 1.2fr 1fr 1.2fr 1fr;
+}
+
+/* ═══════════ RESPONSIVE ═══════════ */
 @media (max-width: 768px) {
   .metric-container { flex-direction: column; }
   .rag-flow { flex-direction: column; gap: 1rem; }
   .flow-arrow { transform: rotate(90deg); }
+  .dual-results { grid-template-columns: 1fr; }
+  .reco-container { grid-template-columns: 1fr 1fr; }
+  .vdb-grid { grid-template-columns: 1fr; }
+  .comparison-grid { grid-template-columns: 1fr; }
 }
+
