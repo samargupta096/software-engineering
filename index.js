@@ -105,6 +105,15 @@ document.addEventListener('DOMContentLoaded', () => {
             category: 'architecture',
             tags: ['Scalability', 'Backend', 'System Design'],
             icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>`
+        },
+        {
+            id: 'vector-db',
+            title: 'Vector Databases',
+            desc: 'Understand high-dimensional embeddings, nearest neighbor search (HNSW), distance metrics, and RAG.',
+            path: './vector-db-visualizer/index.html',
+            category: 'database',
+            tags: ['Vector', 'AI', 'Search', 'Embeddings'],
+            icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>`
         }
     ];
 

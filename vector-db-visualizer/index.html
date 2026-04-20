@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vector Databases Internals — Interactive Visualizer</title>
+    <meta
+      name="description"
+      content="Master Vector Databases through interactive visualizations. Understand embeddings, distance metrics, HNSW, metadata filtering, and RAG."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <body>
+    <!-- ═══════════════════════ HERO ═══════════════════════ -->
+    <header class="hero" id="hero">
+      <div class="hero__bg-orbs">
+        <div class="orb orb--1"></div>
+        <div class="orb orb--2"></div>
+        <div class="orb orb--3"></div>
+      </div>
+      <div class="hero__content">
+        <span class="hero__badge">Interactive Deep Dive</span>
+        <h1 class="hero__title">
+          <span class="gradient-text">Vector Database</span> Internals
+        </h1>
+        <p class="hero__subtitle">
+          Understand high-dimensional embeddings, nearest neighbor search (HNSW),
+          distance metrics, and how Retrieval-Augmented Generation (RAG) works
+          under the hood.
+        </p>
+        <a href="#embeddings" class="hero__cta">
+          <span>Explore Internals</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 5v14M5 12l7 7 7-7" />
+          </svg>
+        </a>
+      </div>
+    </header>
+
+    <main>
+      <!-- ═══════════════ 1. EMBEDDINGS ═══════════════ -->
+      <section class="section reveal" id="embeddings">
+        <div class="section__header">
+          <span class="section__number">01</span>
+          <h2 class="section__title">Embeddings: Words to Vectors</h2>
+        </div>
+        <p class="section__desc">
+          Vector databases don't store text directly; they store <strong>embeddings</strong> —
+          lists of numbers (vectors) that represent the <em>meaning</em> of the text.
+          Words with similar meanings map to points close to each other in this mathematical space.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🧭 2D Embedding Space</h3>
+          <p class="tp-viz-desc">
+            Type words to see where they land in a simplified 2D space. Notice how similar words cluster together!
+          </p>
+          <div class="viz-controls">
+            <input type="text" class="search-input" id="embedding-input" placeholder="Type a word (e.g., 'king', 'queen', 'apple', 'computer')" style="flex:1;" />
+            <button class="send-btn" id="btn-add-word">+ Plot Word</button>
+            <button class="send-btn" id="btn-clear-words" style="background: linear-gradient(135deg, var(--accent-red), #dc2626);">Clear</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="plot-container" id="embeddings-plot">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+          <div class="callout cyan">
+            <strong>💡 High Dimensions:</strong> In reality, models like OpenAI's <code>text-embedding-ada-002</code>
+            create vectors with <strong>1,536 dimensions</strong>, not 2! High dimensions capture rich nuance (grammar, tone, context).
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 2. DISTANCE METRICS ═══════════════ -->
+      <section class="section reveal" id="metrics">
+        <div class="section__header">
+          <span class="section__number">02</span>
+          <h2 class="section__title">Distance Metrics</h2>
+        </div>
+        <p class="section__desc">
+          To find "similar" things, we calculate the mathematical distance between their vectors.
+          Common metrics include <strong>Cosine Similarity</strong>, <strong>Euclidean Distance (L2)</strong>,
+          and <strong>Dot Product</strong>.
+        </p>
+
+        <div class="viz-card">
+          <div class="viz-controls">
+            <label>Metric:</label>
+            <div class="strategy-toggle" id="metric-toggle">
+              <button class="strategy-btn active" data-metric="cosine">Cosine</button>
+              <button class="strategy-btn" data-metric="euclidean">Euclidean</button>
+              <button class="strategy-btn" data-metric="dot">Dot Product</button>
+            </div>
+          </div>
+          <div class="viz-canvas">
+            <div class="metric-container">
+              <div class="metric-plot" id="metric-plot">
+                <!-- Rendered by JS -->
+                <svg id="metric-svg" width="100%" height="100%" viewBox="-10 -10 110 110">
+                  <line x1="0" y1="100" x2="100" y2="100" stroke="#a0aabf" stroke-width="1"/>
+                  <line x1="0" y1="100" x2="0" y2="0" stroke="#a0aabf" stroke-width="1"/>
+                  <!-- Vector A -->
+                  <line id="vec-a-line" x1="0" y1="100" x2="80" y2="20" stroke="var(--accent-amber)" stroke-width="3" marker-end="url(#arrow-a)" />
+                  <!-- Vector B -->
+                  <line id="vec-b-line" x1="0" y1="100" x2="40" y2="70" stroke="var(--accent-cyan)" stroke-width="3" marker-end="url(#arrow-b)" />
+                  
+                  <defs>
+                    <marker id="arrow-a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                      <path d="M0,0 L0,6 L9,3 z" fill="var(--accent-amber)" />
+                    </marker>
+                    <marker id="arrow-b" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                      <path d="M0,0 L0,6 L9,3 z" fill="var(--accent-cyan)" />
+                    </marker>
+                  </defs>
+                </svg>
+              </div>
+              <div class="metric-stats">
+                <h4 style="color: var(--text-primary); margin-bottom: 1rem;">Calculation</h4>
+                <div id="metric-calculation" class="math-box">
+                  <!-- Rendered by JS -->
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="viz-hint">Try dragging the tips of Vector A (Amber) and Vector B (Cyan) to see how the metrics change.</p>
+          <div class="callout">
+            <strong>🔑 Cosine vs Euclidean:</strong> Cosine similarity measures the <em>angle</em> between vectors (ignoring length).
+            Euclidean measures straight-line distance. If you normalize vectors to length 1, Cosine and Euclidean rank results identically!
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 3. KNN VS ANN ═══════════════ -->
+      <section class="section reveal" id="knn">
+        <div class="section__header">
+          <span class="section__number">03</span>
+          <h2 class="section__title">KNN vs ANN Search</h2>
+        </div>
+        <p class="section__desc">
+          <strong>K-Nearest Neighbors (KNN)</strong> checks <em>every</em> vector to find the closest matches. It's accurate but slow.
+          <strong>Approximate Nearest Neighbors (ANN)</strong> uses indexes to skip points, trading a little accuracy for massive speedups.
+        </p>
+
+        <div class="viz-card">
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-run-knn">🔍 Run Exhaustive KNN</button>
+            <button class="send-btn" id="btn-run-ann" style="background: linear-gradient(135deg, var(--accent-cyan), #0891b2);">⚡ Run ANN (Clustered)</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="search-sim-container" id="search-sim">
+               <!-- Rendered by JS -->
+            </div>
+          </div>
+          <div class="callout green">
+            <strong>🚀 Why ANN?</strong> At 1 million vectors, exhaustive KNN might take 500ms. ANN (like HNSW) can find the neighbors in &lt;1ms.
+            Vector DBs are fundamentally built around ANN indexing algorithms.
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 4. HNSW INDEX ═══════════════ -->
+      <section class="section reveal" id="hnsw">
+        <div class="section__header">
+          <span class="section__number">04</span>
+          <h2 class="section__title">HNSW Algorithm (Under the Hood)</h2>
+        </div>
+        <p class="section__desc">
+          <strong>Hierarchical Navigable Small World (HNSW)</strong> is the most popular ANN index.
+          It builds multiple layers of graphs. It starts searching in sparse top layers to make huge leaps,
+          then drops to lower, denser layers to fine-tune the match.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🕸️ HNSW Layer Traversal</h3>
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-hnsw-search">▶ Simulate HNSW Search</button>
+          </div>
+          <div class="viz-canvas">
+             <div class="hnsw-container" id="hnsw-layers">
+               <!-- Rendered by JS -->
+             </div>
+          </div>
+          <div class="callout">
+            <strong>🔗 Small World Graph:</strong> Inspired by the "six degrees of separation". Short-range links connect close neighbors,
+            while long-range links connect distant clusters, allowing extremely fast navigation across the graph.
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 5. METADATA FILTERING ═══════════════ -->
+      <section class="section reveal" id="metadata">
+        <div class="section__header">
+          <span class="section__number">05</span>
+          <h2 class="section__title">Metadata Filtering</h2>
+        </div>
+        <p class="section__desc">
+          Often you want to combine semantic search with exact filters (e.g., "Find comfy shoes, but only size 10").
+          Vector DBs handle this via Pre-filtering or Post-filtering.
+        </p>
+
+        <div class="viz-card">
+           <div class="comparison-grid" id="filter-grid" style="grid-template-columns: 1fr 1fr 1fr;">
+              <div class="comparison-cell header">Method</div>
+              <div class="comparison-cell header">How it works</div>
+              <div class="comparison-cell header">Pros / Cons</div>
+
+              <div class="comparison-cell concept">Post-filtering</div>
+              <div class="comparison-cell desc">
+                1. ANN search returns top K results.<br>
+                2. Filter out items that don't match metadata.
+              </div>
+              <div class="comparison-cell pros-cons">
+                ✅ Fast search<br>
+                ❌ Missing results (if filter is strict, top K might all get filtered out)
+              </div>
+
+              <div class="comparison-cell concept">Pre-filtering</div>
+              <div class="comparison-cell desc">
+                1. Filter DB by metadata first.<br>
+                2. Perform ANN search on the remaining subset.
+              </div>
+              <div class="comparison-cell pros-cons">
+                ✅ Accurate K results<br>
+                ❌ Breaks HNSW graph structure if too many nodes are removed
+              </div>
+
+              <div class="comparison-cell concept" style="color: var(--accent-cyan);">Single-Stage Filter</div>
+              <div class="comparison-cell desc">
+                Traverse the ANN graph, but only evaluate nodes that match the metadata filter.
+              </div>
+              <div class="comparison-cell pros-cons">
+                ✅ Modern standard (Pinecone, Qdrant, Milvus)<br>
+                ✅ Highly accurate & efficient
+              </div>
+           </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 6. RAG ARCHITECTURE ═══════════════ -->
+      <section class="section reveal" id="rag">
+        <div class="section__header">
+          <span class="section__number">06</span>
+          <h2 class="section__title">Retrieval-Augmented Generation (RAG)</h2>
+        </div>
+        <p class="section__desc">
+          Vector DBs are the backbone of AI memory. When an LLM doesn't know private data, RAG uses a Vector DB
+          to retrieve relevant facts and feeds them to the LLM as context.
+        </p>
+
+        <div class="viz-card">
+          <div class="viz-controls">
+            <input type="text" class="search-input" id="rag-query" value="What is our Q3 revenue?" style="flex:1;" />
+            <button class="send-btn" id="btn-trigger-rag">▶ Execute RAG Pipeline</button>
+          </div>
+          <div class="viz-canvas">
+             <div class="rag-flow" id="rag-flow">
+                <div class="flow-stage" id="rag-user">
+                   <div class="flow-stage__box">👤</div>
+                   <div class="flow-stage__name">User Query</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-stage" id="rag-embed">
+                   <div class="flow-stage__box">🧠</div>
+                   <div class="flow-stage__name">Embedding Model</div>
+                   <div class="flow-stage__desc">[0.1, -0.4, ...]</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-stage" id="rag-vdb">
+                   <div class="flow-stage__box">🗄️</div>
+                   <div class="flow-stage__name">Vector DB</div>
+                   <div class="flow-stage__desc">Similarity Search</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-stage" id="rag-prompt">
+                   <div class="flow-stage__box">📝</div>
+                   <div class="flow-stage__name">Prompt + Context</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-stage" id="rag-llm">
+                   <div class="flow-stage__box">🤖</div>
+                   <div class="flow-stage__name">LLM</div>
+                   <div class="flow-stage__desc">Generates Answer</div>
+                </div>
+             </div>
+          </div>
+          <div class="rag-logs" id="rag-logs">
+             <!-- Status logs appear here -->
+             <div style="color: var(--text-secondary);">Waiting for query...</div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <script src="index.js"></script>
+  </body>
+</html>
