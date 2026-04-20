@@ -42,7 +42,37 @@
       </div>
     </header>
 
-    \n    <!-- ═══════════════════════ NAV ═══════════════════════ -->\n    <nav class="toc" id="toc">\n      <div class="toc__inner">\n        <a href="#cluster" class="toc__link" data-section="cluster">01 Kafka Cluster &amp; Brokers</a>\n        <a href="#partitions" class="toc__link" data-section="partitions">02 Topics &amp; Partitions</a>\n        <a href="#producers" class="toc__link" data-section="producers">03 Producers &amp; Message Flow</a>\n        <a href="#consumer-groups" class="toc__link" data-section="consumer-groups">04 Consumer Groups &amp; Parallel Processing</a>\n        <a href="#ordering" class="toc__link" data-section="ordering">05 Message Ordering</a>\n        <a href="#replication" class="toc__link" data-section="replication">06 Replication &amp; Fault Tolerance</a>\n        <a href="#throughput" class="toc__link" data-section="throughput">07 Why Kafka Achieves High Throughput</a>\n        <a href="#rebalancing" class="toc__link" data-section="rebalancing">09 Consumer Group Rebalancing</a>\n        <a href="#idempotency" class="toc__link" data-section="idempotency">10 Idempotent Producers &amp; Exactly-Once</a>\n        <a href="#transactions" class="toc__link" data-section="transactions">11 Kafka Transactions</a>\n        <a href="#saga" class="toc__link" data-section="saga">12 Saga Pattern — Distributed Transactions</a>\n        <a href="#offsets" class="toc__link" data-section="offsets">13 Consumer Offsets &amp; Commit Strategies</a>\n        <a href="#compaction" class="toc__link" data-section="compaction">14 Log Compaction</a>\n        <a href="#schema" class="toc__link" data-section="schema">15 Schema Registry &amp; Evolution</a>\n        <a href="#dlq" class="toc__link" data-section="dlq">16 Dead Letter Queue &amp; Error Handling</a>\n        <a href="#lag" class="toc__link" data-section="lag">17 Consumer Lag &amp; Monitoring</a>\n        <a href="#streams" class="toc__link" data-section="streams">19 Kafka Streams</a>\n        <a href="#connect" class="toc__link" data-section="connect">20 Kafka Connect</a>\n        <a href="#partitioning" class="toc__link" data-section="partitioning">21 Partitioning Strategies</a>\n        <a href="#eventsourcing" class="toc__link" data-section="eventsourcing">22 Event Sourcing &amp; CQRS</a>\n        <a href="#security" class="toc__link" data-section="security">23 Kafka Security</a>\n        <a href="#comparison" class="toc__link" data-section="comparison">24 Kafka vs Traditional Message Queues</a>\n        <a href="#production-issues" class="toc__link" data-section="production-issues">25 Production Issues, Learnings &amp; Solutions</a>\n        <a href="#confluent" class="toc__link" data-section="confluent">26 Confluent Platform Dashboard</a>\n      </div>\n    </nav>\n    <main>
+    
+    <!-- ═══════════════════════ NAV ═══════════════════════ -->
+    <nav class="toc" id="toc">
+      <div class="toc__inner">
+        <a href="#cluster" class="toc__link" data-section="cluster">01 Kafka Cluster &amp; Brokers</a>
+        <a href="#partitions" class="toc__link" data-section="partitions">02 Topics &amp; Partitions</a>
+        <a href="#producers" class="toc__link" data-section="producers">03 Producers &amp; Message Flow</a>
+        <a href="#consumer-groups" class="toc__link" data-section="consumer-groups">04 Consumer Groups &amp; Parallel Processing</a>
+        <a href="#ordering" class="toc__link" data-section="ordering">05 Message Ordering</a>
+        <a href="#replication" class="toc__link" data-section="replication">06 Replication &amp; Fault Tolerance</a>
+        <a href="#throughput" class="toc__link" data-section="throughput">07 Why Kafka Achieves High Throughput</a>
+        <a href="#rebalancing" class="toc__link" data-section="rebalancing">09 Consumer Group Rebalancing</a>
+        <a href="#idempotency" class="toc__link" data-section="idempotency">10 Idempotent Producers &amp; Exactly-Once</a>
+        <a href="#transactions" class="toc__link" data-section="transactions">11 Kafka Transactions</a>
+        <a href="#saga" class="toc__link" data-section="saga">12 Saga Pattern — Distributed Transactions</a>
+        <a href="#offsets" class="toc__link" data-section="offsets">13 Consumer Offsets &amp; Commit Strategies</a>
+        <a href="#compaction" class="toc__link" data-section="compaction">14 Log Compaction</a>
+        <a href="#schema" class="toc__link" data-section="schema">15 Schema Registry &amp; Evolution</a>
+        <a href="#dlq" class="toc__link" data-section="dlq">16 Dead Letter Queue &amp; Error Handling</a>
+        <a href="#lag" class="toc__link" data-section="lag">17 Consumer Lag &amp; Monitoring</a>
+        <a href="#streams" class="toc__link" data-section="streams">19 Kafka Streams</a>
+        <a href="#connect" class="toc__link" data-section="connect">20 Kafka Connect</a>
+        <a href="#partitioning" class="toc__link" data-section="partitioning">21 Partitioning Strategies</a>
+        <a href="#eventsourcing" class="toc__link" data-section="eventsourcing">22 Event Sourcing &amp; CQRS</a>
+        <a href="#security" class="toc__link" data-section="security">23 Kafka Security</a>
+        <a href="#comparison" class="toc__link" data-section="comparison">24 Kafka vs Traditional Message Queues</a>
+        <a href="#production-issues" class="toc__link" data-section="production-issues">25 Production Issues, Learnings &amp; Solutions</a>
+        <a href="#confluent" class="toc__link" data-section="confluent">26 Confluent Platform Dashboard</a>
+      </div>
+    </nav>
+    <main>
       <!-- ═══════════════ 1. CLUSTER OVERVIEW ═══════════════ -->
       <section class="section reveal" id="cluster">
         <div class="section__header">

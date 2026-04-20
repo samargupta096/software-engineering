@@ -114,6 +114,15 @@ document.addEventListener('DOMContentLoaded', () => {
             category: 'ai',
             tags: ['Vector', 'AI', 'Search', 'Embeddings'],
             icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="M20 12h2"></path><path d="M2 12h2"></path></svg>`
+        },
+        {
+            id: 'claude-architect',
+            title: 'Claude Architect Prep',
+            desc: 'Interactive simulator for the Claude Certified Architect exam: MCP, Agents, and Context Caching.',
+            path: './claude-architect-visualizer/index.html',
+            category: 'ai',
+            tags: ['AI', 'Claude', 'Architecture', 'MCP', 'Agents'],
+            icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><path d="M3 9h18"></path><path d="M9 21V9"></path></svg>`
         }
     ];
 

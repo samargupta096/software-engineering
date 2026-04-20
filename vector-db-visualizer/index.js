@@ -11,7 +11,8 @@
     });
   }, { threshold: 0.3 });
   document.querySelectorAll('.section').forEach(s => tocObs.observe(s));
-\ndocument.addEventListener('DOMContentLoaded', () => {
+
+document.addEventListener('DOMContentLoaded', () => {
 
     // ═══════════════ 1. EMBEDDINGS ═══════════════
     const embeddingInput = document.getElementById('embedding-input');
