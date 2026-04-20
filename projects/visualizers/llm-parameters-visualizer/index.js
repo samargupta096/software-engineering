@@ -3,7 +3,8 @@
    ═══════════════════════════════════════════════════════════ */
 
 ;(() => {
-  "use strict";\n
+  "use strict";
+
   // ── TOC Active State ──
   const tocLinks = document.querySelectorAll('.toc__link');
   const tocObs = new IntersectionObserver((entries) => {

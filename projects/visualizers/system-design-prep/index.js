@@ -11,7 +11,8 @@
     });
   }, { threshold: 0.3 });
   document.querySelectorAll('section').forEach(s => tocObs.observe(s));
-\n/* ═══════════════════════════════════════════════════════
+
+/* ═══════════════════════════════════════════════════════
    SYSTEM DESIGN INTERVIEW PREP — Interactive Logic
    ═══════════════════════════════════════════════════════ */
 
