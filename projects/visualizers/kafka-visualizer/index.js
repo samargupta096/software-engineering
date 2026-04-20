@@ -2318,4 +2318,221 @@
       renderConsumerGroup();
     }, 200);
   });
+
+  /* ──────────────────────────────────────────────────────
+     25. PRODUCTION ISSUES & LEARNINGS
+     ────────────────────────────────────────────────────── */
+  const PROD_SCENARIOS = {
+    'lag-spike': {
+      name: '📈 Consumer Lag Spike', severity: 'critical',
+      symptoms: ['Consumer lag growing rapidly on Grafana/Burrow', 'End-to-end latency > SLA threshold', 'Consumers showing high poll() times', 'Messages piling up — stale data served to users'],
+      rootcause: ['Slow downstream dependency (DB, API) blocking processing', 'max.poll.records too high — each batch takes > max.poll.interval.ms', 'GC pauses in consumer JVM causing heartbeat timeouts', 'Not enough consumers for partition count'],
+      fix: ['Reduce max.poll.records (e.g., 500 → 100)', 'Add more consumer instances (scale horizontally)', 'Tune max.poll.interval.ms to match actual processing time', 'Add circuit breaker for slow downstream calls', 'Monitor with: kafka-consumer-groups.sh --describe --group <group>'],
+      config: 'max.poll.records=100\nmax.poll.interval.ms=300000\nfetch.max.bytes=52428800\nsession.timeout.ms=30000'
+    },
+    'rebalance-storm': {
+      name: '🌪️ Rebalance Storm', severity: 'critical',
+      symptoms: ['Consumers constantly joining/leaving group', 'Processing stops every few minutes', '"Member consumer-X has failed" in broker logs', 'Consumer group state flapping: Stable → PreparingRebalance → Stable'],
+      rootcause: ['Consumer processing takes longer than session.timeout.ms', 'Heartbeat thread blocked by heavy processing on same thread', 'Frequent deployments triggering graceful shutdowns', 'Static group membership not configured'],
+      fix: ['Use CooperativeStickyAssignor (incremental rebalance)', 'Set group.instance.id for static membership (avoids rebalance on restart)', 'Increase session.timeout.ms to 45s+', 'Separate heartbeat thread from processing (Kafka does this by default in 2.3+)', 'Use rolling restarts with proper shutdown hooks'],
+      config: 'partition.assignment.strategy=org.apache.kafka.clients.consumer.CooperativeStickyAssignor\ngroup.instance.id=consumer-pod-1\nsession.timeout.ms=45000\nheartbeat.interval.ms=10000'
+    },
+    'data-loss': {
+      name: '💀 Data Loss', severity: 'critical',
+      symptoms: ['Messages produced but never consumed', 'Gaps in event sequence numbers', 'Business reports show missing transactions', 'auto.offset.reset=latest caused skip after consumer restart'],
+      rootcause: ['acks=0 or acks=1 — leader crash before replication', 'min.insync.replicas=1 — no durability guarantee', 'auto.commit before processing completes — crash loses messages', 'Consumer offset reset to latest after topic retention expired'],
+      fix: ['Set acks=all + min.insync.replicas=2', 'Disable auto-commit: enable.auto.commit=false', 'Commit offsets AFTER successful processing', 'Set auto.offset.reset=earliest for safety', 'Monitor __consumer_offsets for gaps'],
+      config: '# Producer\nacks=all\nenable.idempotence=true\n\n# Broker\nmin.insync.replicas=2\n\n# Consumer\nenable.auto.commit=false\nauto.offset.reset=earliest'
+    },
+    'broker-oom': {
+      name: '💥 Broker Out of Memory', severity: 'high',
+      symptoms: ['Broker JVM throwing OutOfMemoryError', 'Broker becoming unresponsive, ISR shrinking', 'Produce requests timing out', 'Log segments not being cleaned up'],
+      rootcause: ['Too many partitions on a single broker (each uses memory for indexes)', 'Large message sizes without proper buffer config', 'Log compaction falling behind, dirty ratio too high', 'JVM heap too small for partition count'],
+      fix: ['Limit partitions per broker (< 4000 recommended)', 'Set message.max.bytes appropriately', 'Tune log.cleaner.threads and log.cleaner.dedupe.buffer.size', 'Increase JVM heap (-Xmx6g) or use G1GC', 'Rebalance partitions across brokers with kafka-reassign-partitions.sh'],
+      config: '# Broker config\nlog.cleaner.threads=4\nlog.cleaner.dedupe.buffer.size=134217728\nnum.partitions=6  # default for new topics\nmessage.max.bytes=1048576'
+    },
+    'hot-partition': {
+      name: '🔥 Hot Partition', severity: 'high',
+      symptoms: ['One partition has 10x the data of others', 'One consumer maxed out while others are idle', 'Uneven consumer lag across partitions', 'Single broker disk filling faster than peers'],
+      rootcause: ['Partition key has skewed distribution (e.g., country="US" = 80% traffic)', 'Null key causing round-robin only before sticky partitioner', 'Using timestamp as key (all events in same time window → same partition)', 'Not enough key cardinality for partition count'],
+      fix: ['Add suffix to hot keys: "US" → "US-0", "US-1", "US-2"', 'Use compound keys: userId + random suffix', 'Implement custom partitioner for business-aware routing', 'Monitor partition size: kafka-log-dirs.sh --describe', 'Consider increasing partitions (but beware — this rebalances existing keys)'],
+      config: '# Custom partitioner in producer config\npartitioner.class=com.example.WeightedPartitioner\n\n# Or use key suffix strategy\n# key = originalKey + "-" + (hash % subPartitions)'
+    },
+    'schema-break': {
+      name: '📐 Schema Evolution Failure', severity: 'medium',
+      symptoms: ['New consumers crash with deserialization errors', 'Schema Registry rejects new schema version', '"Incompatible schema" errors in producer logs', 'Old consumers can\'t read new messages'],
+      rootcause: ['Removed a required field without default (breaks BACKWARD)', 'Added required field without default (breaks FORWARD)', 'Changed field type (string → int — breaks everything)', 'Schema Registry compatibility mode not set correctly'],
+      fix: ['Always add fields with defaults (BACKWARD safe)', 'Never remove required fields — deprecate, then remove after consumers update', 'Use FULL compatibility for maximum safety', 'Test schema changes in dev before prod: confluent schema-registry test', 'Version your schemas: use subject name strategy'],
+      config: '# Schema Registry config\nschema.compatibility.level=BACKWARD\n\n# Producer config\nvalue.subject.name.strategy=TopicNameStrategy\nkey.subject.name.strategy=TopicNameStrategy'
+    }
+  };
+
+  const prodToggle = document.getElementById('prod-issue-toggle');
+  const prodScenario = document.getElementById('prod-scenario');
+
+  function renderProdScenario(key) {
+    if (!prodScenario) return;
+    const s = PROD_SCENARIOS[key];
+    prodScenario.innerHTML = `
+      <div class="scenario-header">
+        <span class="scenario-severity ${s.severity}">${s.severity}</span>
+        <span class="scenario-name">${s.name}</span>
+      </div>
+      <div class="scenario-body">
+        <div class="scenario-col">
+          <div class="scenario-col__title symptoms">🚨 Symptoms</div>
+          <ul>${s.symptoms.map(x => `<li>${x}</li>`).join('')}</ul>
+        </div>
+        <div class="scenario-col">
+          <div class="scenario-col__title rootcause">🔍 Root Cause</div>
+          <ul>${s.rootcause.map(x => `<li>${x}</li>`).join('')}</ul>
+        </div>
+        <div class="scenario-col fix-col">
+          <div class="scenario-col__title fix">✅ Fix / Solution</div>
+          <ul>${s.fix.map(x => `<li>${x}</li>`).join('')}</ul>
+          <div class="scenario-config">${s.config}</div>
+        </div>
+      </div>`;
+  }
+
+  if (prodToggle) {
+    prodToggle.querySelectorAll('.strategy-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        prodToggle.querySelectorAll('.strategy-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderProdScenario(btn.dataset.scenario);
+      });
+    });
+    renderProdScenario('lag-spike');
+  }
+
+  // Incident Timeline
+  const INCIDENT_STEPS = [
+    { time: 'T+0m', type: 'alert', text: '🚨 PagerDuty alert: consumer lag > 50,000 on order-events topic' },
+    { time: 'T+2m', type: 'alert', text: '📊 Grafana dashboard confirms lag growing at 5,000 msg/min' },
+    { time: 'T+5m', type: 'investigate', text: '🔍 Check consumer logs — seeing slow DB queries (avg 2s per message)' },
+    { time: 'T+8m', type: 'investigate', text: '🔍 DB team confirms: missing index on orders table causing full table scans' },
+    { time: 'T+12m', type: 'action', text: '⚙️ Hotfix: add index on orders(user_id, created_at) — query drops to 5ms' },
+    { time: 'T+15m', type: 'action', text: '📈 Scale consumers from 3 → 6 to clear backlog faster' },
+    { time: 'T+25m', type: 'action', text: '📉 Lag decreasing at 10,000 msg/min — consumers catching up' },
+    { time: 'T+45m', type: 'resolve', text: '✅ Lag back to 0. Scale consumers back to 4 (one extra for headroom)' },
+    { time: 'T+60m', type: 'resolve', text: '📝 Post-mortem: add max.poll.records=200, add DB query latency alerts, add index coverage check to CI' },
+  ];
+
+  const incidentTimeline = document.getElementById('incident-timeline');
+  const btnIncidentPlay = document.getElementById('btn-incident-play');
+  const btnIncidentReset = document.getElementById('btn-incident-reset');
+
+  function renderIncidentTimeline(activeCount) {
+    if (!incidentTimeline) return;
+    incidentTimeline.innerHTML = '';
+    INCIDENT_STEPS.forEach((step, i) => {
+      const el = document.createElement('div');
+      el.className = 'incident-step' + (i < activeCount ? ' active' : '');
+      el.innerHTML = `<span class="incident-step__time">${step.time}</span><span class="incident-step__dot ${step.type}"></span><span class="incident-step__text">${step.text}</span>`;
+      incidentTimeline.appendChild(el);
+    });
+  }
+
+  if (btnIncidentPlay) {
+    btnIncidentPlay.addEventListener('click', () => {
+      renderIncidentTimeline(0);
+      INCIDENT_STEPS.forEach((_, i) => {
+        setTimeout(() => renderIncidentTimeline(i + 1), (i + 1) * 700);
+      });
+    });
+  }
+  if (btnIncidentReset) btnIncidentReset.addEventListener('click', () => renderIncidentTimeline(0));
+  renderIncidentTimeline(0);
+
+  // Checklist toggle
+  document.querySelectorAll('.checklist-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const checked = item.dataset.checked === 'true';
+      item.dataset.checked = checked ? 'false' : 'true';
+      item.querySelector('.check-icon').textContent = checked ? '☐' : '☑';
+    });
+  });
+
+  /* ──────────────────────────────────────────────────────
+     26. CONFLUENT PLATFORM DASHBOARD
+     ────────────────────────────────────────────────────── */
+  const cfTabToggle = document.getElementById('confluent-tab-toggle');
+  const cfDashboard = document.getElementById('confluent-dashboard');
+
+  const CF_TABS = {
+    overview: () => `
+      <div class="cf-dash-header"><span class="cf-dash-header__logo">☁️</span><span class="cf-dash-header__title">Cluster Overview</span><span class="cf-dash-header__env">production</span></div>
+      <div class="cf-dash-body">
+        <div class="cf-metrics-grid">
+          <div class="cf-metric-card"><div class="cf-metric-card__value" style="color:var(--accent-teal)">3</div><div class="cf-metric-card__label">Brokers</div><div class="cf-metric-card__trend stable">● All Healthy</div></div>
+          <div class="cf-metric-card"><div class="cf-metric-card__value" style="color:var(--accent-orange)">24</div><div class="cf-metric-card__label">Topics</div><div class="cf-metric-card__trend up">↑ +2 this week</div></div>
+          <div class="cf-metric-card"><div class="cf-metric-card__value" style="color:var(--accent-blue)">142</div><div class="cf-metric-card__label">Partitions</div><div class="cf-metric-card__trend stable">— Balanced</div></div>
+          <div class="cf-metric-card"><div class="cf-metric-card__value" style="color:var(--accent-purple)">8</div><div class="cf-metric-card__label">Consumer Groups</div><div class="cf-metric-card__trend up">↑ 7 Stable, 1 Rebalancing</div></div>
+          <div class="cf-metric-card"><div class="cf-metric-card__value" style="color:var(--accent-teal)">45K</div><div class="cf-metric-card__label">Messages/sec</div><div class="cf-metric-card__trend up">↑ 12% vs yesterday</div></div>
+          <div class="cf-metric-card"><div class="cf-metric-card__value" style="color:var(--accent-yellow)">2.1</div><div class="cf-metric-card__label">CKUs Used</div><div class="cf-metric-card__trend stable">— Within budget</div></div>
+        </div>
+        <div class="callout teal"><strong>Cluster Health:</strong> All brokers healthy. ISR count matches replication factor across all partitions. No under-replicated partitions detected.</div>
+      </div>`,
+    topics: () => `
+      <div class="cf-dash-header"><span class="cf-dash-header__logo">📋</span><span class="cf-dash-header__title">Topics</span><span class="cf-dash-header__env">24 topics</span></div>
+      <div class="cf-dash-body"><div class="cf-topic-list">
+        <div class="cf-topic-row header"><span>Topic Name</span><span>Partitions</span><span>Replication</span><span>Throughput</span><span>Status</span></div>
+        <div class="cf-topic-row"><span class="cf-topic-name">order-events</span><span>12</span><span>3</span><span>8.2K msg/s</span><span class="cf-status-badge healthy">Healthy</span></div>
+        <div class="cf-topic-row"><span class="cf-topic-name">payment-transactions</span><span>6</span><span>3</span><span>3.1K msg/s</span><span class="cf-status-badge healthy">Healthy</span></div>
+        <div class="cf-topic-row"><span class="cf-topic-name">user-activity</span><span>8</span><span>3</span><span>15.4K msg/s</span><span class="cf-status-badge healthy">Healthy</span></div>
+        <div class="cf-topic-row"><span class="cf-topic-name">notification-outbox</span><span>4</span><span>3</span><span>1.8K msg/s</span><span class="cf-status-badge warning">High Lag</span></div>
+        <div class="cf-topic-row"><span class="cf-topic-name">inventory-updates</span><span>6</span><span>3</span><span>2.5K msg/s</span><span class="cf-status-badge healthy">Healthy</span></div>
+        <div class="cf-topic-row"><span class="cf-topic-name">audit-log</span><span>3</span><span>3</span><span>950 msg/s</span><span class="cf-status-badge healthy">Healthy</span></div>
+        <div class="cf-topic-row"><span class="cf-topic-name">dead-letter-queue</span><span>1</span><span>3</span><span>12 msg/s</span><span class="cf-status-badge error">Attention</span></div>
+      </div></div>`,
+    consumers: () => `
+      <div class="cf-dash-header"><span class="cf-dash-header__logo">👥</span><span class="cf-dash-header__title">Consumer Groups</span><span class="cf-dash-header__env">8 groups</span></div>
+      <div class="cf-dash-body"><div class="cf-cg-list">
+        <div class="cf-cg-card"><div class="cf-cg-card__header"><span class="cf-cg-card__name">order-processing-svc</span><span class="cf-cg-card__state stable">STABLE</span></div><div class="cf-cg-card__meta"><span>Members: 4</span><span>Topic: order-events</span><span>Lag: <span class="cf-cg-card__lag low">234</span></span></div></div>
+        <div class="cf-cg-card"><div class="cf-cg-card__header"><span class="cf-cg-card__name">notification-svc</span><span class="cf-cg-card__state rebalancing">REBALANCING</span></div><div class="cf-cg-card__meta"><span>Members: 2 → 3</span><span>Topic: notification-outbox</span><span>Lag: <span class="cf-cg-card__lag high">48,291</span></span></div></div>
+        <div class="cf-cg-card"><div class="cf-cg-card__header"><span class="cf-cg-card__name">analytics-pipeline</span><span class="cf-cg-card__state stable">STABLE</span></div><div class="cf-cg-card__meta"><span>Members: 8</span><span>Topic: user-activity</span><span>Lag: <span class="cf-cg-card__lag low">89</span></span></div></div>
+        <div class="cf-cg-card"><div class="cf-cg-card__header"><span class="cf-cg-card__name">payment-validator</span><span class="cf-cg-card__state stable">STABLE</span></div><div class="cf-cg-card__meta"><span>Members: 3</span><span>Topic: payment-transactions</span><span>Lag: <span class="cf-cg-card__lag low">12</span></span></div></div>
+      </div></div>`,
+    connectors: () => `
+      <div class="cf-dash-header"><span class="cf-dash-header__logo">🔌</span><span class="cf-dash-header__title">Managed Connectors</span><span class="cf-dash-header__env">5 connectors</span></div>
+      <div class="cf-dash-body"><div class="cf-connector-grid">
+        <div class="cf-connector-card"><div class="cf-connector-card__header"><span class="cf-connector-card__icon">🐘</span><span class="cf-connector-card__name">PostgreSQL CDC</span><span class="cf-connector-card__type source">SOURCE</span></div><div class="cf-connector-card__detail">Debezium · orders DB → order-events · <span style="color:var(--accent-teal)">● Running</span></div></div>
+        <div class="cf-connector-card"><div class="cf-connector-card__header"><span class="cf-connector-card__icon">🔍</span><span class="cf-connector-card__name">Elasticsearch Sink</span><span class="cf-connector-card__type sink">SINK</span></div><div class="cf-connector-card__detail">order-events → ES index · <span style="color:var(--accent-teal)">● Running</span></div></div>
+        <div class="cf-connector-card"><div class="cf-connector-card__header"><span class="cf-connector-card__icon">📦</span><span class="cf-connector-card__name">S3 Sink (Archive)</span><span class="cf-connector-card__type sink">SINK</span></div><div class="cf-connector-card__detail">audit-log → s3://audit-archive/ · <span style="color:var(--accent-teal)">● Running</span></div></div>
+        <div class="cf-connector-card"><div class="cf-connector-card__header"><span class="cf-connector-card__icon">📊</span><span class="cf-connector-card__name">JDBC Source</span><span class="cf-connector-card__type source">SOURCE</span></div><div class="cf-connector-card__detail">inventory DB → inventory-updates · <span style="color:var(--accent-yellow)">● Degraded</span></div></div>
+      </div></div>`,
+    schema: () => `
+      <div class="cf-dash-header"><span class="cf-dash-header__logo">📐</span><span class="cf-dash-header__title">Schema Registry</span><span class="cf-dash-header__env">18 subjects</span></div>
+      <div class="cf-dash-body"><div class="cf-topic-list">
+        <div class="cf-topic-row header"><span>Subject</span><span>Format</span><span>Version</span><span>Compat</span><span>Status</span></div>
+        <div class="cf-topic-row"><span class="cf-topic-name">order-events-value</span><span>Avro</span><span>v3</span><span>BACKWARD</span><span class="cf-status-badge healthy">Valid</span></div>
+        <div class="cf-topic-row"><span class="cf-topic-name">payment-transactions-value</span><span>Protobuf</span><span>v2</span><span>FULL</span><span class="cf-status-badge healthy">Valid</span></div>
+        <div class="cf-topic-row"><span class="cf-topic-name">user-activity-value</span><span>JSON</span><span>v5</span><span>BACKWARD</span><span class="cf-status-badge healthy">Valid</span></div>
+        <div class="cf-topic-row"><span class="cf-topic-name">inventory-updates-value</span><span>Avro</span><span>v1</span><span>NONE</span><span class="cf-status-badge warning">No compat</span></div>
+      </div></div>`,
+    ksql: () => `
+      <div class="cf-dash-header"><span class="cf-dash-header__logo">⚡</span><span class="cf-dash-header__title">ksqlDB Editor</span><span class="cf-dash-header__env">ksqldb-cluster-01</span></div>
+      <div class="cf-dash-body">
+        <div class="cf-ksql-editor"><span class="cf-ksql-comment">-- Create a stream from order-events topic</span><br><span class="cf-ksql-keyword">CREATE STREAM</span> orders_stream (<br>&nbsp;&nbsp;order_id <span class="cf-ksql-keyword">VARCHAR KEY</span>,<br>&nbsp;&nbsp;user_id <span class="cf-ksql-keyword">VARCHAR</span>,<br>&nbsp;&nbsp;amount <span class="cf-ksql-keyword">DOUBLE</span>,<br>&nbsp;&nbsp;status <span class="cf-ksql-keyword">VARCHAR</span><br>) <span class="cf-ksql-keyword">WITH</span> (<br>&nbsp;&nbsp;kafka_topic = <span class="cf-ksql-string">'order-events'</span>,<br>&nbsp;&nbsp;value_format = <span class="cf-ksql-string">'AVRO'</span><br>);<br><br><span class="cf-ksql-comment">-- Real-time aggregation: revenue per minute</span><br><span class="cf-ksql-keyword">SELECT</span> <br>&nbsp;&nbsp;<span class="cf-ksql-keyword">WINDOWSTART</span> <span class="cf-ksql-keyword">AS</span> window_start,<br>&nbsp;&nbsp;<span class="cf-ksql-keyword">SUM</span>(amount) <span class="cf-ksql-keyword">AS</span> total_revenue,<br>&nbsp;&nbsp;<span class="cf-ksql-keyword">COUNT</span>(*) <span class="cf-ksql-keyword">AS</span> order_count<br><span class="cf-ksql-keyword">FROM</span> orders_stream<br><span class="cf-ksql-keyword">WINDOW TUMBLING</span> (<span class="cf-ksql-keyword">SIZE</span> 1 <span class="cf-ksql-keyword">MINUTE</span>)<br><span class="cf-ksql-keyword">GROUP BY</span> 1<br><span class="cf-ksql-keyword">EMIT CHANGES</span>;</div>
+        <div class="callout"><strong>ksqlDB</strong> lets you write SQL queries that run continuously on Kafka streams. Use it for real-time aggregations, joins, filtering, and creating materialized views — no Java/Python code needed.</div>
+      </div>`
+  };
+
+  function renderCfDashboard(tab) {
+    if (!cfDashboard || !CF_TABS[tab]) return;
+    cfDashboard.innerHTML = CF_TABS[tab]();
+  }
+
+  if (cfTabToggle) {
+    cfTabToggle.querySelectorAll('.strategy-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        cfTabToggle.querySelectorAll('.strategy-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderCfDashboard(btn.dataset.tab);
+      });
+    });
+    renderCfDashboard('overview');
+  }
+
 })();

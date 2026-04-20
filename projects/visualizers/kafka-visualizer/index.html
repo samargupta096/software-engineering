@@ -1388,6 +1388,298 @@
           </table>
         </div>
       </section>
+
+      <!-- ═══════════════ 25. PRODUCTION ISSUES & LEARNINGS ═══════════════ -->
+      <section class="section reveal" id="production-issues">
+        <div class="section__header">
+          <span class="section__number">25</span>
+          <h2 class="section__title">Production Issues, Learnings &amp; Solutions</h2>
+        </div>
+        <p class="section__desc">
+          Real-world Kafka incidents that every developer encounters. Click any scenario to see
+          the <strong>symptoms</strong>, <strong>root cause</strong>, and <strong>fix</strong> — learned from
+          real production outages and war stories.
+        </p>
+
+        <!-- Interactive Scenario Selector -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🔥 Production Scenario Simulator</h3>
+          <p class="tp-viz-desc">
+            Select a production issue to see its full lifecycle — from initial alert to resolution.
+          </p>
+          <div class="viz-controls">
+            <div class="strategy-toggle prod-issue-toggle" id="prod-issue-toggle">
+              <button class="strategy-btn active" data-scenario="lag-spike">Lag Spike</button>
+              <button class="strategy-btn" data-scenario="rebalance-storm">Rebalance Storm</button>
+              <button class="strategy-btn" data-scenario="data-loss">Data Loss</button>
+              <button class="strategy-btn" data-scenario="broker-oom">Broker OOM</button>
+              <button class="strategy-btn" data-scenario="hot-partition">Hot Partition</button>
+              <button class="strategy-btn" data-scenario="schema-break">Schema Break</button>
+            </div>
+          </div>
+          <div class="viz-canvas">
+            <div class="prod-scenario" id="prod-scenario">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Incident Timeline -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">⏱️ Incident Response Timeline</h3>
+          <p class="tp-viz-desc">
+            How a typical Kafka production issue unfolds — from alert to resolution.
+          </p>
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-incident-play">▶ Play Incident</button>
+            <button class="send-btn" id="btn-incident-reset">🔄 Reset</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="incident-timeline" id="incident-timeline">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Production Checklist -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">✅ Production Readiness Checklist</h3>
+          <div class="prod-checklist" id="prod-checklist">
+            <div class="checklist-group">
+              <div class="checklist-group__title">🔧 Producer Config</div>
+              <div class="checklist-item" data-checked="false">
+                <span class="check-icon">☐</span>
+                <span class="check-text"><code>acks=all</code> for critical topics (durability over speed)</span>
+              </div>
+              <div class="checklist-item" data-checked="false">
+                <span class="check-icon">☐</span>
+                <span class="check-text"><code>enable.idempotence=true</code> to prevent duplicate writes on retry</span>
+              </div>
+              <div class="checklist-item" data-checked="false">
+                <span class="check-icon">☐</span>
+                <span class="check-text"><code>retries=MAX_INT</code> with <code>delivery.timeout.ms</code> as upper bound</span>
+              </div>
+              <div class="checklist-item" data-checked="false">
+                <span class="check-icon">☐</span>
+                <span class="check-text"><code>linger.ms=5-20</code> and <code>batch.size=32KB+</code> for throughput</span>
+              </div>
+              <div class="checklist-item" data-checked="false">
+                <span class="check-icon">☐</span>
+                <span class="check-text"><code>compression.type=lz4</code> or <code>zstd</code> for payload reduction</span>
+              </div>
+            </div>
+            <div class="checklist-group">
+              <div class="checklist-group__title">📥 Consumer Config</div>
+              <div class="checklist-item" data-checked="false">
+                <span class="check-icon">☐</span>
+                <span class="check-text"><code>enable.auto.commit=false</code> — manual commit after processing</span>
+              </div>
+              <div class="checklist-item" data-checked="false">
+                <span class="check-icon">☐</span>
+                <span class="check-text"><code>max.poll.records</code> tuned to processing capacity</span>
+              </div>
+              <div class="checklist-item" data-checked="false">
+                <span class="check-icon">☐</span>
+                <span class="check-text"><code>isolation.level=read_committed</code> if using transactions</span>
+              </div>
+              <div class="checklist-item" data-checked="false">
+                <span class="check-icon">☐</span>
+                <span class="check-text">CooperativeStickyAssignor for zero-downtime rebalancing</span>
+              </div>
+            </div>
+            <div class="checklist-group">
+              <div class="checklist-group__title">📊 Monitoring</div>
+              <div class="checklist-item" data-checked="false">
+                <span class="check-icon">☐</span>
+                <span class="check-text">Consumer lag alerts via Burrow or Confluent Metrics</span>
+              </div>
+              <div class="checklist-item" data-checked="false">
+                <span class="check-icon">☐</span>
+                <span class="check-text">Under-replicated partition alerts (ISR shrink)</span>
+              </div>
+              <div class="checklist-item" data-checked="false">
+                <span class="check-icon">☐</span>
+                <span class="check-text">JMX metrics exported to Prometheus + Grafana dashboards</span>
+              </div>
+              <div class="checklist-item" data-checked="false">
+                <span class="check-icon">☐</span>
+                <span class="check-text">Dead Letter Queue monitoring and reprocessing pipeline</span>
+              </div>
+            </div>
+            <div class="checklist-group">
+              <div class="checklist-group__title">🛡️ Operations</div>
+              <div class="checklist-item" data-checked="false">
+                <span class="check-icon">☐</span>
+                <span class="check-text"><code>min.insync.replicas=2</code> with <code>replication.factor=3</code></span>
+              </div>
+              <div class="checklist-item" data-checked="false">
+                <span class="check-icon">☐</span>
+                <span class="check-text">Rack-aware replica assignment for AZ fault tolerance</span>
+              </div>
+              <div class="checklist-item" data-checked="false">
+                <span class="check-icon">☐</span>
+                <span class="check-text">Retention policies set per topic (time + size based)</span>
+              </div>
+              <div class="checklist-item" data-checked="false">
+                <span class="check-icon">☐</span>
+                <span class="check-text">Schema Registry with BACKWARD compatibility enforced</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 26. CONFLUENT PLATFORM DASHBOARD ═══════════════ -->
+      <section class="section reveal" id="confluent">
+        <div class="section__header">
+          <span class="section__number">26</span>
+          <h2 class="section__title">Confluent Platform Dashboard</h2>
+        </div>
+        <p class="section__desc">
+          <strong>Confluent Platform</strong> is the enterprise distribution of Apache Kafka.
+          This section covers the key dashboard terms, metrics, and workflows that developers
+          interact with daily in a Confluent-managed environment.
+        </p>
+
+        <!-- Simulated Dashboard -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📊 Confluent Cloud Dashboard Simulator</h3>
+          <p class="tp-viz-desc">
+            Interactive simulation of what you see in the Confluent Cloud Console. Click tabs to explore different views.
+          </p>
+          <div class="viz-controls">
+            <div class="strategy-toggle" id="confluent-tab-toggle">
+              <button class="strategy-btn active" data-tab="overview">Cluster Overview</button>
+              <button class="strategy-btn" data-tab="topics">Topics</button>
+              <button class="strategy-btn" data-tab="consumers">Consumer Groups</button>
+              <button class="strategy-btn" data-tab="connectors">Connectors</button>
+              <button class="strategy-btn" data-tab="schema">Schema Registry</button>
+              <button class="strategy-btn" data-tab="ksql">ksqlDB</button>
+            </div>
+          </div>
+          <div class="viz-canvas">
+            <div class="confluent-dashboard" id="confluent-dashboard">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Confluent Glossary -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📖 Confluent Platform Glossary</h3>
+          <p class="tp-viz-desc">
+            Key terms every developer encounters when working with Confluent Platform / Confluent Cloud.
+          </p>
+          <dl class="key-insight">
+            <dt>Environment</dt>
+            <dd>Top-level organizational unit in Confluent Cloud. Separates dev/staging/prod. Each has its own clusters, API keys, and billing.</dd>
+            <dt>Cluster (CKU)</dt>
+            <dd>A managed Kafka cluster. Measured in <strong>Confluent Kafka Units (CKU)</strong> — each CKU provides ~100 MB/s throughput. Types: Basic (shared), Standard (dedicated), Dedicated (VPC peered).</dd>
+            <dt>Topic</dt>
+            <dd>Same as open-source Kafka. In Confluent Cloud, you can create topics via UI, CLI (<code>confluent kafka topic create</code>), or Terraform.</dd>
+            <dt>API Key / Secret</dt>
+            <dd>Authentication credentials for producers/consumers. Scoped to a cluster (Kafka API Key) or global (Cloud API Key). Rotate regularly.</dd>
+            <dt>Service Account</dt>
+            <dd>Non-human identity for applications. Best practice: one service account per microservice, with ACLs granting only needed permissions.</dd>
+            <dt>Confluent Schema Registry</dt>
+            <dd>Managed schema storage and evolution. Supports Avro, Protobuf, JSON Schema. Enforces compatibility (BACKWARD, FORWARD, FULL, NONE).</dd>
+            <dt>ksqlDB</dt>
+            <dd>SQL engine for stream processing on Kafka. Create streams, tables, and materialized views using SQL syntax. Runs on Confluent Cloud as a managed service.</dd>
+            <dt>Kafka Connect (Managed)</dt>
+            <dd>Pre-built connectors running on Confluent Cloud. No infra to manage. Connectors: S3 Sink, Elasticsearch Sink, Debezium CDC Source, JDBC Source/Sink, etc.</dd>
+            <dt>Stream Lineage</dt>
+            <dd>Visual graph in Confluent Cloud showing data flow across topics, connectors, ksqlDB apps, and consumers. Critical for debugging data pipelines.</dd>
+            <dt>Cluster Linking</dt>
+            <dd>Mirror topics between clusters (cross-region, hybrid cloud). Like MirrorMaker 2 but fully managed, byte-for-byte identical replicas.</dd>
+            <dt>Confluent CLI</dt>
+            <dd>Command-line tool: <code>confluent login</code>, <code>confluent kafka topic list</code>, <code>confluent kafka topic produce</code>. Essential for local dev and CI/CD.</dd>
+          </dl>
+        </div>
+
+        <!-- Developer Day-to-Day Workflows -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🛠️ Developer Day-to-Day Workflows</h3>
+          <div class="confluent-workflows" id="confluent-workflows">
+            <div class="workflow-card">
+              <div class="workflow-icon">🔑</div>
+              <div class="workflow-title">1. Get Credentials</div>
+              <div class="workflow-steps">
+                <code>confluent login</code><br>
+                <code>confluent api-key create --resource &lt;cluster-id&gt;</code><br>
+                Store in <code>application.properties</code> or env vars
+              </div>
+            </div>
+            <div class="workflow-card">
+              <div class="workflow-icon">📝</div>
+              <div class="workflow-title">2. Create / Manage Topics</div>
+              <div class="workflow-steps">
+                <code>confluent kafka topic create orders --partitions 6</code><br>
+                Set retention: <code>--config retention.ms=604800000</code><br>
+                List: <code>confluent kafka topic list</code>
+              </div>
+            </div>
+            <div class="workflow-card">
+              <div class="workflow-icon">📤</div>
+              <div class="workflow-title">3. Produce / Consume (Testing)</div>
+              <div class="workflow-steps">
+                <code>confluent kafka topic produce orders</code><br>
+                <code>confluent kafka topic consume orders --from-beginning</code><br>
+                Use <code>--value-format avro</code> for Schema Registry
+              </div>
+            </div>
+            <div class="workflow-card">
+              <div class="workflow-icon">📊</div>
+              <div class="workflow-title">4. Monitor Consumer Lag</div>
+              <div class="workflow-steps">
+                Dashboard → Consumer Groups → Select group<br>
+                Check <strong>lag per partition</strong><br>
+                Alert if lag grows > threshold over time
+              </div>
+            </div>
+            <div class="workflow-card">
+              <div class="workflow-icon">🔗</div>
+              <div class="workflow-title">5. Set Up Connectors</div>
+              <div class="workflow-steps">
+                Dashboard → Connectors → Add Connector<br>
+                Select source (e.g., PostgreSQL CDC) or sink (e.g., S3)<br>
+                Configure JSON, test, deploy
+              </div>
+            </div>
+            <div class="workflow-card">
+              <div class="workflow-icon">📐</div>
+              <div class="workflow-title">6. Register / Evolve Schema</div>
+              <div class="workflow-steps">
+                Dashboard → Schema Registry → Select topic<br>
+                Upload Avro/Protobuf schema → check compatibility<br>
+                Evolve: add optional fields with defaults
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Confluent vs Open-Source Kafka -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📋 Confluent Cloud vs Self-Managed Kafka</h3>
+          <table style="width: 100%; border-collapse: collapse; font-size: 0.88rem;">
+            <thead>
+              <tr style="border-bottom: 1px solid var(--border-card);">
+                <th style="padding: 12px; text-align: left; color: var(--text-muted); font-size: 0.78rem; text-transform: uppercase;">Aspect</th>
+                <th style="padding: 12px; text-align: left; color: var(--accent-teal); font-weight: 700;">Confluent Cloud</th>
+                <th style="padding: 12px; text-align: left; color: var(--accent-orange); font-weight: 700;">Self-Managed Kafka</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom: 1px solid var(--border-subtle);"><td style="padding: 12px; color: var(--text-secondary);">Infrastructure</td><td style="padding: 12px;">Fully managed — zero ops</td><td style="padding: 12px;">You manage brokers, ZooKeeper/KRaft, storage</td></tr>
+              <tr style="border-bottom: 1px solid var(--border-subtle);"><td style="padding: 12px; color: var(--text-secondary);">Scaling</td><td style="padding: 12px;">Auto-scaling CKUs, elastic partitions</td><td style="padding: 12px;">Manual — add brokers, rebalance partitions</td></tr>
+              <tr style="border-bottom: 1px solid var(--border-subtle);"><td style="padding: 12px; color: var(--text-secondary);">Schema Registry</td><td style="padding: 12px;">Managed, built-in, HA</td><td style="padding: 12px;">Deploy separately, manage HA yourself</td></tr>
+              <tr style="border-bottom: 1px solid var(--border-subtle);"><td style="padding: 12px; color: var(--text-secondary);">Connectors</td><td style="padding: 12px;">200+ managed connectors, no code</td><td style="padding: 12px;">Deploy Connect workers, manage plugins</td></tr>
+              <tr style="border-bottom: 1px solid var(--border-subtle);"><td style="padding: 12px; color: var(--text-secondary);">Security</td><td style="padding: 12px;">SSO, RBAC, encryption by default</td><td style="padding: 12px;">Configure SSL, SASL, ACLs manually</td></tr>
+              <tr style="border-bottom: 1px solid var(--border-subtle);"><td style="padding: 12px; color: var(--text-secondary);">Monitoring</td><td style="padding: 12px;">Built-in metrics, Stream Lineage, Health+</td><td style="padding: 12px;">JMX → Prometheus → Grafana pipeline</td></tr>
+              <tr><td style="padding: 12px; color: var(--text-secondary);">Cost Model</td><td style="padding: 12px;">Pay per CKU + ingress/egress</td><td style="padding: 12px;">EC2/VM costs + storage + team time</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
     </main>
 
     <!-- ═══════════════════ FOOTER ═══════════════════ -->
