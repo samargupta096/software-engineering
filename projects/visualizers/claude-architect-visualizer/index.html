@@ -1,441 +1,325 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Claude Certified Architect Exam Prep | Interactive Visualizer</title>
-    <meta name="description" content="Comprehensive learning hub for the Claude Certified Architect (CCA) exam covering MCP, Agentic Architecture, Prompt Caching, and more." />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="index.css" />
-  </head>
-  <body>
-    <!-- Background Animation -->
-    <div class="background-animation">
-      <div class="blob blob-1"></div>
-      <div class="blob blob-2"></div>
-      <div class="blob blob-3"></div>
-      <div class="grid-overlay"></div>
-    </div>
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Claude Certified Architect Exam Prep | Interactive Visualizer</title>
+<meta name="description" content="Comprehensive CCA exam prep hub with theory, interactive sandboxes, flashcards, and mock quizzes."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="index.css"/>
+</head>
+<body>
+<div class="background-animation"><div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div><div class="grid-overlay"></div></div>
 
-    <!-- Hero Section -->
-    <header class="hero">
-      <div class="brand-badge">Comprehensive Study Hub</div>
-      <h1 class="hero-title">Claude Certified <span class="gradient-text">Architect</span></h1>
-      <p class="hero-subtitle">
-        Master the five core domains of the CCA-Foundations exam. Combine deep-dive theory with interactive sandboxes, active recall flashcards, and scenario-based mock quizzes.
-      </p>
-    </header>
+<header class="hero">
+<div class="brand-badge">Comprehensive Study Hub</div>
+<h1 class="hero-title">Claude Certified <span class="gradient-text">Architect</span></h1>
+<p class="hero-subtitle">Master the five core domains of the CCA-Foundations exam. Deep-dive theory, interactive sandboxes, 16 flashcards, and a 40-question mock quiz.</p>
+</header>
 
-    <!-- Table of Contents -->
-    <nav class="toc">
-      <div class="toc__inner">
-        <a href="#domain-1" class="toc__link active">1. Agents (27%)</a>
-        <a href="#domain-2" class="toc__link">2. Config (20%)</a>
-        <a href="#domain-3" class="toc__link">3. Structured (20%)</a>
-        <a href="#domain-4" class="toc__link">4. MCP (18%)</a>
-        <a href="#domain-5" class="toc__link">5. Context (15%)</a>
-        <a href="#flashcards" class="toc__link highlight">Flashcards</a>
-        <a href="#mock-quiz" class="toc__link highlight">Mock Quiz</a>
-      </div>
-    </nav>
+<nav class="toc"><div class="toc__inner">
+<a href="#domain-1" class="toc__link active">1. Agents (27%)</a>
+<a href="#domain-2" class="toc__link">2. Config (20%)</a>
+<a href="#domain-3" class="toc__link">3. Structured (20%)</a>
+<a href="#domain-4" class="toc__link">4. MCP (18%)</a>
+<a href="#domain-5" class="toc__link">5. Context (15%)</a>
+<a href="#flashcards" class="toc__link highlight">Flashcards</a>
+<a href="#mock-quiz" class="toc__link highlight">Mock Quiz</a>
+</div></nav>
 
-    <main class="content-wrapper">
+<main class="content-wrapper">
 
-      <!-- Domain 1 -->
-      <section id="domain-1" class="viz-section">
-        <div class="section-header">
-          <div class="domain-weight">27%</div>
-          <h2 class="section-title">Domain 1: Agentic Architecture & Orchestration</h2>
-          <p class="section-desc">Design multi-agent systems, manage task decomposition, and implement hub-and-spoke models.</p>
-        </div>
-        <div class="viz-card">
-          <div class="card-tabs">
-            <button class="tab-btn active" data-target="d1-theory">Theory & Best Practices</button>
-            <button class="tab-btn" data-target="d1-practice">Interactive Sandbox</button>
-          </div>
-          
-          <div id="d1-theory" class="tab-content theory-content active">
-            <div class="theory-grid">
-              <div class="theory-block">
-                <h3>Hub-and-Spoke Pattern</h3>
-                <p>The recommended architecture for complex tasks. A Supervisor (Router) agent breaks down a prompt, delegates to specialized sub-agents, and synthesizes the final output.</p>
-                <ul>
-                  <li><strong>Supervisor:</strong> Responsible for planning, delegation, and final review.</li>
-                  <li><strong>Sub-agents:</strong> Highly specialized prompts (e.g., "You are an expert at searching logs").</li>
-                </ul>
-              </div>
-              <div class="theory-block">
-                <h3>When to use Multi-Agent?</h3>
-                <p>Avoid multi-agent overhead for simple workflows. Use them when:</p>
-                <ul>
-                  <li>The task requires multiple distinct domains of expertise.</li>
-                  <li>Context windows would be overwhelmed by combining all tools into one agent.</li>
-                  <li>You need distinct validation loops.</li>
-                </ul>
-              </div>
-            </div>
-          </div>
+<!-- DOMAIN 1 -->
+<section id="domain-1" class="viz-section">
+<div class="section-header"><div class="domain-weight">27%</div><h2 class="section-title">Domain 1: Agentic Architecture & Orchestration</h2><p class="section-desc">Design multi-agent systems, manage task decomposition, and implement hub-and-spoke models.</p></div>
+<div class="viz-card">
+<div class="card-tabs"><button class="tab-btn active" data-target="d1-theory">Theory & Best Practices</button><button class="tab-btn" data-target="d1-practice">Interactive Sandbox</button></div>
 
-          <div id="d1-practice" class="tab-content practice-content">
-            <div class="agent-simulator">
-              <div class="agent-input-container">
-                <textarea id="agentPrompt" class="glass-input" rows="2" placeholder="e.g., 'Research latest ML trends, write a summary script, and review the code for errors'"></textarea>
-                <button id="btnRunAgent" class="btn btn-primary">Run Orchestration</button>
-              </div>
-              <div class="agent-network">
-                <!-- Supervisor -->
-                <div class="agent-node supervisor" id="nodeSupervisor">
-                  <div class="agent-icon">👑</div>
-                  <div class="agent-name">Supervisor Agent</div>
-                  <div class="agent-status" id="statusSupervisor">Waiting...</div>
-                </div>
-                <div class="agent-links">
-                  <div class="link-line" id="linkResearcher"></div>
-                  <div class="link-line" id="linkCoder"></div>
-                  <div class="link-line" id="linkReviewer"></div>
-                </div>
-                <!-- Sub Agents -->
-                <div class="sub-agents-row">
-                  <div class="agent-node subagent" id="nodeResearcher">
-                    <div class="agent-icon">🔍</div>
-                    <div class="agent-name">Researcher</div>
-                    <div class="agent-status" id="statusResearcher">Idle</div>
-                  </div>
-                  <div class="agent-node subagent" id="nodeCoder">
-                    <div class="agent-icon">💻</div>
-                    <div class="agent-name">Coder</div>
-                    <div class="agent-status" id="statusCoder">Idle</div>
-                  </div>
-                  <div class="agent-node subagent" id="nodeReviewer">
-                    <div class="agent-icon">🛡️</div>
-                    <div class="agent-name">Reviewer</div>
-                    <div class="agent-status" id="statusReviewer">Idle</div>
-                  </div>
-                </div>
-              </div>
-              <div class="agent-logs" id="agentLogs">
-                <div class="log-entry system-msg">[System] Ready to process task.</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+<div id="d1-theory" class="tab-content theory-content active">
+<div class="theory-grid">
+<div class="theory-block"><h3>The Agentic Loop</h3><p>The core pattern: User Request → Send to Claude → Check <code>stop_reason</code> → Act → Loop.</p>
+<table class="theory-table"><tr><th>stop_reason</th><th>Meaning</th><th>Action</th></tr>
+<tr><td><code>end_turn</code></td><td>Claude finished</td><td>Return response ✅</td></tr>
+<tr><td><code>tool_use</code></td><td>Wants to call a tool</td><td>Execute → return result → loop</td></tr>
+<tr><td><code>max_tokens</code></td><td>Hit output limit</td><td>Summarize/chunk (NOT "increase limit")</td></tr>
+<tr><td><code>refusal</code></td><td>Safety triggered</td><td>Report to user, don't retry</td></tr></table>
+<div class="exam-trap"><strong>Exam Trap:</strong> "Increase max_tokens" is WRONG. It controls output length, not context. Use <code>/compact</code> or subagents.</div></div>
 
-      <!-- Domain 2 -->
-      <section id="domain-2" class="viz-section">
-        <div class="section-header">
-          <div class="domain-weight">20%</div>
-          <h2 class="section-title">Domain 2: Claude Code Configuration</h2>
-          <p class="section-desc">Mastering <code>CLAUDE.md</code> hierarchies and CI/CD pipelines.</p>
-        </div>
-        <div class="viz-card">
-          <div class="card-tabs">
-            <button class="tab-btn active" data-target="d2-theory">Theory & Best Practices</button>
-            <button class="tab-btn" data-target="d2-practice">Interactive Sandbox</button>
-          </div>
-          
-          <div id="d2-theory" class="tab-content theory-content active">
-             <div class="theory-grid">
-              <div class="theory-block">
-                <h3>CLAUDE.md Hierarchy</h3>
-                <p>Claude Code uses a cascading configuration system. Rules in a sub-directory's <code>CLAUDE.md</code> will append to or override rules from the parent directory.</p>
-                <ul>
-                  <li><strong>Project Level:</strong> Global styling, architecture guidelines.</li>
-                  <li><strong>Directory Level:</strong> Specific test commands, linting rules.</li>
-                </ul>
-              </div>
-              <div class="theory-block">
-                <h3>CI/CD Integration (-p flag)</h3>
-                <p>To run Claude Code non-interactively in CI pipelines (e.g., GitHub Actions for PR reviews), use the <code>-p</code> (print) flag. Without it, the pipeline will hang waiting for user input.</p>
-              </div>
-            </div>
-          </div>
+<div class="theory-block"><h3>4 Multi-Agent Patterns</h3>
+<table class="theory-table"><tr><th>Pattern</th><th>When</th><th>Key Principle</th></tr>
+<tr><td><strong>Hub-and-spoke</strong></td><td>Multiple independent subtasks</td><td>Coordinator delegates, subagents return summaries</td></tr>
+<tr><td><strong>Evaluator-optimizer</strong></td><td>Quality matters</td><td>Generate → evaluate → loop until quality</td></tr>
+<tr><td><strong>Pipeline</strong></td><td>Sequential dependencies</td><td>Output A = Input B</td></tr>
+<tr><td><strong>Parallel fan-out</strong></td><td>Independent research</td><td>Spawn N subagents simultaneously</td></tr></table></div>
+</div>
+<div class="theory-grid" style="margin-top:1rem">
+<div class="theory-block"><h3>5 Golden Rules</h3><ul>
+<li><strong>Context isolation</strong> — each subagent has its OWN context window</li>
+<li><strong>Pass summaries, not histories</strong> — prevents context pollution</li>
+<li><strong>Manifest files</strong> for crash recovery</li>
+<li><strong>Subagents cannot share memory</strong> — communicate only through coordinator</li>
+<li><strong>Limit tools: 4-5 per agent</strong> — more = more selection ambiguity</li></ul></div>
+<div class="theory-block"><h3>Session Management</h3>
+<table class="theory-table"><tr><th>Concept</th><th>Purpose</th></tr>
+<tr><td><code>--resume</code></td><td>Continue previous session</td></tr>
+<tr><td><code>fork_session</code></td><td>Branch for exploration</td></tr>
+<tr><td>Named sessions</td><td>Organize work by feature</td></tr>
+<tr><td><code>/compact</code></td><td>Summarize to free context</td></tr></table>
+<div class="exam-trap"><strong>Exam Trap:</strong> "Use a single continuous session for a multi-day project" is WRONG. Use <code>--resume</code> + <code>fork_session</code>.</div></div>
+</div>
+</div>
 
-          <div id="d2-practice" class="tab-content practice-content">
-            <div class="dual-col">
-              <div class="file-explorer">
-                <h4>Project Tree</h4>
-                <ul class="tree">
-                  <li class="tree-node folder active" data-path="root">
-                    <span class="folder-icon">📁</span> /my-project
-                    <span class="file-badge">CLAUDE.md</span>
-                    <ul class="tree-sub">
-                      <li class="tree-node folder" data-path="backend">
-                        <span class="folder-icon">📁</span> backend
-                        <span class="file-badge">CLAUDE.md</span>
-                      </li>
-                      <li class="tree-node folder" data-path="frontend">
-                        <span class="folder-icon">📁</span> frontend
-                      </li>
-                    </ul>
-                  </li>
-                </ul>
-              </div>
-              <div class="context-resolution">
-                <h4>Resolved Context</h4>
-                <div class="resolved-context-box" id="resolvedContext"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+<div id="d1-practice" class="tab-content practice-content">
+<div class="agent-simulator">
+<div class="agent-input-container"><textarea id="agentPrompt" class="glass-input" rows="2" placeholder="e.g., 'Research ML trends, write a script, review code'"></textarea><button id="btnRunAgent" class="btn btn-primary">Run Orchestration</button></div>
+<div class="agent-network">
+<div class="agent-node supervisor" id="nodeSupervisor"><div class="agent-icon">👑</div><div class="agent-name">Supervisor</div><div class="agent-status" id="statusSupervisor">Waiting...</div></div>
+<div class="agent-links"><div class="link-line" id="linkResearcher"></div><div class="link-line" id="linkCoder"></div><div class="link-line" id="linkReviewer"></div></div>
+<div class="sub-agents-row">
+<div class="agent-node subagent" id="nodeResearcher"><div class="agent-icon">🔍</div><div class="agent-name">Researcher</div><div class="agent-status" id="statusResearcher">Idle</div></div>
+<div class="agent-node subagent" id="nodeCoder"><div class="agent-icon">💻</div><div class="agent-name">Coder</div><div class="agent-status" id="statusCoder">Idle</div></div>
+<div class="agent-node subagent" id="nodeReviewer"><div class="agent-icon">🛡️</div><div class="agent-name">Reviewer</div><div class="agent-status" id="statusReviewer">Idle</div></div>
+</div></div>
+<div class="agent-logs" id="agentLogs"><div class="log-entry system-msg">[System] Ready.</div></div>
+</div></div>
+</div>
+</section>
 
-      <!-- Domain 3 -->
-      <section id="domain-3" class="viz-section">
-        <div class="section-header">
-          <div class="domain-weight">20%</div>
-          <h2 class="section-title">Domain 3: Prompt Engineering & Structured Output</h2>
-        </div>
-        <div class="viz-card">
-          <div class="card-tabs">
-            <button class="tab-btn active" data-target="d3-theory">Theory & Best Practices</button>
-            <button class="tab-btn" data-target="d3-practice">Interactive Sandbox</button>
-          </div>
+<!-- DOMAIN 2 -->
+<section id="domain-2" class="viz-section">
+<div class="section-header"><div class="domain-weight">20%</div><h2 class="section-title">Domain 2: Claude Code Configuration</h2></div>
+<div class="viz-card">
+<div class="card-tabs"><button class="tab-btn active" data-target="d2-theory">Theory</button><button class="tab-btn" data-target="d2-practice">Interactive Sandbox</button></div>
 
-          <div id="d3-theory" class="tab-content theory-content active">
-             <div class="theory-grid">
-              <div class="theory-block">
-                <h3>Programmatic Enforcement</h3>
-                <p>Never rely on "Please output JSON" in your system prompt for production pipelines. The LLM might include conversational filler like "Here is your JSON:" which breaks <code>JSON.parse()</code>.</p>
-              </div>
-              <div class="theory-block">
-                <h3>Tool Use for Schemas</h3>
-                <p>Provide a single Tool (e.g., <code>record_data</code>) and force Claude to use it (via <code>tool_choice</code>). Claude's internal training heavily prioritizes matching Tool schemas perfectly, guaranteeing a strictly typed JSON object back to your application.</p>
-              </div>
-            </div>
-          </div>
+<div id="d2-theory" class="tab-content theory-content active">
+<div class="theory-grid">
+<div class="theory-block"><h3>CLAUDE.md Hierarchy</h3>
+<table class="theory-table"><tr><th>Level</th><th>File</th><th>Priority</th></tr>
+<tr><td>Global</td><td><code>~/.claude/CLAUDE.md</code></td><td>Lowest</td></tr>
+<tr><td>Project</td><td><code>./CLAUDE.md</code></td><td>Medium</td></tr>
+<tr><td>Directory</td><td><code>./src/CLAUDE.md</code></td><td>Loaded on demand</td></tr>
+<tr><td>Path-scoped</td><td><code>.claude/rules/*.md</code></td><td>Glob-based auto-load</td></tr></table>
+<div class="exam-trap"><strong>Exam Trap:</strong> "Put all rules in global CLAUDE.md" is WRONG. Use path-scoped <code>.claude/rules/</code> for targeted, maintainable config.</div></div>
+<div class="theory-block"><h3>Hooks & CLI Flags</h3>
+<table class="theory-table"><tr><th>Hook</th><th>When</th><th>Example</th></tr>
+<tr><td><code>PreToolUse</code></td><td>Before tool executes</td><td>Block dangerous commands</td></tr>
+<tr><td><code>PostToolUse</code></td><td>After tool completes</td><td>Auto-format after Write</td></tr>
+<tr><td><code>Notification</code></td><td>Needs user input</td><td>Send Slack alert</td></tr>
+<tr><td><code>Stop</code></td><td>Session ends</td><td>Clean up, audit log</td></tr></table>
+<table class="theory-table" style="margin-top:1rem"><tr><th>Flag</th><th>Use</th></tr>
+<tr><td><code>-p</code> / <code>--print</code></td><td>Non-interactive (CI/CD!)</td></tr>
+<tr><td><code>--output-format json</code></td><td>Machine-readable output</td></tr>
+<tr><td><code>--json-schema</code></td><td>Validate CI output</td></tr></table></div>
+</div></div>
 
-          <div id="d3-practice" class="tab-content practice-content">
-            <div class="toggle-group">
-              <button class="toggle-btn active" data-mode="loose">Loose Prompting</button>
-              <button class="toggle-btn" data-mode="strict">Strict Tool Schema</button>
-            </div>
-            <div class="schema-playground">
-              <div class="schema-input">
-                <label>Input Text to Parse</label>
-                <textarea id="schemaInputText" class="glass-input" rows="3">Extract user: Alice, age 28. Status is active.</textarea>
-                <button id="btnParseData" class="btn btn-secondary mt-2">Parse Data</button>
-              </div>
-              <div class="schema-output">
-                <label>Generated JSON Output</label>
-                <pre class="json-display" id="schemaOutputJson">// Output will appear here</pre>
-                <div class="validation-status" id="validationStatus"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+<div id="d2-practice" class="tab-content practice-content">
+<div class="dual-col">
+<div class="file-explorer"><h4>Project Tree</h4>
+<ul class="tree"><li class="tree-node folder active" data-path="root"><span class="folder-icon">📁</span> /my-project <span class="file-badge">CLAUDE.md</span>
+<ul class="tree-sub"><li class="tree-node folder" data-path="backend"><span class="folder-icon">📁</span> backend <span class="file-badge">CLAUDE.md</span></li>
+<li class="tree-node folder" data-path="frontend"><span class="folder-icon">📁</span> frontend</li></ul></li></ul></div>
+<div class="context-resolution"><h4>Resolved Context</h4><div class="resolved-context-box" id="resolvedContext"></div></div>
+</div></div>
+</div>
+</section>
 
-      <!-- Domain 4 -->
-      <section id="domain-4" class="viz-section">
-        <div class="section-header">
-          <div class="domain-weight">18%</div>
-          <h2 class="section-title">Domain 4: Tool Design & MCP</h2>
-        </div>
-        <div class="viz-card">
-          <div class="card-tabs">
-            <button class="tab-btn active" data-target="d4-theory">Theory & Best Practices</button>
-            <button class="tab-btn" data-target="d4-practice">Interactive Sandbox</button>
-          </div>
+<!-- DOMAIN 3 -->
+<section id="domain-3" class="viz-section">
+<div class="section-header"><div class="domain-weight">20%</div><h2 class="section-title">Domain 3: Prompt Engineering & Structured Output</h2></div>
+<div class="viz-card">
+<div class="card-tabs"><button class="tab-btn active" data-target="d3-theory">Theory</button><button class="tab-btn" data-target="d3-practice">Interactive Sandbox</button></div>
 
-          <div id="d4-theory" class="tab-content theory-content active">
-             <div class="theory-grid">
-              <div class="theory-block">
-                <h3>The Model Context Protocol</h3>
-                <p>MCP standardizes how AI connects to external data. It establishes a secure boundary between the Host (Claude Desktop/Claude Code) and external environments.</p>
-                <ul>
-                  <li><strong>Tools:</strong> Actions the LLM can take (e.g., <code>write_file</code>).</li>
-                  <li><strong>Resources:</strong> Data the LLM can read (e.g., <code>postgres://table</code>).</li>
-                  <li><strong>Prompts:</strong> Reusable prompt templates exposed by the server.</li>
-                </ul>
-              </div>
-              <div class="theory-block">
-                <h3>Security Boundaries</h3>
-                <p>The LLM host never executes code. It requests an MCP server to execute a Tool. The MCP Server executes the logic locally and returns the result to the Host. The Host user must explicitly approve sensitive tool calls.</p>
-              </div>
-            </div>
-          </div>
+<div id="d3-theory" class="tab-content theory-content active">
+<div class="theory-grid">
+<div class="theory-block"><h3>Structured Output via Forced Tool Use</h3>
+<p>1. Define a "tool" with your JSON Schema<br>2. Set <code>tool_choice: {"type":"tool","name":"extract_X"}</code><br>3. Claude MUST return data matching the schema</p>
+<table class="theory-table"><tr><th>tool_choice</th><th>Behavior</th></tr>
+<tr><td><code>"auto"</code></td><td>Claude decides (default)</td></tr>
+<tr><td><code>"any"</code></td><td>Must use some tool</td></tr>
+<tr><td><code>{"type":"tool","name":"X"}</code></td><td>Forces specific tool</td></tr>
+<tr><td><code>"none"</code></td><td>No tools allowed</td></tr></table>
+<div class="exam-trap"><strong>Exam Trap:</strong> "Silently fix Claude's output errors" is WRONG. Always send validation errors back to Claude.</div></div>
+<div class="theory-block"><h3>Anti-Hallucination Patterns</h3>
+<table class="theory-table"><tr><th>Pattern</th><th>Why</th></tr>
+<tr><td><code>"type":["string","null"]</code></td><td>Claude returns null instead of guessing</td></tr>
+<tr><td><code>"enum":[...,"other"]</code> + detail</td><td>Handles unexpected values</td></tr>
+<tr><td>Required vs optional fields</td><td>Explicit about what must exist</td></tr></table>
+<p style="margin-top:1rem"><strong>Few-shot best practices:</strong> 2–5 examples, include positive AND negative, show edge cases.</p></div>
+</div></div>
 
-          <div id="d4-practice" class="tab-content practice-content">
-            <div class="mcp-architecture">
-              <div class="mcp-client">
-                <div class="mcp-icon">🧠</div>
-                <h4>Claude Host</h4>
-                <div class="mcp-injected-tools" id="injectedTools"><span class="mcp-empty">No tools connected</span></div>
-              </div>
-              <div class="mcp-connection-lines">
-                <svg width="100%" height="100%" class="connection-svg">
-                  <path id="line-github" d="M 0,50 Q 50,50 100,20" class="conn-line" />
-                  <path id="line-postgres" d="M 0,50 Q 50,50 100,50" class="conn-line" />
-                  <path id="line-fs" d="M 0,50 Q 50,50 100,80" class="conn-line" />
-                </svg>
-              </div>
-              <div class="mcp-servers">
-                <div class="mcp-server-node" data-server="github">
-                  <div class="server-header"><span class="icon">🐙</span> GitHub MCP<label class="switch"><input type="checkbox" class="mcp-toggle" value="github"><span class="slider"></span></label></div>
-                  <div class="server-details">Provides: <code>read_repo</code>, <code>create_pr</code></div>
-                </div>
-                <div class="mcp-server-node" data-server="postgres">
-                  <div class="server-header"><span class="icon">🐘</span> Postgres MCP<label class="switch"><input type="checkbox" class="mcp-toggle" value="postgres"><span class="slider"></span></label></div>
-                  <div class="server-details">Provides: <code>query_db</code></div>
-                </div>
-                <div class="mcp-server-node" data-server="fs">
-                  <div class="server-header"><span class="icon">📁</span> Local FS MCP<label class="switch"><input type="checkbox" class="mcp-toggle" value="fs"><span class="slider"></span></label></div>
-                  <div class="server-details">Provides: <code>read_file</code></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+<div id="d3-practice" class="tab-content practice-content">
+<div class="toggle-group"><button class="toggle-btn active" data-mode="loose">Loose Prompting</button><button class="toggle-btn" data-mode="strict">Strict Tool Schema</button></div>
+<div class="schema-playground">
+<div class="schema-input"><label>Input Text to Parse</label><textarea id="schemaInputText" class="glass-input" rows="3">Extract user: Alice, age 28. Status is active.</textarea><button id="btnParseData" class="btn btn-secondary mt-2">Parse Data</button></div>
+<div class="schema-output"><label>Generated JSON Output</label><pre class="json-display" id="schemaOutputJson">// Output will appear here</pre><div class="validation-status" id="validationStatus"></div></div>
+</div></div>
+</div>
+</section>
 
-      <!-- Domain 5 -->
-      <section id="domain-5" class="viz-section">
-        <div class="section-header">
-          <div class="domain-weight">15%</div>
-          <h2 class="section-title">Domain 5: Context Management & Reliability</h2>
-        </div>
-        <div class="viz-card">
-          <div class="card-tabs">
-            <button class="tab-btn active" data-target="d5-theory">Theory & Best Practices</button>
-            <button class="tab-btn" data-target="d5-practice">Interactive Sandbox</button>
-          </div>
+<!-- DOMAIN 4 -->
+<section id="domain-4" class="viz-section">
+<div class="section-header"><div class="domain-weight">18%</div><h2 class="section-title">Domain 4: Tool Design & MCP</h2></div>
+<div class="viz-card">
+<div class="card-tabs"><button class="tab-btn active" data-target="d4-theory">Theory</button><button class="tab-btn" data-target="d4-practice">Interactive Sandbox</button></div>
 
-          <div id="d5-theory" class="tab-content theory-content active">
-             <div class="theory-grid">
-              <div class="theory-block">
-                <h3>Prompt Caching Thresholds</h3>
-                <p>Prompt Caching drastically reduces costs (up to 90%) and latency for long contexts. However, caching only activates if the prefix is at least <strong>1024 tokens</strong>.</p>
-              </div>
-              <div class="theory-block">
-                <h3>Context Structuring</h3>
-                <p>To maximize cache hits, place static content (System prompts, long reference PDFs, massive few-shot examples) at the <em>beginning</em> of your context window. Place dynamic, changing content (User queries, recent chat history) at the <em>end</em>.</p>
-              </div>
-            </div>
-          </div>
+<div id="d4-theory" class="tab-content theory-content active">
+<div class="theory-grid">
+<div class="theory-block"><h3>MCP Three Primitives</h3>
+<table class="theory-table"><tr><th></th><th>Tools</th><th>Resources</th><th>Prompts</th></tr>
+<tr><td><strong>Does</strong></td><td>Actions (side effects)</td><td>Data catalog (read-only)</td><td>Reusable templates</td></tr>
+<tr><td><strong>Example</strong></td><td><code>create_issue</code></td><td><code>list_repos</code></td><td>Structured interaction</td></tr></table>
+<p style="margin-top:0.5rem"><strong>Golden rule:</strong> Resources = read. Tools = write/act.</p>
+<table class="theory-table" style="margin-top:1rem"><tr><th>Scope</th><th>File</th><th>For</th></tr>
+<tr><td>Project</td><td><code>.mcp.json</code></td><td>Shared with team</td></tr>
+<tr><td>User</td><td><code>~/.claude/.mcp.json</code></td><td>Personal, global</td></tr></table></div>
+<div class="theory-block"><h3>Error Categories</h3>
+<table class="theory-table"><tr><th>Type</th><th>Example</th><th>Action</th></tr>
+<tr><td><strong>Transient</strong></td><td>Timeout, rate limit</td><td>Retry with backoff</td></tr>
+<tr><td><strong>Business logic</strong></td><td>"User not found"</td><td>Return to Claude for decision</td></tr>
+<tr><td><strong>Permission</strong></td><td>"Access denied"</td><td>Escalate, never retry</td></tr></table>
+<div class="exam-trap"><strong>Exam Trap:</strong> "Retry business logic errors" is WRONG. "User not found" won't change with retries. Return to Claude.</div></div>
+</div></div>
 
-          <div id="d5-practice" class="tab-content practice-content">
-            <div class="context-controls">
-              <button class="btn btn-outline" id="btnAddSys">Add System Prompt (5k)</button>
-              <button class="btn btn-outline" id="btnAddDocs">Add Reference PDF (50k)</button>
-              <button class="btn btn-outline" id="btnAddChat">Add Chat History (15k)</button>
-              <button class="btn btn-danger" id="btnClearTokens">Reset</button>
-            </div>
-            <div class="context-window-visual">
-              <div class="context-stats">
-                <span>Used: <strong id="tokenUsed">0</strong> / 200,000 tokens</span>
-                <span class="cached-label">Cached: <strong id="tokenCached" style="color:var(--accent-teal)">0</strong> tokens</span>
-              </div>
-              <div class="context-bar">
-                <div class="cache-marker" title="Threshold (1024)"></div>
-                <div class="bar-fill sys-fill" id="fillSys" style="width: 0%"></div>
-                <div class="bar-fill docs-fill" id="fillDocs" style="width: 0%"></div>
-                <div class="bar-fill chat-fill" id="fillChat" style="width: 0%"></div>
-              </div>
-              <div class="context-axis">
-                <span>0</span><span>50k</span><span>100k</span><span>150k</span><span>200k</span>
-              </div>
-            </div>
-            <div class="token-metrics">
-              <div class="metric-box"><div class="metric-label">Estimated Cost</div><div class="metric-val" id="metricCost">$0.00</div></div>
-              <div class="metric-box"><div class="metric-label">Cache Discount</div><div class="metric-val discount" id="metricDiscount">-$0.00</div></div>
-              <div class="metric-box"><div class="metric-label">TTFT</div><div class="metric-val" id="metricLatency">~0.5s</div></div>
-            </div>
-          </div>
-        </div>
-      </section>
+<div id="d4-practice" class="tab-content practice-content">
+<div class="mcp-architecture">
+<div class="mcp-client"><div class="mcp-icon">🧠</div><h4>Claude Host</h4><div class="mcp-injected-tools" id="injectedTools"><span class="mcp-empty">No tools connected</span></div></div>
+<div class="mcp-connection-lines"><svg width="100%" height="100%" class="connection-svg"><path id="line-github" d="M 0,50 Q 50,50 100,20" class="conn-line"/><path id="line-postgres" d="M 0,50 Q 50,50 100,50" class="conn-line"/><path id="line-fs" d="M 0,50 Q 50,50 100,80" class="conn-line"/></svg></div>
+<div class="mcp-servers">
+<div class="mcp-server-node" data-server="github"><div class="server-header"><span class="icon">🐙</span> GitHub MCP<label class="switch"><input type="checkbox" class="mcp-toggle" value="github"><span class="slider"></span></label></div><div class="server-details">Provides: <code>read_repo</code>, <code>create_pr</code></div></div>
+<div class="mcp-server-node" data-server="postgres"><div class="server-header"><span class="icon">🐘</span> Postgres MCP<label class="switch"><input type="checkbox" class="mcp-toggle" value="postgres"><span class="slider"></span></label></div><div class="server-details">Provides: <code>query_db</code></div></div>
+<div class="mcp-server-node" data-server="fs"><div class="server-header"><span class="icon">📁</span> Local FS MCP<label class="switch"><input type="checkbox" class="mcp-toggle" value="fs"><span class="slider"></span></label></div><div class="server-details">Provides: <code>read_file</code></div></div>
+</div></div>
+</div>
+</div>
+</section>
 
-      <!-- Divider -->
-      <div class="section-divider"></div>
+<!-- DOMAIN 5 -->
+<section id="domain-5" class="viz-section">
+<div class="section-header"><div class="domain-weight">15%</div><h2 class="section-title">Domain 5: Context Management & Reliability</h2></div>
+<div class="viz-card">
+<div class="card-tabs"><button class="tab-btn active" data-target="d5-theory">Theory</button><button class="tab-btn" data-target="d5-practice">Interactive Sandbox</button></div>
 
-      <!-- Flashcards Section -->
-      <section id="flashcards" class="viz-section">
-        <div class="section-header">
-          <h2 class="section-title">Active Recall Flashcards</h2>
-          <p class="section-desc">Test your knowledge of key terminology before taking the mock exam.</p>
-        </div>
-        <div class="flashcards-grid">
-          <!-- Card 1 -->
-          <div class="flashcard-container">
-            <div class="flashcard">
-              <div class="flashcard-front">
-                <h4>What is the minimum token threshold to activate Prompt Caching?</h4>
-              </div>
-              <div class="flashcard-back">
-                <p><strong>1024 tokens.</strong> Any static prefix shorter than this will not be cached, even if explicitly marked with `cache_control`.</p>
-              </div>
-            </div>
-          </div>
-          <!-- Card 2 -->
-          <div class="flashcard-container">
-            <div class="flashcard">
-              <div class="flashcard-front">
-                <h4>How do you run Claude Code non-interactively in a CI/CD pipeline?</h4>
-              </div>
-              <div class="flashcard-back">
-                <p>Use the <strong><code>-p</code> (print) flag</strong>. Example: <code>claude -p "Review this PR"</code>. This prevents the CLI from hanging while waiting for user input.</p>
-              </div>
-            </div>
-          </div>
-          <!-- Card 3 -->
-          <div class="flashcard-container">
-            <div class="flashcard">
-              <div class="flashcard-front">
-                <h4>In a multi-agent system, what is the role of the Supervisor (Router) Agent?</h4>
-              </div>
-              <div class="flashcard-back">
-                <p>The Supervisor is responsible for <strong>task decomposition, delegating to sub-agents, evaluating results, and synthesizing the final output.</strong></p>
-              </div>
-            </div>
-          </div>
-          <!-- Card 4 -->
-          <div class="flashcard-container">
-            <div class="flashcard">
-              <div class="flashcard-front">
-                <h4>How should you reliably guarantee a strict JSON output?</h4>
-              </div>
-              <div class="flashcard-back">
-                <p>Use <strong>Tool Use (Function Calling)</strong> and enforce the <code>tool_choice</code>. Do not rely solely on system prompt instructions like "Output only JSON".</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+<div id="d5-theory" class="tab-content theory-content active">
+<div class="theory-grid">
+<div class="theory-block"><h3>Lost-in-the-Middle Effect</h3>
+<p>LLMs have <strong>U-shaped attention</strong> — high at start, low in middle, high at end. Place critical context at START and END.</p>
+<h3 style="margin-top:1rem">Token Budget Strategies</h3>
+<table class="theory-table"><tr><th>Strategy</th><th>How</th></tr>
+<tr><td>Trim tool outputs</td><td>Extract only relevant fields</td></tr>
+<tr><td>Position-aware ordering</td><td>Critical first and last</td></tr>
+<tr><td>Progressive summarization</td><td>Compress older context</td></tr>
+<tr><td>Subagent delegation</td><td>Own context, return summaries</td></tr></table></div>
+<div class="theory-block"><h3>Batch Processing (Message Batches API)</h3>
+<table class="theory-table"><tr><th>Fact</th><th>Value</th></tr>
+<tr><td>Cost</td><td><strong>50% cheaper</strong> than real-time</td></tr>
+<tr><td>Max size</td><td>100K requests or 256 MB</td></tr>
+<tr><td>Correlation</td><td><code>custom_id</code> per request</td></tr>
+<tr><td>Limitation</td><td>❌ No multi-turn tool calling</td></tr></table>
+<h3 style="margin-top:1rem">Escalation Decision Rule</h3>
+<table class="theory-table"><tr><th>✅ Escalate</th><th>❌ Don't Escalate</th></tr>
+<tr><td>Policy gap — no rule exists</td><td>Standard procedure available</td></tr>
+<tr><td>Customer requests human</td><td>Repeatable task</td></tr>
+<tr><td>N attempts exhausted</td><td>Transient/retryable error</td></tr></table></div>
+</div></div>
 
-      <!-- Mock Quiz Section -->
-      <section id="mock-quiz" class="viz-section">
-        <div class="section-header">
-          <h2 class="section-title">Scenario-Based Mock Quiz</h2>
-          <p class="section-desc">Apply your architectural judgment to production scenarios.</p>
-        </div>
-        <div class="viz-card">
-          <div class="quiz-container">
-            <div class="quiz-header">
-              <span class="quiz-progress" id="quizProgress">Question 1 of 3</span>
-              <span class="quiz-score" id="quizScore">Score: 0</span>
-            </div>
-            
-            <div class="quiz-body" id="quizBody">
-              <!-- Injected by JS -->
-            </div>
-            
-            <div class="quiz-feedback" id="quizFeedback" style="display: none;">
-              <h4 id="feedbackTitle">Correct!</h4>
-              <p id="feedbackText">Explanation here.</p>
-              <button class="btn btn-primary mt-2" id="btnNextQuestion">Next Question</button>
-            </div>
-          </div>
-        </div>
-      </section>
+<div id="d5-practice" class="tab-content practice-content">
+<div class="context-controls">
+<button class="btn btn-outline" id="btnAddSys">Add System Prompt (5k)</button>
+<button class="btn btn-outline" id="btnAddDocs">Add Reference PDF (50k)</button>
+<button class="btn btn-outline" id="btnAddChat">Add Chat History (15k)</button>
+<button class="btn btn-danger" id="btnClearTokens">Reset</button></div>
+<div class="context-window-visual">
+<div class="context-stats"><span>Used: <strong id="tokenUsed">0</strong> / 200,000</span><span class="cached-label">Cached: <strong id="tokenCached" style="color:var(--accent-teal)">0</strong></span></div>
+<div class="context-bar"><div class="cache-marker" title="Threshold (1024)"></div><div class="bar-fill sys-fill" id="fillSys" style="width:0%"></div><div class="bar-fill docs-fill" id="fillDocs" style="width:0%"></div><div class="bar-fill chat-fill" id="fillChat" style="width:0%"></div></div>
+<div class="context-axis"><span>0</span><span>50k</span><span>100k</span><span>150k</span><span>200k</span></div></div>
+<div class="token-metrics">
+<div class="metric-box"><div class="metric-label">Cost</div><div class="metric-val" id="metricCost">$0.00</div></div>
+<div class="metric-box"><div class="metric-label">Cache Discount</div><div class="metric-val discount" id="metricDiscount">-$0.00</div></div>
+<div class="metric-box"><div class="metric-label">TTFT</div><div class="metric-val" id="metricLatency">~0.5s</div></div></div>
+</div>
+</div>
+</section>
 
-    </main>
+<div class="section-divider"></div>
 
-    <footer class="footer">
-      <p>Prepared for the Claude Certified Architect Foundations Exam.</p>
-    </footer>
+<!-- FLASHCARDS -->
+<section id="flashcards" class="viz-section">
+<div class="section-header"><h2 class="section-title">Active Recall Flashcards</h2><p class="section-desc">Click to flip. 16 high-yield cards covering the most tested concepts.</p></div>
+<div class="flashcards-grid">
+<div class="flashcard-container"><div class="flashcard"><div class="flashcard-front"><h4>What are the 4 stop_reason values?</h4></div><div class="flashcard-back"><p><strong>end_turn</strong> (done), <strong>tool_use</strong> (call tool), <strong>max_tokens</strong> (output limit hit), <strong>refusal</strong> (safety block)</p></div></div></div>
+<div class="flashcard-container"><div class="flashcard"><div class="flashcard-front"><h4>Minimum tokens for Prompt Caching?</h4></div><div class="flashcard-back"><p><strong>1024 tokens.</strong> Any prefix shorter than this won't be cached.</p></div></div></div>
+<div class="flashcard-container"><div class="flashcard"><div class="flashcard-front"><h4>How to run Claude Code in CI/CD?</h4></div><div class="flashcard-back"><p>Use the <strong><code>-p</code> (print) flag</strong> for non-interactive mode. Add <code>--output-format json</code> for structured output.</p></div></div></div>
+<div class="flashcard-container"><div class="flashcard"><div class="flashcard-front"><h4>Grep vs Glob?</h4></div><div class="flashcard-back"><p><strong>Grep</strong> = search inside file <em>contents</em>. <strong>Glob</strong> = search file <em>names/paths</em> by pattern.</p></div></div></div>
+<div class="flashcard-container"><div class="flashcard"><div class="flashcard-front"><h4>MCP: Tools vs Resources vs Prompts?</h4></div><div class="flashcard-back"><p><strong>Tools</strong> = actions with side effects. <strong>Resources</strong> = read-only data. <strong>Prompts</strong> = reusable templates.</p></div></div></div>
+<div class="flashcard-container"><div class="flashcard"><div class="flashcard-front"><h4>What is the Lost-in-the-Middle effect?</h4></div><div class="flashcard-back"><p>LLMs have <strong>U-shaped attention</strong>. They attend most to content at the <strong>beginning and end</strong>, least in the middle.</p></div></div></div>
+<div class="flashcard-container"><div class="flashcard"><div class="flashcard-front"><h4>How many tools should each agent have?</h4></div><div class="flashcard-back"><p><strong>4-5 tools max.</strong> More tools = more selection ambiguity = more errors.</p></div></div></div>
+<div class="flashcard-container"><div class="flashcard"><div class="flashcard-front"><h4>What does fork_session do?</h4></div><div class="flashcard-back"><p>Creates a <strong>branch</strong> from the current session for safe exploration without polluting the main session.</p></div></div></div>
+<div class="flashcard-container"><div class="flashcard"><div class="flashcard-front"><h4>How to guarantee strict JSON output?</h4></div><div class="flashcard-back"><p>Use <strong>Tool Use API</strong> with <code>tool_choice: {"type":"tool","name":"X"}</code>. Never rely on prompt instructions alone.</p></div></div></div>
+<div class="flashcard-container"><div class="flashcard"><div class="flashcard-front"><h4>What is custom_id in Batch API?</h4></div><div class="flashcard-back"><p>A unique identifier per batch request for <strong>result correlation</strong>. Results are NOT returned in submission order.</p></div></div></div>
+<div class="flashcard-container"><div class="flashcard"><div class="flashcard-front"><h4>PreToolUse vs PostToolUse hooks?</h4></div><div class="flashcard-back"><p><strong>PreToolUse</strong> = validate/block before execution. <strong>PostToolUse</strong> = act after completion (e.g., auto-format after Write).</p></div></div></div>
+<div class="flashcard-container"><div class="flashcard"><div class="flashcard-front"><h4>What should subagents return to coordinators?</h4></div><div class="flashcard-back"><p><strong>Structured summaries with key findings</strong>, NOT full document contents. Full content = context pollution.</p></div></div></div>
+<div class="flashcard-container"><div class="flashcard"><div class="flashcard-front"><h4>3 types of tool errors?</h4></div><div class="flashcard-back"><p><strong>Transient</strong> → retry. <strong>Business logic</strong> → return to Claude. <strong>Permission</strong> → escalate, never retry.</p></div></div></div>
+<div class="flashcard-container"><div class="flashcard"><div class="flashcard-front"><h4>Where does path-scoped config go?</h4></div><div class="flashcard-back"><p><code>.claude/rules/*.md</code> with YAML frontmatter <code>globs:</code> patterns. Auto-loads when editing matching files.</p></div></div></div>
+<div class="flashcard-container"><div class="flashcard"><div class="flashcard-front"><h4>Message Batches API cost savings?</h4></div><div class="flashcard-back"><p><strong>50% cheaper</strong> than real-time. Max 100K requests or 256MB. Up to 24h SLA. No multi-turn tool calling.</p></div></div></div>
+<div class="flashcard-container"><div class="flashcard"><div class="flashcard-front"><h4>When to use Plan Mode vs Direct?</h4></div><div class="flashcard-back"><p><strong>Plan Mode:</strong> multi-file, architectural, high-risk, ambiguous. <strong>Direct:</strong> single file, obvious bug fixes, low-risk.</p></div></div></div>
+</div>
+</section>
 
-    <script src="index.js"></script>
-  </body>
+<!-- MOCK QUIZ -->
+<section id="mock-quiz" class="viz-section">
+<div class="section-header"><h2 class="section-title">Scenario-Based Mock Quiz</h2><p class="section-desc">40 questions sourced from practice sets. Filter by domain or take the full exam.</p></div>
+<div class="viz-card">
+<div class="quiz-container">
+<div class="domain-filters">
+<button class="filter-btn active" data-domain="0">All Domains</button>
+<button class="filter-btn" data-domain="1">D1: Agents (27%)</button>
+<button class="filter-btn" data-domain="2">D2: Config (20%)</button>
+<button class="filter-btn" data-domain="3">D3: Structured (20%)</button>
+<button class="filter-btn" data-domain="4">D4: MCP (18%)</button>
+<button class="filter-btn" data-domain="5">D5: Context (15%)</button>
+</div>
+<div class="quiz-header"><span class="quiz-progress" id="quizProgress">Question 1</span><span class="quiz-score" id="quizScore">Score: 0</span></div>
+<div class="quiz-body" id="quizBody"></div>
+<div class="quiz-feedback" id="quizFeedback" style="display:none"><h4 id="feedbackTitle"></h4><p id="feedbackText"></p><button class="btn btn-primary mt-2" id="btnNextQuestion">Next Question</button></div>
+</div>
+</div>
+</section>
+
+</main>
+
+<!-- Cheat Sheet FAB -->
+<button class="cheat-fab" id="cheatFab" title="Exam Cheat Sheet">📋</button>
+
+<!-- Cheat Sheet Modal -->
+<div class="cheat-overlay" id="cheatOverlay">
+<div class="cheat-modal">
+<button class="cheat-close" id="cheatClose">✕</button>
+<h2>📋 Exam Day Cheat Sheet</h2>
+<div class="cheat-section"><h3>Exam Quick Facts</h3>
+<table class="theory-table"><tr><th>Detail</th><th>Value</th></tr>
+<tr><td>Questions</td><td>60 MCQs</td></tr><tr><td>Time</td><td>120 minutes</td></tr><tr><td>Pass</td><td>720 / 1000 scaled</td></tr><tr><td>Format</td><td>4 of 6 scenarios randomly selected</td></tr><tr><td>Resources</td><td>❌ Closed-book, no breaks</td></tr></table></div>
+<div class="cheat-section"><h3>Top 10 Anti-Patterns (Wrong Answers)</h3>
+<table class="theory-table"><tr><th>#</th><th>Anti-Pattern</th><th>Why Wrong</th></tr>
+<tr><td>1</td><td>"Increase max_tokens"</td><td>It's output limit, not context. Use /compact</td></tr>
+<tr><td>2</td><td>"Retry business logic errors"</td><td>"User not found" won't change. Return to Claude</td></tr>
+<tr><td>3</td><td>"Pass entire history to subagents"</td><td>Defeats context isolation. Pass summaries only</td></tr>
+<tr><td>4</td><td>"Use vague prompts for flexibility"</td><td>Causes inconsistency. Be explicit</td></tr>
+<tr><td>5</td><td>"Single confidence threshold"</td><td>Different fields need different thresholds</td></tr>
+<tr><td>6</td><td>"Silently fix Claude's errors"</td><td>Send errors back — Claude may have misread source</td></tr>
+<tr><td>7</td><td>"All rules in global CLAUDE.md"</td><td>Use path-scoped .claude/rules/</td></tr>
+<tr><td>8</td><td>"One massive tool"</td><td>Split by purpose. 4-5 tools per agent</td></tr>
+<tr><td>9</td><td>"Auto-escalate every error"</td><td>Only escalate policy gaps, exhausted retries</td></tr>
+<tr><td>10</td><td>"Resubmit entire batch"</td><td>Track by custom_id, retry only failed</td></tr></table></div>
+<div class="cheat-section"><h3>Last-Minute Reminders</h3><ul style="color:var(--text-muted);padding-left:1.2rem">
+<li>Read ALL options before choosing</li><li>"What would a senior architect recommend?"</li><li>Watch for "always" and "never" — usually wrong</li><li>Domain 1 is 27% — spend extra time on agentic questions</li><li>2 min/question average, flag hard ones</li><li>The exam tests judgment, not syntax</li></ul></div>
+</div>
+</div>
+
+<footer class="footer"><p>Prepared for the Claude Certified Architect Foundations Exam.</p></footer>
+
+<script src="quiz-data.js"></script>
+<script src="index.js"></script>
+</body>
 </html>
