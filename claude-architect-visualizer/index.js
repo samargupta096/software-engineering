@@ -323,4 +323,136 @@ document.addEventListener('DOMContentLoaded', () => {
     updateMath();
   });
 
+  /* --------------------------------------------------------------------------
+     Tabs Logic
+     -------------------------------------------------------------------------- */
+  const tabBtns = document.querySelectorAll('.tab-btn');
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const card = btn.closest('.viz-card');
+      const tabs = card.querySelectorAll('.tab-btn');
+      const contents = card.querySelectorAll('.tab-content');
+      
+      tabs.forEach(t => t.classList.remove('active'));
+      contents.forEach(c => c.classList.remove('active'));
+      
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.target).classList.add('active');
+    });
+  });
+
+  /* --------------------------------------------------------------------------
+     Flashcards Logic
+     -------------------------------------------------------------------------- */
+  const flashcards = document.querySelectorAll('.flashcard');
+  flashcards.forEach(card => {
+    card.addEventListener('click', () => {
+      card.classList.toggle('flipped');
+    });
+  });
+
+  /* --------------------------------------------------------------------------
+     Mock Quiz Engine
+     -------------------------------------------------------------------------- */
+  const quizData = [
+    {
+      q: "You are building a system that needs to extract specific data from an email and insert it into a Postgres database. How should you ensure the LLM provides the correct schema?",
+      opts: [
+        "Include a JSON template in the system prompt and ask nicely.",
+        "Use the Tool Use API with `tool_choice` to enforce the schema programmatically.",
+        "Use Prompt Caching to cache the schema.",
+        "Add a Reviewer Agent to parse the text."
+      ],
+      ans: 1,
+      exp: "Using the Tool Use API provides the strongest guarantee that the output will match the schema, as the model is heavily trained to map arguments to provided tool definitions."
+    },
+    {
+      q: "Your application is experiencing high latency and costs when processing 50-page reference PDFs. What is the most effective optimization?",
+      opts: [
+        "Switch to a smaller model like Haiku.",
+        "Remove the system prompt to save tokens.",
+        "Place the PDF at the beginning of the prompt and use Prompt Caching.",
+        "Break the PDF into 50 separate requests."
+      ],
+      ans: 2,
+      exp: "Prompt Caching is designed exactly for this. By placing the massive, static PDF at the start of the context window, it crosses the 1024 token threshold and drastically reduces TTFT (Time To First Token) and cost."
+    },
+    {
+      q: "When configuring a project directory with `CLAUDE.md`, what happens if you have a `CLAUDE.md` in the root and another in the `/backend` folder?",
+      opts: [
+        "The root file is ignored completely for files in `/backend`.",
+        "The `/backend` file throws an error for duplicating configurations.",
+        "They cascade. The `/backend` file will append to or override the root file's rules.",
+        "You must manually link them using the `-config` flag."
+      ],
+      ans: 2,
+      exp: "CLAUDE.md files follow a cascading inheritance model, similar to .gitignore or .eslintrc files."
+    }
+  ];
+
+  let currentQuestion = 0;
+  let score = 0;
+  
+  const qProgress = document.getElementById('quizProgress');
+  const qScore = document.getElementById('quizScore');
+  const qBody = document.getElementById('quizBody');
+  const qFeedback = document.getElementById('quizFeedback');
+  const fbTitle = document.getElementById('feedbackTitle');
+  const fbText = document.getElementById('feedbackText');
+  const btnNext = document.getElementById('btnNextQuestion');
+
+  function renderQuiz() {
+    if (currentQuestion >= quizData.length) {
+      qBody.innerHTML = `<div class="quiz-question">Quiz Complete! Final Score: ${score} / ${quizData.length}</div>`;
+      qFeedback.style.display = 'none';
+      return;
+    }
+    
+    const data = quizData[currentQuestion];
+    qProgress.textContent = `Question ${currentQuestion + 1} of ${quizData.length}`;
+    qScore.textContent = `Score: ${score}`;
+    qFeedback.style.display = 'none';
+    
+    let html = `<div class="quiz-question">${data.q}</div><div class="quiz-options">`;
+    data.opts.forEach((opt, idx) => {
+      html += `<button class="quiz-option" data-idx="${idx}">${opt}</button>`;
+    });
+    html += `</div>`;
+    qBody.innerHTML = html;
+    
+    const optsBtns = document.querySelectorAll('.quiz-option');
+    optsBtns.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        // Disable all
+        optsBtns.forEach(b => { b.disabled = true; b.style.cursor = 'default'; });
+        
+        const selectedIdx = parseInt(e.target.dataset.idx);
+        const correctIdx = data.ans;
+        
+        if (selectedIdx === correctIdx) {
+          e.target.classList.add('correct');
+          score++;
+          fbTitle.textContent = "Correct!";
+          qFeedback.className = "quiz-feedback success";
+        } else {
+          e.target.classList.add('wrong');
+          document.querySelector(`.quiz-option[data-idx="${correctIdx}"]`).classList.add('correct');
+          fbTitle.textContent = "Incorrect";
+          qFeedback.className = "quiz-feedback error";
+        }
+        
+        fbText.textContent = data.exp;
+        qFeedback.style.display = 'block';
+      });
+    });
+  }
+
+  if (btnNext) {
+      btnNext.addEventListener('click', () => {
+        currentQuestion++;
+        renderQuiz();
+      });
+      renderQuiz();
+  }
+
 });

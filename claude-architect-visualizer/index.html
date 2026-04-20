@@ -4,16 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Claude Certified Architect Exam Prep | Interactive Visualizer</title>
-    <meta
-      name="description"
-      content="Interactive learning modules for the Claude Certified Architect (CCA) exam covering MCP, Agentic Architecture, Prompt Caching, and more."
-    />
+    <meta name="description" content="Comprehensive learning hub for the Claude Certified Architect (CCA) exam covering MCP, Agentic Architecture, Prompt Caching, and more." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="index.css" />
   </head>
   <body>
@@ -27,43 +21,64 @@
 
     <!-- Hero Section -->
     <header class="hero">
-      <div class="brand-badge">Certification Prep</div>
-      <h1 class="hero-title">
-        Claude Certified <span class="gradient-text">Architect</span>
-      </h1>
+      <div class="brand-badge">Comprehensive Study Hub</div>
+      <h1 class="hero-title">Claude Certified <span class="gradient-text">Architect</span></h1>
       <p class="hero-subtitle">
-        Master the five core domains of the CCA-Foundations exam. Understand
-        agentic orchestration, MCP tool design, context caching, and Claude Code
-        workflows through interactive simulations.
+        Master the five core domains of the CCA-Foundations exam. Combine deep-dive theory with interactive sandboxes, active recall flashcards, and scenario-based mock quizzes.
       </p>
     </header>
 
     <!-- Table of Contents -->
     <nav class="toc">
       <div class="toc__inner">
-        <a href="#domain-1" class="toc__link active">1. Agentic Architecture (27%)</a>
-        <a href="#domain-2" class="toc__link">2. Claude Code Config (20%)</a>
-        <a href="#domain-3" class="toc__link">3. Structured Output (20%)</a>
-        <a href="#domain-4" class="toc__link">4. MCP & Tools (18%)</a>
-        <a href="#domain-5" class="toc__link">5. Context Caching (15%)</a>
+        <a href="#domain-1" class="toc__link active">1. Agents (27%)</a>
+        <a href="#domain-2" class="toc__link">2. Config (20%)</a>
+        <a href="#domain-3" class="toc__link">3. Structured (20%)</a>
+        <a href="#domain-4" class="toc__link">4. MCP (18%)</a>
+        <a href="#domain-5" class="toc__link">5. Context (15%)</a>
+        <a href="#flashcards" class="toc__link highlight">Flashcards</a>
+        <a href="#mock-quiz" class="toc__link highlight">Mock Quiz</a>
       </div>
     </nav>
 
     <main class="content-wrapper">
-      <!-- Domain 1: Agentic Architecture & Orchestration -->
+
+      <!-- Domain 1 -->
       <section id="domain-1" class="viz-section">
         <div class="section-header">
           <div class="domain-weight">27%</div>
           <h2 class="section-title">Domain 1: Agentic Architecture & Orchestration</h2>
-          <p class="section-desc">
-            Explore the hub-and-spoke pattern where a Supervisor Agent delegates tasks to specialized sub-agents.
-          </p>
+          <p class="section-desc">Design multi-agent systems, manage task decomposition, and implement hub-and-spoke models.</p>
         </div>
         <div class="viz-card">
-          <div class="viz-card__header">
-            <h3>Multi-Agent Routing Simulator</h3>
+          <div class="card-tabs">
+            <button class="tab-btn active" data-target="d1-theory">Theory & Best Practices</button>
+            <button class="tab-btn" data-target="d1-practice">Interactive Sandbox</button>
           </div>
-          <div class="viz-card__body">
+          
+          <div id="d1-theory" class="tab-content theory-content active">
+            <div class="theory-grid">
+              <div class="theory-block">
+                <h3>Hub-and-Spoke Pattern</h3>
+                <p>The recommended architecture for complex tasks. A Supervisor (Router) agent breaks down a prompt, delegates to specialized sub-agents, and synthesizes the final output.</p>
+                <ul>
+                  <li><strong>Supervisor:</strong> Responsible for planning, delegation, and final review.</li>
+                  <li><strong>Sub-agents:</strong> Highly specialized prompts (e.g., "You are an expert at searching logs").</li>
+                </ul>
+              </div>
+              <div class="theory-block">
+                <h3>When to use Multi-Agent?</h3>
+                <p>Avoid multi-agent overhead for simple workflows. Use them when:</p>
+                <ul>
+                  <li>The task requires multiple distinct domains of expertise.</li>
+                  <li>Context windows would be overwhelmed by combining all tools into one agent.</li>
+                  <li>You need distinct validation loops.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div id="d1-practice" class="tab-content practice-content">
             <div class="agent-simulator">
               <div class="agent-input-container">
                 <textarea id="agentPrompt" class="glass-input" rows="2" placeholder="e.g., 'Research latest ML trends, write a summary script, and review the code for errors'"></textarea>
@@ -76,13 +91,11 @@
                   <div class="agent-name">Supervisor Agent</div>
                   <div class="agent-status" id="statusSupervisor">Waiting...</div>
                 </div>
-                
                 <div class="agent-links">
                   <div class="link-line" id="linkResearcher"></div>
                   <div class="link-line" id="linkCoder"></div>
                   <div class="link-line" id="linkReviewer"></div>
                 </div>
-
                 <!-- Sub Agents -->
                 <div class="sub-agents-row">
                   <div class="agent-node subagent" id="nodeResearcher">
@@ -107,71 +120,94 @@
               </div>
             </div>
           </div>
-          <div class="callout callout-info">
-            <strong>Exam Tip:</strong> The Supervisor (Router) handles decomposition and synthesis. It must have clear instructions on when to delegate and when to halt the agentic loop.
-          </div>
         </div>
       </section>
 
-      <!-- Domain 2: Claude Code Configuration -->
+      <!-- Domain 2 -->
       <section id="domain-2" class="viz-section">
         <div class="section-header">
           <div class="domain-weight">20%</div>
           <h2 class="section-title">Domain 2: Claude Code Configuration</h2>
-          <p class="section-desc">
-            Understand how <code>CLAUDE.md</code> files cascade. Directory-level rules override or append to project-level rules, enabling custom slash commands and path-specific linting.
-          </p>
+          <p class="section-desc">Mastering <code>CLAUDE.md</code> hierarchies and CI/CD pipelines.</p>
         </div>
         <div class="viz-card">
-          <div class="viz-card__header">
-            <h3>CLAUDE.md Hierarchy Explorer</h3>
+          <div class="card-tabs">
+            <button class="tab-btn active" data-target="d2-theory">Theory & Best Practices</button>
+            <button class="tab-btn" data-target="d2-practice">Interactive Sandbox</button>
           </div>
-          <div class="viz-card__body dual-col">
-            <div class="file-explorer">
-              <h4>Project Tree</h4>
-              <ul class="tree">
-                <li class="tree-node folder active" data-path="root">
-                  <span class="folder-icon">📁</span> /my-project
-                  <span class="file-badge">CLAUDE.md</span>
-                  <ul class="tree-sub">
-                    <li class="tree-node folder" data-path="backend">
-                      <span class="folder-icon">📁</span> backend
-                      <span class="file-badge">CLAUDE.md</span>
-                    </li>
-                    <li class="tree-node folder" data-path="frontend">
-                      <span class="folder-icon">📁</span> frontend
-                    </li>
-                  </ul>
-                </li>
-              </ul>
-            </div>
-            <div class="context-resolution">
-              <h4>Resolved Claude Context</h4>
-              <div class="resolved-context-box" id="resolvedContext">
-                <!-- Injected via JS -->
+          
+          <div id="d2-theory" class="tab-content theory-content active">
+             <div class="theory-grid">
+              <div class="theory-block">
+                <h3>CLAUDE.md Hierarchy</h3>
+                <p>Claude Code uses a cascading configuration system. Rules in a sub-directory's <code>CLAUDE.md</code> will append to or override rules from the parent directory.</p>
+                <ul>
+                  <li><strong>Project Level:</strong> Global styling, architecture guidelines.</li>
+                  <li><strong>Directory Level:</strong> Specific test commands, linting rules.</li>
+                </ul>
+              </div>
+              <div class="theory-block">
+                <h3>CI/CD Integration (-p flag)</h3>
+                <p>To run Claude Code non-interactively in CI pipelines (e.g., GitHub Actions for PR reviews), use the <code>-p</code> (print) flag. Without it, the pipeline will hang waiting for user input.</p>
               </div>
             </div>
           </div>
-          <div class="callout callout-tip">
-            <strong>Exam Tip:</strong> Use the <code>-p</code> flag in CI/CD environments to run Claude Code non-interactively for PR reviews or automated tests.
+
+          <div id="d2-practice" class="tab-content practice-content">
+            <div class="dual-col">
+              <div class="file-explorer">
+                <h4>Project Tree</h4>
+                <ul class="tree">
+                  <li class="tree-node folder active" data-path="root">
+                    <span class="folder-icon">📁</span> /my-project
+                    <span class="file-badge">CLAUDE.md</span>
+                    <ul class="tree-sub">
+                      <li class="tree-node folder" data-path="backend">
+                        <span class="folder-icon">📁</span> backend
+                        <span class="file-badge">CLAUDE.md</span>
+                      </li>
+                      <li class="tree-node folder" data-path="frontend">
+                        <span class="folder-icon">📁</span> frontend
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </div>
+              <div class="context-resolution">
+                <h4>Resolved Context</h4>
+                <div class="resolved-context-box" id="resolvedContext"></div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      <!-- Domain 3: Prompt Engineering & Structured Output -->
+      <!-- Domain 3 -->
       <section id="domain-3" class="viz-section">
         <div class="section-header">
           <div class="domain-weight">20%</div>
           <h2 class="section-title">Domain 3: Prompt Engineering & Structured Output</h2>
-          <p class="section-desc">
-            Compare loose prompting to programmatic schema enforcement (tool use) for ensuring reliable, parsable JSON outputs.
-          </p>
         </div>
         <div class="viz-card">
-          <div class="viz-card__header">
-            <h3>Schema Validation Playground</h3>
+          <div class="card-tabs">
+            <button class="tab-btn active" data-target="d3-theory">Theory & Best Practices</button>
+            <button class="tab-btn" data-target="d3-practice">Interactive Sandbox</button>
           </div>
-          <div class="viz-card__body">
+
+          <div id="d3-theory" class="tab-content theory-content active">
+             <div class="theory-grid">
+              <div class="theory-block">
+                <h3>Programmatic Enforcement</h3>
+                <p>Never rely on "Please output JSON" in your system prompt for production pipelines. The LLM might include conversational filler like "Here is your JSON:" which breaks <code>JSON.parse()</code>.</p>
+              </div>
+              <div class="theory-block">
+                <h3>Tool Use for Schemas</h3>
+                <p>Provide a single Tool (e.g., <code>record_data</code>) and force Claude to use it (via <code>tool_choice</code>). Claude's internal training heavily prioritizes matching Tool schemas perfectly, guaranteeing a strictly typed JSON object back to your application.</p>
+              </div>
+            </div>
+          </div>
+
+          <div id="d3-practice" class="tab-content practice-content">
             <div class="toggle-group">
               <button class="toggle-btn active" data-mode="loose">Loose Prompting</button>
               <button class="toggle-btn" data-mode="strict">Strict Tool Schema</button>
@@ -189,35 +225,46 @@
               </div>
             </div>
           </div>
-          <div class="callout callout-warning">
-            <strong>Exam Tip:</strong> Never rely solely on "Please output valid JSON" in the system prompt. Always use Claude's Tool Use API to programmatically enforce the schema structure.
-          </div>
         </div>
       </section>
 
-      <!-- Domain 4: Tool Design & MCP Integration -->
+      <!-- Domain 4 -->
       <section id="domain-4" class="viz-section">
         <div class="section-header">
           <div class="domain-weight">18%</div>
-          <h2 class="section-title">Domain 4: Tool Design & MCP Integration</h2>
-          <p class="section-desc">
-            Model Context Protocol (MCP) standardizes how Claude connects to external data. Toggle servers to see tools injected into the context window.
-          </p>
+          <h2 class="section-title">Domain 4: Tool Design & MCP</h2>
         </div>
         <div class="viz-card">
-          <div class="viz-card__header">
-            <h3>MCP Server Architecture</h3>
+          <div class="card-tabs">
+            <button class="tab-btn active" data-target="d4-theory">Theory & Best Practices</button>
+            <button class="tab-btn" data-target="d4-practice">Interactive Sandbox</button>
           </div>
-          <div class="viz-card__body">
+
+          <div id="d4-theory" class="tab-content theory-content active">
+             <div class="theory-grid">
+              <div class="theory-block">
+                <h3>The Model Context Protocol</h3>
+                <p>MCP standardizes how AI connects to external data. It establishes a secure boundary between the Host (Claude Desktop/Claude Code) and external environments.</p>
+                <ul>
+                  <li><strong>Tools:</strong> Actions the LLM can take (e.g., <code>write_file</code>).</li>
+                  <li><strong>Resources:</strong> Data the LLM can read (e.g., <code>postgres://table</code>).</li>
+                  <li><strong>Prompts:</strong> Reusable prompt templates exposed by the server.</li>
+                </ul>
+              </div>
+              <div class="theory-block">
+                <h3>Security Boundaries</h3>
+                <p>The LLM host never executes code. It requests an MCP server to execute a Tool. The MCP Server executes the logic locally and returns the result to the Host. The Host user must explicitly approve sensitive tool calls.</p>
+              </div>
+            </div>
+          </div>
+
+          <div id="d4-practice" class="tab-content practice-content">
             <div class="mcp-architecture">
               <div class="mcp-client">
                 <div class="mcp-icon">🧠</div>
                 <h4>Claude Host</h4>
-                <div class="mcp-injected-tools" id="injectedTools">
-                  <span class="mcp-empty">No tools connected</span>
-                </div>
+                <div class="mcp-injected-tools" id="injectedTools"><span class="mcp-empty">No tools connected</span></div>
               </div>
-              
               <div class="mcp-connection-lines">
                 <svg width="100%" height="100%" class="connection-svg">
                   <path id="line-github" d="M 0,50 Q 50,50 100,20" class="conn-line" />
@@ -225,99 +272,164 @@
                   <path id="line-fs" d="M 0,50 Q 50,50 100,80" class="conn-line" />
                 </svg>
               </div>
-
               <div class="mcp-servers">
                 <div class="mcp-server-node" data-server="github">
-                  <div class="server-header">
-                    <span class="icon">🐙</span> GitHub MCP
-                    <label class="switch"><input type="checkbox" class="mcp-toggle" value="github"><span class="slider"></span></label>
-                  </div>
+                  <div class="server-header"><span class="icon">🐙</span> GitHub MCP<label class="switch"><input type="checkbox" class="mcp-toggle" value="github"><span class="slider"></span></label></div>
                   <div class="server-details">Provides: <code>read_repo</code>, <code>create_pr</code></div>
                 </div>
                 <div class="mcp-server-node" data-server="postgres">
-                  <div class="server-header">
-                    <span class="icon">🐘</span> Postgres MCP
-                    <label class="switch"><input type="checkbox" class="mcp-toggle" value="postgres"><span class="slider"></span></label>
-                  </div>
-                  <div class="server-details">Provides: <code>query_db</code>, <code>list_tables</code></div>
+                  <div class="server-header"><span class="icon">🐘</span> Postgres MCP<label class="switch"><input type="checkbox" class="mcp-toggle" value="postgres"><span class="slider"></span></label></div>
+                  <div class="server-details">Provides: <code>query_db</code></div>
                 </div>
                 <div class="mcp-server-node" data-server="fs">
-                  <div class="server-header">
-                    <span class="icon">📁</span> Local FS MCP
-                    <label class="switch"><input type="checkbox" class="mcp-toggle" value="fs"><span class="slider"></span></label>
-                  </div>
-                  <div class="server-details">Provides: <code>read_file</code>, <code>search_dir</code></div>
+                  <div class="server-header"><span class="icon">📁</span> Local FS MCP<label class="switch"><input type="checkbox" class="mcp-toggle" value="fs"><span class="slider"></span></label></div>
+                  <div class="server-details">Provides: <code>read_file</code></div>
                 </div>
               </div>
             </div>
           </div>
-          <div class="callout callout-info">
-            <strong>Exam Tip:</strong> MCP separates the <strong>Host</strong> (Claude) from the <strong>Client</strong> and <strong>Server</strong>. Servers expose <em>Resources</em> (data), <em>Prompts</em> (templates), and <em>Tools</em> (actions).
-          </div>
         </div>
       </section>
 
-      <!-- Domain 5: Context Management & Reliability -->
+      <!-- Domain 5 -->
       <section id="domain-5" class="viz-section">
         <div class="section-header">
           <div class="domain-weight">15%</div>
           <h2 class="section-title">Domain 5: Context Management & Reliability</h2>
-          <p class="section-desc">
-            Understand how prompt caching works to optimize the 200k context window, reducing latency and cost for long-running workflows.
-          </p>
         </div>
         <div class="viz-card">
-          <div class="viz-card__header">
-            <h3>Prompt Caching & Token Math</h3>
+          <div class="card-tabs">
+            <button class="tab-btn active" data-target="d5-theory">Theory & Best Practices</button>
+            <button class="tab-btn" data-target="d5-practice">Interactive Sandbox</button>
           </div>
-          <div class="viz-card__body">
+
+          <div id="d5-theory" class="tab-content theory-content active">
+             <div class="theory-grid">
+              <div class="theory-block">
+                <h3>Prompt Caching Thresholds</h3>
+                <p>Prompt Caching drastically reduces costs (up to 90%) and latency for long contexts. However, caching only activates if the prefix is at least <strong>1024 tokens</strong>.</p>
+              </div>
+              <div class="theory-block">
+                <h3>Context Structuring</h3>
+                <p>To maximize cache hits, place static content (System prompts, long reference PDFs, massive few-shot examples) at the <em>beginning</em> of your context window. Place dynamic, changing content (User queries, recent chat history) at the <em>end</em>.</p>
+              </div>
+            </div>
+          </div>
+
+          <div id="d5-practice" class="tab-content practice-content">
             <div class="context-controls">
               <button class="btn btn-outline" id="btnAddSys">Add System Prompt (5k)</button>
               <button class="btn btn-outline" id="btnAddDocs">Add Reference PDF (50k)</button>
               <button class="btn btn-outline" id="btnAddChat">Add Chat History (15k)</button>
               <button class="btn btn-danger" id="btnClearTokens">Reset</button>
             </div>
-            
             <div class="context-window-visual">
               <div class="context-stats">
                 <span>Used: <strong id="tokenUsed">0</strong> / 200,000 tokens</span>
                 <span class="cached-label">Cached: <strong id="tokenCached" style="color:var(--accent-teal)">0</strong> tokens</span>
               </div>
               <div class="context-bar">
-                <div class="cache-marker" title="Minimum Cache Threshold (1024 tokens)"></div>
+                <div class="cache-marker" title="Threshold (1024)"></div>
                 <div class="bar-fill sys-fill" id="fillSys" style="width: 0%"></div>
                 <div class="bar-fill docs-fill" id="fillDocs" style="width: 0%"></div>
                 <div class="bar-fill chat-fill" id="fillChat" style="width: 0%"></div>
               </div>
               <div class="context-axis">
-                <span>0</span>
-                <span>50k</span>
-                <span>100k</span>
-                <span>150k</span>
-                <span>200k</span>
+                <span>0</span><span>50k</span><span>100k</span><span>150k</span><span>200k</span>
               </div>
             </div>
-            
             <div class="token-metrics">
-              <div class="metric-box">
-                <div class="metric-label">Estimated Cost</div>
-                <div class="metric-val" id="metricCost">$0.00</div>
-              </div>
-              <div class="metric-box">
-                <div class="metric-label">Cache Discount</div>
-                <div class="metric-val discount" id="metricDiscount">-$0.00</div>
-              </div>
-              <div class="metric-box">
-                <div class="metric-label">TTFT (Time To First Token)</div>
-                <div class="metric-val" id="metricLatency">~0.5s</div>
-              </div>
+              <div class="metric-box"><div class="metric-label">Estimated Cost</div><div class="metric-val" id="metricCost">$0.00</div></div>
+              <div class="metric-box"><div class="metric-label">Cache Discount</div><div class="metric-val discount" id="metricDiscount">-$0.00</div></div>
+              <div class="metric-box"><div class="metric-label">TTFT</div><div class="metric-val" id="metricLatency">~0.5s</div></div>
             </div>
-          </div>
-          <div class="callout callout-tip">
-            <strong>Exam Tip:</strong> Prompt Caching requires a minimum of 1024 tokens to activate. Place static data (system prompts, tools, long documents) at the <em>beginning</em> of the context window.
           </div>
         </div>
       </section>
+
+      <!-- Divider -->
+      <div class="section-divider"></div>
+
+      <!-- Flashcards Section -->
+      <section id="flashcards" class="viz-section">
+        <div class="section-header">
+          <h2 class="section-title">Active Recall Flashcards</h2>
+          <p class="section-desc">Test your knowledge of key terminology before taking the mock exam.</p>
+        </div>
+        <div class="flashcards-grid">
+          <!-- Card 1 -->
+          <div class="flashcard-container">
+            <div class="flashcard">
+              <div class="flashcard-front">
+                <h4>What is the minimum token threshold to activate Prompt Caching?</h4>
+              </div>
+              <div class="flashcard-back">
+                <p><strong>1024 tokens.</strong> Any static prefix shorter than this will not be cached, even if explicitly marked with `cache_control`.</p>
+              </div>
+            </div>
+          </div>
+          <!-- Card 2 -->
+          <div class="flashcard-container">
+            <div class="flashcard">
+              <div class="flashcard-front">
+                <h4>How do you run Claude Code non-interactively in a CI/CD pipeline?</h4>
+              </div>
+              <div class="flashcard-back">
+                <p>Use the <strong><code>-p</code> (print) flag</strong>. Example: <code>claude -p "Review this PR"</code>. This prevents the CLI from hanging while waiting for user input.</p>
+              </div>
+            </div>
+          </div>
+          <!-- Card 3 -->
+          <div class="flashcard-container">
+            <div class="flashcard">
+              <div class="flashcard-front">
+                <h4>In a multi-agent system, what is the role of the Supervisor (Router) Agent?</h4>
+              </div>
+              <div class="flashcard-back">
+                <p>The Supervisor is responsible for <strong>task decomposition, delegating to sub-agents, evaluating results, and synthesizing the final output.</strong></p>
+              </div>
+            </div>
+          </div>
+          <!-- Card 4 -->
+          <div class="flashcard-container">
+            <div class="flashcard">
+              <div class="flashcard-front">
+                <h4>How should you reliably guarantee a strict JSON output?</h4>
+              </div>
+              <div class="flashcard-back">
+                <p>Use <strong>Tool Use (Function Calling)</strong> and enforce the <code>tool_choice</code>. Do not rely solely on system prompt instructions like "Output only JSON".</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Mock Quiz Section -->
+      <section id="mock-quiz" class="viz-section">
+        <div class="section-header">
+          <h2 class="section-title">Scenario-Based Mock Quiz</h2>
+          <p class="section-desc">Apply your architectural judgment to production scenarios.</p>
+        </div>
+        <div class="viz-card">
+          <div class="quiz-container">
+            <div class="quiz-header">
+              <span class="quiz-progress" id="quizProgress">Question 1 of 3</span>
+              <span class="quiz-score" id="quizScore">Score: 0</span>
+            </div>
+            
+            <div class="quiz-body" id="quizBody">
+              <!-- Injected by JS -->
+            </div>
+            
+            <div class="quiz-feedback" id="quizFeedback" style="display: none;">
+              <h4 id="feedbackTitle">Correct!</h4>
+              <p id="feedbackText">Explanation here.</p>
+              <button class="btn btn-primary mt-2" id="btnNextQuestion">Next Question</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
     </main>
 
     <footer class="footer">
