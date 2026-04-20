@@ -12,6 +12,16 @@
   }, { threshold: 0.3 });
   document.querySelectorAll('.section').forEach(s => tocObs.observe(s));
 
+  // ── Scroll Reveal ──
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
 document.addEventListener('DOMContentLoaded', () => {
 
     // ═══════════════ 1. EMBEDDINGS ═══════════════
