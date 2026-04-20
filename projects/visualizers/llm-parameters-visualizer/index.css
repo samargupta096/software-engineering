@@ -720,3 +720,12 @@ input[type="text"]:focus {
     min-width: auto;
   }
 }
+\n
+/* ═══════════════════════ TOC ═══════════════════════ */
+.toc{position:sticky;top:0;z-index:100;background:rgba(8,12,24,.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--border-card);padding:.6rem 0;overflow-x:auto}
+.toc__inner{display:flex;gap:4px;max-width:1200px;margin:0 auto;padding:0 1rem;min-width:max-content}
+.toc__link{font-size:.72rem;font-weight:600;color:var(--text-muted);text-decoration:none;padding:6px 10px;border-radius:6px;white-space:nowrap;transition:var(--transition-fast)}
+.toc__link:hover,.toc__link.active{color:var(--accent-teal);background:rgba(6,214,160,.08)}
+@media (max-width: 768px) {
+  .toc__link{font-size:.65rem;padding:4px 6px}
+}

@@ -1,4 +1,17 @@
-document.addEventListener('DOMContentLoaded', () => {
+
+  // ── TOC Active State ──
+  const tocLinks = document.querySelectorAll('.toc__link');
+  const tocObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        tocLinks.forEach(l => l.classList.remove('active'));
+        const link = document.querySelector('.toc__link[data-section="' + e.target.id + '"]');
+        if (link) link.classList.add('active');
+      }
+    });
+  }, { threshold: 0.3 });
+  document.querySelectorAll('.section').forEach(s => tocObs.observe(s));
+\ndocument.addEventListener('DOMContentLoaded', () => {
 
     // ═══════════════ 1. EMBEDDINGS ═══════════════
     const embeddingInput = document.getElementById('embedding-input');
