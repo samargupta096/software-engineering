@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quantization & Model Compression — Interactive Visualizer</title>
+    <meta
+      name="description"
+      content="Understand how LLMs shrink from 70GB to run on laptops. Explore FP32, FP16, INT8, INT4 quantization with interactive visualizations."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <body>
+    <!-- ═══════════════════════ HERO ═══════════════════════ -->
+    <header class="hero" id="hero">
+      <div class="hero__bg-orbs">
+        <div class="orb orb--1"></div>
+        <div class="orb orb--2"></div>
+        <div class="orb orb--3"></div>
+      </div>
+      <div class="hero__content">
+        <span class="hero__badge">Interactive Deep Dive</span>
+        <h1 class="hero__title">
+          <span class="gradient-text">Quantization</span> & Model Compression
+        </h1>
+        <p class="hero__subtitle">
+          Understand how massive LLMs shrink from 140GB to fit on your laptop —
+          with live, interactive visualizations of bit precision, weight
+          distributions, and memory tradeoffs.
+        </p>
+        <a href="#what-is-quantization" class="hero__cta">
+          <span>Explore Quantization</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 5v14M5 12l7 7 7-7" />
+          </svg>
+        </a>
+      </div>
+    </header>
+
+    <!-- ═══════════════════════ NAV ═══════════════════════ -->
+    <nav class="toc" id="toc">
+      <div class="toc__inner">
+        <a href="#what-is-quantization" class="toc__link" data-section="what-is-quantization">01 What is Quantization?</a>
+        <a href="#precision-accuracy" class="toc__link" data-section="precision-accuracy">02 Precision vs Accuracy</a>
+        <a href="#weight-distribution" class="toc__link" data-section="weight-distribution">03 Weight Distribution</a>
+        <a href="#methods" class="toc__link" data-section="methods">04 Quantization Methods</a>
+        <a href="#memory-calculator" class="toc__link" data-section="memory-calculator">05 Memory Calculator</a>
+        <a href="#quality-tradeoff" class="toc__link" data-section="quality-tradeoff">06 Quality vs Size</a>
+        <a href="#real-world" class="toc__link" data-section="real-world">07 Real-World Examples</a>
+      </div>
+    </nav>
+
+    <main>
+      <!-- ═══════════════ 1. WHAT IS QUANTIZATION ═══════════════ -->
+      <section class="section reveal" id="what-is-quantization">
+        <div class="section__header">
+          <span class="section__number">01</span>
+          <h2 class="section__title">What is Quantization?</h2>
+        </div>
+        <p class="section__desc">
+          Quantization reduces the <strong>numerical precision</strong> of a model's weights.
+          Instead of storing each weight as a 32-bit floating point number, we use fewer bits
+          (16, 8, or even 4), dramatically reducing memory and speeding up inference.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="viz-title">🔢 Bit Precision Explorer</h3>
+          <p class="viz-desc">
+            Drag the slider to see how the same number is represented at different bit widths.
+            Watch how precision decreases as bits shrink.
+          </p>
+          <div class="viz-controls">
+            <label for="slider-bits">Precision</label>
+            <div class="precision-toggle" id="precision-toggle">
+              <button class="prec-btn active" data-bits="32">FP32</button>
+              <button class="prec-btn" data-bits="16">FP16</button>
+              <button class="prec-btn" data-bits="8">INT8</button>
+              <button class="prec-btn" data-bits="4">INT4</button>
+            </div>
+          </div>
+          <div class="viz-canvas">
+            <div class="bit-explorer" id="bit-explorer">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+          <p class="viz-hint">Select a precision format to see how a number is stored in binary</p>
+        </div>
+
+        <div class="callout">
+          <strong>💡 Key Insight:</strong> A 70B parameter model at FP32 needs
+          <code>70B × 4 bytes = 280 GB</code> of memory. At INT4, it only needs
+          <code>70B × 0.5 bytes = 35 GB</code> — an 8× reduction!
+        </div>
+      </section>
+
+      <!-- ═══════════════ 2. PRECISION VS ACCURACY ═══════════════ -->
+      <section class="section reveal" id="precision-accuracy">
+        <div class="section__header">
+          <span class="section__number">02</span>
+          <h2 class="section__title">Precision vs Accuracy</h2>
+        </div>
+        <p class="section__desc">
+          When you reduce bits, numbers get <strong>rounded</strong> to the nearest representable value.
+          This introduces <em>quantization error</em>. The question is: how much error can the model
+          tolerate before output quality degrades?
+        </p>
+
+        <div class="viz-card">
+          <h3 class="viz-title">📏 Number Line Rounding</h3>
+          <p class="viz-desc">
+            See how the original FP32 value gets snapped to the nearest grid point at lower precisions.
+          </p>
+          <div class="viz-controls">
+            <label for="slider-original-value">Original Value</label>
+            <input type="range" id="slider-original-value" min="-300" max="300" value="142" />
+            <span class="viz-value" id="val-original">1.42</span>
+          </div>
+          <div class="viz-canvas">
+            <div class="number-line-container" id="number-line">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+          <p class="viz-hint">Drag the slider to move the original value and see rounding errors at each precision</p>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 3. WEIGHT DISTRIBUTION ═══════════════ -->
+      <section class="section reveal" id="weight-distribution">
+        <div class="section__header">
+          <span class="section__number">03</span>
+          <h2 class="section__title">Weight Distribution</h2>
+        </div>
+        <p class="section__desc">
+          Neural network weights typically follow a <strong>bell curve</strong> (normal distribution)
+          centered around zero. Quantization works well because most weights are small — only
+          <em>outliers</em> suffer from clipping.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="viz-title">📊 Live Weight Histogram</h3>
+          <p class="viz-desc">
+            Watch how the weight distribution changes as you reduce precision.
+            Outlier weights get clipped, and values snap to quantization grid points.
+          </p>
+          <div class="viz-controls">
+            <label>Bit Width</label>
+            <input type="range" id="slider-weight-bits" min="2" max="32" value="32" step="1" />
+            <span class="viz-value" id="val-weight-bits">32-bit</span>
+          </div>
+          <div class="viz-canvas">
+            <div class="histogram-container" id="histogram">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+          <div class="weight-stats" id="weight-stats">
+            <!-- Rendered by JS -->
+          </div>
+          <p class="viz-hint">Drag the slider to see how weight distribution changes at different bit widths</p>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 4. QUANTIZATION METHODS ═══════════════ -->
+      <section class="section reveal" id="methods">
+        <div class="section__header">
+          <span class="section__number">04</span>
+          <h2 class="section__title">Quantization Methods</h2>
+        </div>
+        <p class="section__desc">
+          There are many ways to quantize a model. Each method makes different tradeoffs between
+          <strong>quality</strong>, <strong>speed</strong>, and <strong>ease of use</strong>.
+        </p>
+
+        <div class="viz-card">
+          <div class="methods-grid" id="methods-grid">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <div class="viz-card" style="margin-top: 2rem;">
+          <h3 class="viz-title">⚖️ Method Comparison Matrix</h3>
+          <div class="comparison-grid methods-comparison" id="methods-comparison">
+            <div class="comparison-cell header">Method</div>
+            <div class="comparison-cell header">Type</div>
+            <div class="comparison-cell header">Bits</div>
+            <div class="comparison-cell header">Quality</div>
+            <div class="comparison-cell header">Speed</div>
+            <div class="comparison-cell header">Best For</div>
+
+            <div class="comparison-cell concept">PTQ</div>
+            <div class="comparison-cell">Post-Training</div>
+            <div class="comparison-cell">INT8</div>
+            <div class="comparison-cell"><span class="quality-bar q-good"></span> Good</div>
+            <div class="comparison-cell"><span class="quality-bar q-fast"></span> Fast</div>
+            <div class="comparison-cell">Quick deployment</div>
+
+            <div class="comparison-cell concept">QAT</div>
+            <div class="comparison-cell">During Training</div>
+            <div class="comparison-cell">INT8/INT4</div>
+            <div class="comparison-cell"><span class="quality-bar q-great"></span> Great</div>
+            <div class="comparison-cell"><span class="quality-bar q-slow"></span> Slow</div>
+            <div class="comparison-cell">Maximum quality</div>
+
+            <div class="comparison-cell concept">GPTQ</div>
+            <div class="comparison-cell">Post-Training</div>
+            <div class="comparison-cell">INT4/INT3</div>
+            <div class="comparison-cell"><span class="quality-bar q-good"></span> Good</div>
+            <div class="comparison-cell"><span class="quality-bar q-medium"></span> Medium</div>
+            <div class="comparison-cell">GPU inference</div>
+
+            <div class="comparison-cell concept">AWQ</div>
+            <div class="comparison-cell">Post-Training</div>
+            <div class="comparison-cell">INT4</div>
+            <div class="comparison-cell"><span class="quality-bar q-great"></span> Great</div>
+            <div class="comparison-cell"><span class="quality-bar q-medium"></span> Medium</div>
+            <div class="comparison-cell">Best INT4 quality</div>
+
+            <div class="comparison-cell concept" style="color: #34d399;">GGUF</div>
+            <div class="comparison-cell">Post-Training</div>
+            <div class="comparison-cell">Q2–Q8</div>
+            <div class="comparison-cell"><span class="quality-bar q-good"></span> Good</div>
+            <div class="comparison-cell"><span class="quality-bar q-fast"></span> Fast</div>
+            <div class="comparison-cell">CPU / llama.cpp</div>
+
+            <div class="comparison-cell concept" style="color: #60a5fa;">bitsandbytes</div>
+            <div class="comparison-cell">Runtime</div>
+            <div class="comparison-cell">INT8/NF4</div>
+            <div class="comparison-cell"><span class="quality-bar q-good"></span> Good</div>
+            <div class="comparison-cell"><span class="quality-bar q-fast"></span> Fast</div>
+            <div class="comparison-cell">HuggingFace / QLoRA</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 5. MEMORY CALCULATOR ═══════════════ -->
+      <section class="section reveal" id="memory-calculator">
+        <div class="section__header">
+          <span class="section__number">05</span>
+          <h2 class="section__title">Memory Calculator</h2>
+        </div>
+        <p class="section__desc">
+          See exactly how much <strong>VRAM / RAM</strong> your model needs at each precision level.
+          This is the #1 practical consideration when deploying LLMs.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="viz-title">🧮 VRAM Estimator</h3>
+          <div class="viz-controls">
+            <label>Model Size</label>
+            <div class="precision-toggle" id="model-size-toggle">
+              <button class="prec-btn" data-params="1">1B</button>
+              <button class="prec-btn active" data-params="7">7B</button>
+              <button class="prec-btn" data-params="13">13B</button>
+              <button class="prec-btn" data-params="34">34B</button>
+              <button class="prec-btn" data-params="70">70B</button>
+            </div>
+          </div>
+          <div class="viz-canvas">
+            <div class="memory-bars" id="memory-bars">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+          <div class="gpu-fit" id="gpu-fit">
+            <!-- Rendered by JS -->
+          </div>
+          <p class="viz-hint">Select a model size to see VRAM requirements at each precision level</p>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 6. QUALITY VS SIZE ═══════════════ -->
+      <section class="section reveal" id="quality-tradeoff">
+        <div class="section__header">
+          <span class="section__number">06</span>
+          <h2 class="section__title">Quality vs Size Tradeoff</h2>
+        </div>
+        <p class="section__desc">
+          As you reduce precision, model quality (measured by <strong>perplexity</strong>)
+          gradually degrades. The sweet spot depends on your use case — often
+          <em>INT4 with calibration</em> retains 95%+ of quality at 8× compression.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="viz-title">📈 Perplexity vs Bit Width</h3>
+          <p class="viz-desc">
+            Lower perplexity = better quality. Watch how quality degrades as bits decrease.
+          </p>
+          <div class="viz-canvas">
+            <div class="tradeoff-chart" id="tradeoff-chart">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+          <div class="tradeoff-legend" id="tradeoff-legend">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <div class="callout green">
+          <strong>🎯 Sweet Spot:</strong> For most LLMs, <code>INT4</code> (especially Q4_K_M in GGUF
+          or AWQ) offers the best balance — <strong>~95% quality at 8× compression</strong>.
+          Going below 3 bits usually causes noticeable degradation.
+        </div>
+      </section>
+
+      <!-- ═══════════════ 7. REAL-WORLD EXAMPLES ═══════════════ -->
+      <section class="section reveal" id="real-world">
+        <div class="section__header">
+          <span class="section__number">07</span>
+          <h2 class="section__title">Real-World Examples</h2>
+        </div>
+        <p class="section__desc">
+          Here's how popular models map to real hardware when quantized. These examples show
+          that <strong>quantization is what makes local AI possible</strong>.
+        </p>
+
+        <div class="viz-card">
+          <div class="real-world-grid" id="real-world-grid">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <div class="callout cyan">
+          <strong>🚀 The Revolution:</strong> Without quantization, running Llama 3 70B would require
+          a $15,000+ server with 280GB of VRAM. With Q4_K_M quantization, it runs on a single
+          <strong>RTX 4090 (24GB)</strong> or even a <strong>MacBook Pro with 64GB RAM</strong>.
+        </div>
+      </section>
+    </main>
+
+    <!-- ═══════════════════ FOOTER ═══════════════════ -->
+    <footer class="footer">
+      <p>Built for learning — explore how AI models get compressed for the real world.</p>
+    </footer>
+
+    <script src="index.js"></script>
+  </body>
+</html>

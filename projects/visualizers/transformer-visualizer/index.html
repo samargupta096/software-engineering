@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Transformer Architecture — Interactive Visualizer</title>
+    <meta
+      name="description"
+      content="Demystifying the Transformer architecture behind modern LLMs. Explore embeddings, self-attention, and the feed-forward network interactively."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <body>
+    <!-- ═══════════════════════ HERO ═══════════════════════ -->
+    <header class="hero" id="hero">
+      <div class="hero__bg-orbs">
+        <div class="orb orb--1"></div>
+        <div class="orb orb--2"></div>
+        <div class="orb orb--3"></div>
+      </div>
+      <div class="hero__content">
+        <span class="hero__badge">Interactive Architecture</span>
+        <h1 class="hero__title">
+          <span class="gradient-text">Transformer</span> Architecture
+        </h1>
+        <p class="hero__subtitle">
+          Demystifying the core engine behind ChatGPT, Claude, and Llama.
+          Explore embeddings, self-attention, and feed-forward networks step-by-step.
+        </p>
+        <a href="#embeddings-positional" class="hero__cta">
+          <span>Explore The Architecture</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 5v14M5 12l7 7 7-7" />
+          </svg>
+        </a>
+      </div>
+    </header>
+
+    <!-- ═══════════════════════ NAV ═══════════════════════ -->
+    <nav class="toc" id="toc">
+      <div class="toc__inner">
+        <a href="#embeddings-positional" class="toc__link" data-section="embeddings-positional">01 Embeddings + Positional</a>
+        <a href="#self-attention" class="toc__link" data-section="self-attention">02 Self-Attention (QKV)</a>
+        <a href="#multi-head" class="toc__link" data-section="multi-head">03 Multi-Head Attention</a>
+        <a href="#feed-forward" class="toc__link" data-section="feed-forward">04 Feed-Forward Network</a>
+        <a href="#layer-norm" class="toc__link" data-section="layer-norm">05 Layer Normalization</a>
+        <a href="#encoder-decoder" class="toc__link" data-section="encoder-decoder">06 Encoder vs Decoder</a>
+        <a href="#full-pipeline" class="toc__link" data-section="full-pipeline">07 Full Pipeline</a>
+      </div>
+    </nav>
+
+    <main>
+      <!-- ═══════════════ 1. EMBEDDINGS + POSITIONAL ═══════════════ -->
+      <section class="section reveal" id="embeddings-positional">
+        <div class="section__header">
+          <span class="section__number">01</span>
+          <h2 class="section__title">Input Embeddings & Positional Encoding</h2>
+        </div>
+        <p class="section__desc">
+          Transformers don't read text. They read vectors. First, words are mapped to 
+          <strong>semantic embeddings</strong>. But because Transformers process all words in parallel, 
+          they have no sense of word order. We fix this by adding a <strong>Positional Encoding</strong> vector to each word.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="viz-title">🧩 Token + Position Vector Addition</h3>
+          <div class="viz-controls">
+            <input type="text" id="sentence-input" class="search-input" value="The cat sat" style="flex:1" maxlength="20">
+            <button class="send-btn" id="btn-tokenize">Process</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="embedding-demo" id="embedding-demo">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+          <p class="viz-hint">Notice how the same word gets a different final vector depending on its position.</p>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 2. SELF-ATTENTION (QKV) ═══════════════ -->
+      <section class="section reveal" id="self-attention">
+        <div class="section__header">
+          <span class="section__number">02</span>
+          <h2 class="section__title">Self-Attention Mechanism (Q, K, V)</h2>
+        </div>
+        <p class="section__desc">
+          This is the heart of the Transformer. It allows the model to look at other words in the sentence 
+          when processing a specific word. It uses <strong>Queries (Q)</strong> (what I'm looking for), 
+          <strong>Keys (K)</strong> (what I contain), and <strong>Values (V)</strong> (my actual content).
+        </p>
+
+        <div class="viz-card">
+          <h3 class="viz-title">🎯 The "Bank" Example</h3>
+          <p class="viz-desc">Hover over a word to see which other words it pays "attention" to based on context.</p>
+          
+          <div class="viz-controls">
+            <div class="precision-toggle" id="attention-scenario">
+              <button class="prec-btn active" data-scenario="river">"I sat by the river bank"</button>
+              <button class="prec-btn" data-scenario="money">"I went to the bank to deposit money"</button>
+            </div>
+          </div>
+
+          <div class="viz-canvas">
+            <div class="attention-demo" id="attention-demo">
+               <!-- Rendered by JS -->
+            </div>
+          </div>
+        </div>
+
+        <div class="callout cyan">
+          <strong>💡 The Formula:</strong> <code>Attention(Q, K, V) = softmax(Q × K^T / √d_k) × V</code>. 
+          The dot product of Query and Key creates an attention score, which dictates how much of the Value gets mixed in.
+        </div>
+      </section>
+
+      <!-- ═══════════════ 3. MULTI-HEAD ATTENTION ═══════════════ -->
+      <section class="section reveal" id="multi-head">
+        <div class="section__header">
+          <span class="section__number">03</span>
+          <h2 class="section__title">Multi-Head Attention</h2>
+        </div>
+        <p class="section__desc">
+          Instead of performing one single attention function, the model does it <strong>multiple times in parallel</strong> 
+          (multiple "heads"). One head might focus on grammar, another on pronouns, another on temporal relationships.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="viz-title">🧠 Parallel Thinking</h3>
+          <p class="viz-desc">Click different heads to see how they attend to different aspects of the sentence: <em>"The ball hit the window and it broke."</em></p>
+          
+          <div class="viz-controls">
+            <div class="precision-toggle" id="head-toggle">
+              <button class="prec-btn active" data-head="1">Head 1 (Pronoun Resolution)</button>
+              <button class="prec-btn" data-head="2">Head 2 (Subject-Verb)</button>
+              <button class="prec-btn" data-head="3">Head 3 (Adjective-Noun)</button>
+            </div>
+          </div>
+
+          <div class="viz-canvas">
+            <div class="multihead-demo" id="multihead-demo">
+               <!-- Rendered by JS -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 4. FEED-FORWARD NETWORK ═══════════════ -->
+      <section class="section reveal" id="feed-forward">
+        <div class="section__header">
+          <span class="section__number">04</span>
+          <h2 class="section__title">Feed-Forward Network (FFN)</h2>
+        </div>
+        <p class="section__desc">
+          After attention mixes information <em>between</em> tokens, the FFN processes each token <strong>individually</strong>. 
+          This is where the model stores most of its "knowledge" and performs non-linear transformations using activation functions.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="viz-title">⚡ Activation Function Explorer</h3>
+          
+          <div class="viz-controls">
+            <label>Activation:</label>
+            <div class="precision-toggle" id="activation-toggle">
+              <button class="prec-btn" data-func="relu">ReLU</button>
+              <button class="prec-btn active" data-func="gelu">GELU</button>
+              <button class="prec-btn" data-func="swish">Swish/SiLU</button>
+            </div>
+          </div>
+
+          <div class="viz-canvas">
+            <div class="ffn-demo" id="ffn-demo">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+          <p class="viz-hint">Modern LLMs like Llama use SwiGLU (a variant of Swish) for better gradient flow.</p>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 5. LAYER NORMALIZATION ═══════════════ -->
+      <section class="section reveal" id="layer-norm">
+        <div class="section__header">
+          <span class="section__number">05</span>
+          <h2 class="section__title">Layer Normalization</h2>
+        </div>
+        <p class="section__desc">
+          As data passes through dozens of layers, numbers can grow too large or shrink too small (exploding/vanishing gradients). 
+          <strong>LayerNorm</strong> (or RMSNorm) re-centers the values to have a mean of 0 and variance of 1.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="viz-title">⚖️ Vector Stabilization</h3>
+          <div class="viz-controls">
+            <label>Scale Factor:</label>
+            <input type="range" id="slider-norm" min="1" max="100" value="80">
+          </div>
+          <div class="viz-canvas">
+            <div class="norm-demo" id="norm-demo">
+               <!-- Rendered by JS -->
+            </div>
+          </div>
+          <p class="viz-hint">Drag the slider to introduce extreme values. Watch LayerNorm instantly pull them back to a stable range.</p>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 6. ENCODER VS DECODER ═══════════════ -->
+      <section class="section reveal" id="encoder-decoder">
+        <div class="section__header">
+          <span class="section__number">06</span>
+          <h2 class="section__title">Encoder vs Decoder Architectures</h2>
+        </div>
+        <p class="section__desc">
+          The original Transformer had both. Today, most models use just one half.
+        </p>
+
+        <div class="viz-card">
+          <div class="comparison-grid methods-comparison">
+            <div class="comparison-cell header">Architecture</div>
+            <div class="comparison-cell header">Attention Masking</div>
+            <div class="comparison-cell header">Best For</div>
+            <div class="comparison-cell header">Famous Models</div>
+
+            <div class="comparison-cell concept">Encoder-Only</div>
+            <div class="comparison-cell"><strong>Bidirectional</strong> (sees whole sentence at once)</div>
+            <div class="comparison-cell">Classification, Search, Sentiment</div>
+            <div class="comparison-cell" style="color:var(--accent-1);">BERT, RoBERTa</div>
+
+            <div class="comparison-cell concept">Decoder-Only</div>
+            <div class="comparison-cell"><strong>Causal / Masked</strong> (can only see past tokens)</div>
+            <div class="comparison-cell">Text Generation, Chatbots, Agents</div>
+            <div class="comparison-cell" style="color:var(--green);">GPT-4, Llama 3, Claude</div>
+
+            <div class="comparison-cell concept">Encoder-Decoder</div>
+            <div class="comparison-cell"><strong>Mixed</strong> (Encoder sees all, Decoder sees past)</div>
+            <div class="comparison-cell">Translation, Summarization</div>
+            <div class="comparison-cell" style="color:var(--amber);">T5, BART</div>
+          </div>
+        </div>
+
+        <div class="callout">
+          <strong>🔒 Causal Masking:</strong> In Decoder-only models (like GPT), we mask future tokens during training so the model can't "cheat" and see the word it's supposed to predict next.
+        </div>
+      </section>
+
+      <!-- ═══════════════ 7. FULL PIPELINE ═══════════════ -->
+      <section class="section reveal" id="full-pipeline">
+        <div class="section__header">
+          <span class="section__number">07</span>
+          <h2 class="section__title">The Full Pipeline</h2>
+        </div>
+        <p class="section__desc">
+          Putting it all together: Modern LLMs stack 32 to 100+ Decoder blocks.
+        </p>
+
+        <div class="viz-card">
+          <div class="viz-canvas" style="min-height: 400px;">
+            <div class="pipeline-demo" id="pipeline-demo">
+              <div class="pipe-stage">Input Text: "Hello world"</div>
+              <div class="pipe-arrow">↓</div>
+              <div class="pipe-stage">Tokenizer (IDs: 15496, 995)</div>
+              <div class="pipe-arrow">↓</div>
+              <div class="pipe-stage highlight">Embedding + Positional Encoding</div>
+              <div class="pipe-arrow">↓</div>
+              
+              <div class="pipe-block">
+                <div class="pipe-block-title">Transformer Block (×32 Layers)</div>
+                <div class="pipe-stage internal">LayerNorm</div>
+                <div class="pipe-arrow">↓</div>
+                <div class="pipe-stage internal highlight">Masked Multi-Head Self-Attention</div>
+                <div class="pipe-arrow">↓</div>
+                <div class="pipe-stage internal">+ Residual Connection</div>
+                <div class="pipe-arrow">↓</div>
+                <div class="pipe-stage internal">LayerNorm</div>
+                <div class="pipe-arrow">↓</div>
+                <div class="pipe-stage internal highlight">Feed-Forward Network</div>
+                <div class="pipe-arrow">↓</div>
+                <div class="pipe-stage internal">+ Residual Connection</div>
+              </div>
+
+              <div class="pipe-arrow">↓</div>
+              <div class="pipe-stage">Final LayerNorm</div>
+              <div class="pipe-arrow">↓</div>
+              <div class="pipe-stage">Linear Projection (Logits)</div>
+              <div class="pipe-arrow">↓</div>
+              <div class="pipe-stage highlight">Softmax (Probabilities)</div>
+              <div class="pipe-arrow">↓</div>
+              <div class="pipe-stage">Next Token: "!"</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ═══════════════════ FOOTER ═══════════════════ -->
+    <footer class="footer">
+      <p>Built for learning — visualize the matrix math powering modern AI.</p>
+    </footer>
+
+    <script src="index.js"></script>
+  </body>
+</html>

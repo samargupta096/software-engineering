@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fine-Tuning & LoRA — Interactive Visualizer</title>
+    <meta
+      name="description"
+      content="Learn how to customize LLMs. Explore Full Fine-tuning, LoRA (Low-Rank Adaptation), QLoRA, and when to use RAG vs Fine-tuning."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <body>
+    <!-- ═══════════════════════ HERO ═══════════════════════ -->
+    <header class="hero" id="hero">
+      <div class="hero__bg-orbs">
+        <div class="orb orb--1"></div>
+        <div class="orb orb--2"></div>
+        <div class="orb orb--3"></div>
+      </div>
+      <div class="hero__content">
+        <span class="hero__badge">Interactive Deep Dive</span>
+        <h1 class="hero__title">
+          <span class="gradient-text">Fine-Tuning</span> & LoRA
+        </h1>
+        <p class="hero__subtitle">
+          How do you teach a massive AI model new tricks without breaking it?
+          Explore Full Fine-Tuning, Low-Rank Adaptation (LoRA), and QLoRA.
+        </p>
+        <a href="#pretrain-vs-finetune" class="hero__cta">
+          <span>Explore Customization</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 5v14M5 12l7 7 7-7" />
+          </svg>
+        </a>
+      </div>
+    </header>
+
+    <!-- ═══════════════════════ NAV ═══════════════════════ -->
+    <nav class="toc" id="toc">
+      <div class="toc__inner">
+        <a href="#pretrain-vs-finetune" class="toc__link" data-section="pretrain-vs-finetune">01 Pre-training vs Fine-tuning</a>
+        <a href="#full-finetuning" class="toc__link" data-section="full-finetuning">02 Full Fine-tuning</a>
+        <a href="#lora" class="toc__link" data-section="lora">03 LoRA (Low-Rank Adaptation)</a>
+        <a href="#qlora" class="toc__link" data-section="qlora">04 QLoRA (Quantized LoRA)</a>
+        <a href="#adapter-comparison" class="toc__link" data-section="adapter-comparison">05 Adapter Comparison</a>
+        <a href="#rag-vs-finetuning" class="toc__link" data-section="rag-vs-finetuning">06 When to Fine-Tune? (RAG vs FT)</a>
+        <a href="#pipeline" class="toc__link" data-section="pipeline">07 The Training Pipeline</a>
+      </div>
+    </nav>
+
+    <main>
+      <!-- ═══════════════ 1. PRE-TRAINING VS FINE-TUNING ═══════════════ -->
+      <section class="section reveal" id="pretrain-vs-finetune">
+        <div class="section__header">
+          <span class="section__number">01</span>
+          <h2 class="section__title">Pre-training vs Fine-tuning</h2>
+        </div>
+        <p class="section__desc">
+          Building an LLM happens in stages. First, it reads the whole internet to learn language and facts (<strong>Pre-training</strong>). 
+          Then, it practices specific skills like answering questions or formatting JSON (<strong>Fine-tuning</strong>).
+        </p>
+
+        <div class="viz-card">
+          <div class="comparison-grid methods-comparison" style="grid-template-columns: 1fr 1fr 1fr;">
+            <div class="comparison-cell header">Stage</div>
+            <div class="comparison-cell header">Pre-training (Base Model)</div>
+            <div class="comparison-cell header">Fine-tuning (Instruct/Chat)</div>
+
+            <div class="comparison-cell concept">Data</div>
+            <div class="comparison-cell">Trillions of words (Wikipedia, Reddit, Code)</div>
+            <div class="comparison-cell" style="color:var(--accent-3);">1k - 100k high-quality Q&A pairs</div>
+
+            <div class="comparison-cell concept">Goal</div>
+            <div class="comparison-cell">Learn language, logic, and world knowledge</div>
+            <div class="comparison-cell" style="color:var(--accent-3);">Learn to be a helpful assistant, follow formatting</div>
+
+            <div class="comparison-cell concept">Compute Cost</div>
+            <div class="comparison-cell">$2M - $100M+ (Thousands of GPUs for months)</div>
+            <div class="comparison-cell" style="color:var(--green);">$50 - $1,000 (1-8 GPUs for hours/days)</div>
+
+            <div class="comparison-cell concept">Example Model</div>
+            <div class="comparison-cell">Llama-3-8B-Base</div>
+            <div class="comparison-cell" style="color:var(--accent-3);">Llama-3-8B-Instruct</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 2. FULL FINE-TUNING ═══════════════ -->
+      <section class="section reveal" id="full-finetuning">
+        <div class="section__header">
+          <span class="section__number">02</span>
+          <h2 class="section__title">Full Fine-Tuning</h2>
+        </div>
+        <p class="section__desc">
+          In Full Fine-Tuning, we update <strong>every single parameter</strong> in the model. If it's a 7 Billion parameter model, 
+          we are calculating gradients and updating 7 Billion weights.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="viz-title">📉 The Memory Wall</h3>
+          <p class="viz-desc">To train a 7B model, you need way more memory than just storing the model itself. You need space for Gradients and Optimizer States (Adam).</p>
+          
+          <div class="viz-canvas">
+            <div class="memory-bars" id="fft-memory">
+              <div class="mem-row">
+                <div class="mem-label">Model Weights (FP16)</div>
+                <div class="mem-track"><div class="mem-fill fp16" style="width: 25%">14 GB</div></div>
+              </div>
+              <div class="mem-row">
+                <div class="mem-label">Gradients (FP16)</div>
+                <div class="mem-track"><div class="mem-fill int8" style="width: 25%">14 GB</div></div>
+              </div>
+              <div class="mem-row">
+                <div class="mem-label">Adam States (FP32)</div>
+                <div class="mem-track"><div class="mem-fill fp32" style="width: 50%">56 GB</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="callout red">
+            <strong>⚠️ The Problem:</strong> Full Fine-Tuning a 7B model requires ~84GB of VRAM. This won't fit on a single consumer GPU (like an RTX 4090 with 24GB). 
+            You'd need expensive server clusters.
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 3. LORA ═══════════════ -->
+      <section class="section reveal" id="lora">
+        <div class="section__header">
+          <span class="section__number">03</span>
+          <h2 class="section__title">LoRA (Low-Rank Adaptation)</h2>
+        </div>
+        <p class="section__desc">
+          Instead of changing the giant original weight matrix (<code>W</code>), LoRA freezes it. We then add two tiny, low-rank matrices 
+          (<code>A</code> and <code>B</code>) alongside it. We only train <code>A</code> and <code>B</code>.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="viz-title">🧩 Matrix Decomposition</h3>
+          <p class="viz-desc"><code>W = W + (A × B)</code>. Watch how changing the "Rank" (r) affects the number of trainable parameters.</p>
+          
+          <div class="viz-controls">
+            <label>Rank (r):</label>
+            <input type="range" id="slider-rank" min="1" max="5" value="2">
+            <span class="viz-value" id="val-rank">r=8</span>
+          </div>
+
+          <div class="viz-canvas">
+            <div class="lora-demo" id="lora-demo">
+               <!-- Rendered by JS -->
+            </div>
+          </div>
+          <div class="lora-stats" id="lora-stats">
+            <!-- Rendered by JS -->
+          </div>
+          <div class="callout green">
+            <strong>✅ The Magic:</strong> By training A and B instead of W, we reduce trainable parameters by <strong>99%</strong>. 
+            When training is done, we simply multiply A×B and add the result back to W. There's <strong>zero inference delay</strong>!
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 4. QLORA ═══════════════ -->
+      <section class="section reveal" id="qlora">
+        <div class="section__header">
+          <span class="section__number">04</span>
+          <h2 class="section__title">QLoRA (Quantized LoRA)</h2>
+        </div>
+        <p class="section__desc">
+          LoRA fixes the gradient/optimizer memory, but the base model still takes up a lot of space. 
+          <strong>QLoRA</strong> goes a step further: it loads the base model in 4-bit precision (tiny!), but keeps the LoRA adapters in 16-bit.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="viz-title">⚡ Democratizing AI Training</h3>
+          
+          <div class="viz-canvas">
+            <div class="memory-bars" id="qlora-memory">
+              <div class="mem-row">
+                <div class="mem-label" style="text-align: left;">Full Fine-Tuning (7B)</div>
+                <div class="mem-track"><div class="mem-fill fp32" style="width: 100%">84 GB VRAM (Needs Multi-GPU)</div></div>
+              </div>
+              <div class="mem-row">
+                <div class="mem-label" style="text-align: left;">Standard LoRA (7B)</div>
+                <div class="mem-track"><div class="mem-fill fp16" style="width: 40%">30 GB VRAM (Needs 2x GPUs)</div></div>
+              </div>
+              <div class="mem-row">
+                <div class="mem-label" style="text-align: left;">QLoRA (7B)</div>
+                <div class="mem-track"><div class="mem-fill int4" style="width: 15%">~10 GB VRAM (Fits on 1x RTX 3060)</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 5. ADAPTER COMPARISON ═══════════════ -->
+      <section class="section reveal" id="adapter-comparison">
+        <div class="section__header">
+          <span class="section__number">05</span>
+          <h2 class="section__title">Adapter Comparison</h2>
+        </div>
+        <p class="section__desc">
+          LoRA is the most popular, but there are other Parameter-Efficient Fine-Tuning (PEFT) methods.
+        </p>
+
+        <div class="viz-card">
+          <div class="comparison-grid methods-comparison" style="grid-template-columns: 1fr 1fr 1fr 1fr;">
+            <div class="comparison-cell header">Method</div>
+            <div class="comparison-cell header">Trainable Params</div>
+            <div class="comparison-cell header">Inference Latency</div>
+            <div class="comparison-cell header">How it works</div>
+
+            <div class="comparison-cell concept" style="color:var(--red);">Full FT</div>
+            <div class="comparison-cell">100%</div>
+            <div class="comparison-cell"><span style="color:var(--green)">None</span></div>
+            <div class="comparison-cell">Updates all weights.</div>
+
+            <div class="comparison-cell concept" style="color:var(--accent-1);">LoRA</div>
+            <div class="comparison-cell">~0.1% to 1%</div>
+            <div class="comparison-cell"><span style="color:var(--green)">None (Merged)</span></div>
+            <div class="comparison-cell">Adds low-rank matrices parallel to weights.</div>
+
+            <div class="comparison-cell concept" style="color:var(--amber);">Prefix Tuning</div>
+            <div class="comparison-cell">~0.1%</div>
+            <div class="comparison-cell"><span style="color:var(--amber)">Minor</span></div>
+            <div class="comparison-cell">Prepends trainable "virtual tokens" to prompt.</div>
+
+            <div class="comparison-cell concept">Adapters (Classic)</div>
+            <div class="comparison-cell">~2% to 4%</div>
+            <div class="comparison-cell"><span style="color:var(--red)">Noticeable</span></div>
+            <div class="comparison-cell">Adds new mini-layers between existing layers.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 6. RAG VS FINETUNING ═══════════════ -->
+      <section class="section reveal" id="rag-vs-finetuning">
+        <div class="section__header">
+          <span class="section__number">06</span>
+          <h2 class="section__title">When to Fine-Tune? (RAG vs FT)</h2>
+        </div>
+        <p class="section__desc">
+          A common mistake is trying to fine-tune a model to teach it new facts (e.g., "What is my company's refund policy?"). 
+          <strong>LLMs are bad at memorizing exact facts via training.</strong> Use RAG for facts, use Fine-tuning for style and behavior.
+        </p>
+
+        <div class="viz-card">
+          <h3 class="viz-title">🤔 Decision Matrix</h3>
+          <div class="viz-controls">
+            <div class="precision-toggle" id="usecase-toggle">
+              <button class="prec-btn active" data-case="1">Teach proprietary facts/docs</button>
+              <button class="prec-btn" data-case="2">Output strict JSON schemas</button>
+              <button class="prec-btn" data-case="3">Copy a specific writing style</button>
+              <button class="prec-btn" data-case="4">Teach a new language</button>
+            </div>
+          </div>
+          <div class="viz-canvas" style="min-height: 120px; align-items:flex-start;">
+            <div id="usecase-result" style="width:100%; padding: 1rem; border-radius:var(--radius-xs); background: rgba(255,255,255,0.05); font-size:1.1rem; line-height:1.6;">
+               <!-- Rendered by JS -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 7. PIPELINE ═══════════════ -->
+      <section class="section reveal" id="pipeline">
+        <div class="section__header">
+          <span class="section__number">07</span>
+          <h2 class="section__title">The Training Pipeline</h2>
+        </div>
+        <p class="section__desc">
+          How do you actually run a fine-tuning job? Here is the typical workflow.
+        </p>
+
+        <div class="viz-card">
+          <div class="viz-canvas" style="min-height: 400px;">
+            <div class="pipeline-demo">
+              <div class="pipe-stage">1. Prepare Dataset (JSONL with {"prompt": "...", "completion": "..."})</div>
+              <div class="pipe-arrow">↓</div>
+              <div class="pipe-stage highlight" style="border-color:var(--cyan); color:var(--cyan);">2. Tokenization & Formatting (ChatML)</div>
+              <div class="pipe-arrow">↓</div>
+              
+              <div class="pipe-block" style="border-color:var(--accent-1);">
+                <div class="pipe-block-title">3. Unsloth / HuggingFace Trainer</div>
+                <div class="pipe-stage internal">Load Base Model (4-bit QLoRA)</div>
+                <div class="pipe-stage internal highlight">Inject LoRA Adapters</div>
+                <div class="pipe-stage internal">Backpropagation (Update Adapters)</div>
+              </div>
+
+              <div class="pipe-arrow">↓</div>
+              <div class="pipe-stage" style="border-color:var(--amber); color:var(--amber);">4. Evaluate (Validation Loss)</div>
+              <div class="pipe-arrow">↓</div>
+              <div class="pipe-stage highlight" style="border-color:var(--green); color:var(--green);">5. Merge Adapters back into Base Model</div>
+              <div class="pipe-arrow">↓</div>
+              <div class="pipe-stage">6. Export to GGUF (for Ollama/llama.cpp)</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="footer">
+      <p>Built for learning — understand how to customize AI models for the real world.</p>
+    </footer>
+
+    <script src="index.js"></script>
+  </body>
+</html>
