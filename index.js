@@ -44,6 +44,33 @@ document.addEventListener('DOMContentLoaded', () => {
             icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"></path><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>`
         },
         {
+            id: 'quantization',
+            title: 'Quantization & Compression',
+            desc: 'Interactive visualizations of bit precision, weight distributions, memory tradeoffs, and model quantization methods.',
+            path: './quantization-visualizer/index.html',
+            category: 'ai',
+            tags: ['AI', 'Quantization', 'Memory', 'Optimization'],
+            icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>`
+        },
+        {
+            id: 'transformer',
+            title: 'Transformer Architecture',
+            desc: 'Demystifying the Transformer engine: embeddings, self-attention mechanisms, and the feed-forward network.',
+            path: './transformer-visualizer/index.html',
+            category: 'ai',
+            tags: ['AI', 'LLM', 'Architecture', 'Attention'],
+            icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>`
+        },
+        {
+            id: 'finetuning-lora',
+            title: 'Fine-Tuning & LoRA',
+            desc: 'Learn how to customize LLMs using Full Fine-tuning, Low-Rank Adaptation (LoRA), QLoRA, and when to use RAG.',
+            path: './finetuning-visualizer/index.html',
+            category: 'ai',
+            tags: ['AI', 'Training', 'LoRA', 'PEFT'],
+            icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>`
+        },
+        {
             id: 'kafka',
             title: 'Apache Kafka Architecture',
             desc: 'Master message brokers, topics, partitions, consumer groups, and event-driven design.',
