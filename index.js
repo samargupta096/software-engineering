@@ -7,6 +7,51 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Visualizer Data
     const visualizers = [
+         {
+            id: 'system-design',
+            title: 'System Design Interview',
+            desc: 'Interactive components for consistent hashing, rate limiting, and building scalable backends.',
+            path: './system-design-prep/index.html',
+            category: 'architecture',
+            tags: ['Scalability', 'Backend', 'System Design'],
+            icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>`
+        },
+        {
+            id: 'vector-database',
+            title: 'Vector Databases',
+            desc: 'Understand high-dimensional embeddings, nearest neighbor search (HNSW), distance metrics, and RAG.',
+            path: './vector-db-visualizer/index.html',
+            category: 'ai',
+            tags: ['Vector', 'AI', 'Search', 'Embeddings'],
+            icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="M20 12h2"></path><path d="M2 12h2"></path></svg>`
+        },
+        {
+            id: 'claude-architect',
+            title: 'Claude Architect Prep',
+            desc: 'Interactive simulator for the Claude Certified Architect exam: MCP, Agents, and Context Caching.',
+            path: './claude-architect-visualizer/index.html',
+            category: 'ai',
+            tags: ['AI', 'Claude', 'Architecture', 'MCP', 'Agents'],
+            icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><path d="M3 9h18"></path><path d="M9 21V9"></path></svg>`
+        },
+         {
+            id: 'llm-params',
+            title: 'LLM Generation Parameters',
+            desc: 'Interactive playground to understand Temperature, Top-P, Top-K, and repetition penalties.',
+            path: './llm-parameters-visualizer/index.html',
+            category: 'ai',
+            tags: ['AI', 'LLM', 'GPT'],
+            icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"></path><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>`
+        },
+        {
+            id: 'kafka',
+            title: 'Apache Kafka Architecture',
+            desc: 'Master message brokers, topics, partitions, consumer groups, and event-driven design.',
+            path: './kafka-visualizer/index.html',
+            category: 'architecture',
+            tags: ['Streaming', 'Events', 'Pub/Sub'],
+            icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h14a2 2 0 0 0 2-2V7.5L14.5 2H6a2 2 0 0 0-2 2v4"></path><polyline points="14 2 14 8 20 8"></polyline><path d="M2 15h10"></path><path d="m9 18 3-3-3-3"></path></svg>`
+        },
         {
             id: 'aws-services',
             title: 'AWS Services Visualizer',
@@ -61,15 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
             tags: ['Networking', 'Protocols', 'Web'],
             icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>`
         },
-        {
-            id: 'kafka',
-            title: 'Apache Kafka Architecture',
-            desc: 'Master message brokers, topics, partitions, consumer groups, and event-driven design.',
-            path: './kafka-visualizer/index.html',
-            category: 'architecture',
-            tags: ['Streaming', 'Events', 'Pub/Sub'],
-            icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h14a2 2 0 0 0 2-2V7.5L14.5 2H6a2 2 0 0 0-2 2v4"></path><polyline points="14 2 14 8 20 8"></polyline><path d="M2 15h10"></path><path d="m9 18 3-3-3-3"></path></svg>`
-        },
+      
         {
             id: 'leetcode-patterns',
             title: 'LeetCode Patterns',
@@ -79,15 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
             tags: ['Patterns', 'Interviews', 'Arrays'],
             icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 16 4-4-4-4"></path><path d="m6 8-4 4 4 4"></path><path d="m14.5 4-5 16"></path></svg>`
         },
-        {
-            id: 'llm-params',
-            title: 'LLM Generation Parameters',
-            desc: 'Interactive playground to understand Temperature, Top-P, Top-K, and repetition penalties.',
-            path: './llm-parameters-visualizer/index.html',
-            category: 'ai',
-            tags: ['AI', 'LLM', 'GPT'],
-            icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"></path><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>`
-        },
+       
         {
             id: 'postgres',
             title: 'PostgreSQL Internals',
@@ -96,43 +125,17 @@ document.addEventListener('DOMContentLoaded', () => {
             category: 'database',
             tags: ['SQL', 'ACID', 'Relational'],
             icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>`
-        },
-        {
-            id: 'system-design',
-            title: 'System Design Interview',
-            desc: 'Interactive components for consistent hashing, rate limiting, and building scalable backends.',
-            path: './system-design-prep/index.html',
-            category: 'architecture',
-            tags: ['Scalability', 'Backend', 'System Design'],
-            icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>`
-        },
-        {
-            id: 'vector-database',
-            title: 'Vector Databases',
-            desc: 'Understand high-dimensional embeddings, nearest neighbor search (HNSW), distance metrics, and RAG.',
-            path: './vector-db-visualizer/index.html',
-            category: 'ai',
-            tags: ['Vector', 'AI', 'Search', 'Embeddings'],
-            icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="M20 12h2"></path><path d="M2 12h2"></path></svg>`
-        },
-        {
-            id: 'claude-architect',
-            title: 'Claude Architect Prep',
-            desc: 'Interactive simulator for the Claude Certified Architect exam: MCP, Agents, and Context Caching.',
-            path: './claude-architect-visualizer/index.html',
-            category: 'ai',
-            tags: ['AI', 'Claude', 'Architecture', 'MCP', 'Agents'],
-            icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><path d="M3 9h18"></path><path d="M9 21V9"></path></svg>`
         }
+       
     ];
 
     // Category display config — defines group order, labels, and icons
     const categoryConfig = [
+        { key: 'ai',           label: '🤖 AI & Machine Learning',   color: '#00d2d3' },
         { key: 'cloud',        label: '☁️ Cloud & Infrastructure',  color: '#ff9f43' },
         { key: 'database',     label: '🗄️ Databases & Storage',     color: '#0abde3' },
         { key: 'architecture', label: '🏗️ Architecture & Systems',  color: '#ee5a24' },
-        { key: 'algorithms',   label: '🧮 Algorithms & DSA',        color: '#6c5ce7' },
-        { key: 'ai',           label: '🤖 AI & Machine Learning',   color: '#00d2d3' }
+        { key: 'algorithms',   label: '🧮 Algorithms & DSA',        color: '#6c5ce7' }
     ];
 
     let currentFilter = 'all';
