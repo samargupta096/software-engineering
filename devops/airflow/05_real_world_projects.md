@@ -1,5 +1,10 @@
 # Deep Dive: Real-World Airflow Projects & Pipelines
 
+📄 **Navigation:**
+[« Previous: Module 4](04_production_best_practices.md) | [🏠 Back to Index](airflow_comprehensive_guide.md)
+
+---
+
 Airflow is incredibly versatile. It is used across various domains from standard Data Engineering to MLOps and Infrastructure management. Below are three detailed, real-world project architectures and their corresponding DAG structures.
 
 ---
@@ -11,19 +16,19 @@ Airflow is incredibly versatile. It is used across various domains from standard
 
 ```mermaid
 graph TD
-    subgraph Data Sources
-        PG[("Postgres (Sales)")]
+    subgraph Data_Sources ["Data Sources"]
+        PG[("Postgres Sales")]
         FB["Facebook Ads API"]
     end
 
-    subgraph Airflow DAG (The Orchestrator)
-        T1["extract_sales (PostgresToS3Operator)"]
-        T2["extract_ads (HttpToS3Operator)"]
-        T3["load_sales (S3ToSnowflakeOperator)"]
-        T4["load_ads (S3ToSnowflakeOperator)"]
-        T5["run_dbt_models (DbtCloudRunJobOperator)"]
-        T6["data_quality_check (SnowflakeOperator)"]
-        T7["slack_alert (SlackWebhookOperator)"]
+    subgraph Airflow_DAG ["Airflow DAG: The Orchestrator"]
+        T1["extract_sales \n (PostgresToS3Operator)"]
+        T2["extract_ads \n (HttpToS3Operator)"]
+        T3["load_sales \n (S3ToSnowflakeOperator)"]
+        T4["load_ads \n (S3ToSnowflakeOperator)"]
+        T5["run_dbt_models \n (DbtCloudRunJobOperator)"]
+        T6["data_quality_check \n (SnowflakeOperator)"]
+        T7["slack_alert \n (SlackWebhookOperator)"]
         
         T1 --> T3
         T2 --> T4
@@ -33,9 +38,9 @@ graph TD
         T6 -->|"On Failure"| T7
     end
     
-    subgraph Compute & Storage
-        S3[("AWS S3 (Data Lake)")]
-        SF[("Snowflake (Data Warehouse)")]
+    subgraph Compute_Storage ["Compute & Storage"]
+        S3[("AWS S3 Data Lake")]
+        SF[("Snowflake Data Warehouse")]
     end
     
     PG -.->|Data| T1
@@ -66,7 +71,7 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph Airflow DAG (ML Orchestration)
+    subgraph Airflow_ML ["Airflow DAG: ML Orchestration"]
         S["S3KeySensor \n (Wait for new data)"]
         Prep["SparkSubmitOperator \n (Feature Engineering)"]
         Train["SageMakerTrainingOperator \n (Train Model)"]
@@ -102,10 +107,10 @@ graph TD
 
 ```mermaid
 graph TD
-    subgraph Airflow DAG (Infrastructure as Code)
+    subgraph Airflow_Infra ["Airflow DAG: Infrastructure as Code"]
         Create["EksCreateClusterOperator \n (Spin up K8s)"]
         
-        subgraph Dynamic Processing Tasks
+        subgraph Dynamic_Processing ["Dynamic Processing Tasks"]
             P1["K8sPodOperator \n (Process Chunk 1)"]
             P2["K8sPodOperator \n (Process Chunk 2)"]
             P3["K8sPodOperator \n (Process Chunk N)"]
@@ -132,3 +137,8 @@ graph TD
 3.  **Teardown (Crucial Trigger Rule):** The final task deletes the cluster to save money. 
     *   *The Catch:* If `Process Chunk 2` fails, by default, the downstream `Destroy` task would be skipped, leaving the expensive cluster running indefinitely!
     *   *The Fix:* The `Destroy` task is given `trigger_rule=TriggerRule.ALL_DONE`. This ensures that whether the processing tasks succeed, fail, or crash, Airflow will *always* tear down the infrastructure.
+
+---
+
+📄 **Navigation:**
+[« Previous: Module 4](04_production_best_practices.md) | [🏠 Back to Index](airflow_comprehensive_guide.md)

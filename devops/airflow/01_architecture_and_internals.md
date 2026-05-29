@@ -1,6 +1,9 @@
 # Deep Dive: Apache Airflow Architecture & Internals
 
-To truly master Apache Airflow and run it in a production environment, you need to understand how the components interact under the hood. Airflow is not a single monolith; it is a distributed, service-oriented system.
+📄 **Navigation:**
+[🏠 Back to Index](airflow_comprehensive_guide.md) | [Next: Module 2](02_core_concepts_deep_dive.md) ➔
+
+---
 
 ## 1. The Big Picture: System Architecture
 
@@ -167,3 +170,8 @@ stateDiagram-v2
     Success --> [*]
     Failed --> [*]
 ```
+
+---
+
+📄 **Navigation:**
+[🏠 Back to Index](airflow_comprehensive_guide.md) | [Next: Module 2](02_core_concepts_deep_dive.md) ➔

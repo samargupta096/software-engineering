@@ -1,6 +1,9 @@
-# Deep Dive: Production Best Practices & Real-World Architecture
+# Deep Dive: Production Best Practices & Testing
 
-Treating Airflow as a production system requires discipline. This section covers the core principles of pipeline design, testing, and what not to do.
+📄 **Navigation:**
+[« Previous: Module 3](03_advanced_scheduling_and_scaling.md) | [🏠 Back to Index](airflow_comprehensive_guide.md) | [Next: Module 5](05_real_world_projects.md) ➔
+
+---
 
 ## 1. The Golden Rule: Idempotency
 
@@ -113,3 +116,8 @@ def test_dag_structure():
 
 ### 2. Local Environment Testing
 Never test logic in production. Use the provided Docker Compose setup to run a local instance of Airflow, mount your DAGs folder, and run them locally to verify logic and XCom passing.
+
+---
+
+📄 **Navigation:**
+[« Previous: Module 3](03_advanced_scheduling_and_scaling.md) | [🏠 Back to Index](airflow_comprehensive_guide.md) | [Next: Module 5](05_real_world_projects.md) ➔

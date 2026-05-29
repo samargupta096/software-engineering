@@ -201,3 +201,8 @@ Want to practice? The official Docker way is best.
 7. Access: `http://localhost:8080` (User/Pass: airflow)
 
 Place your Python DAG scripts inside the `./dags` folder, and they will automatically appear in the UI!
+
+---
+
+📄 **Navigation:**
+[➡️ Start with Module 1: Architecture & Internals](01_architecture_and_internals.md)

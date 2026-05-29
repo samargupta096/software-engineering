@@ -1,6 +1,9 @@
 # Deep Dive: Advanced Scheduling & Scaling (Airflow 3.0+)
 
-Scaling Airflow isn't just about adding more worker nodes; it's about intelligent resource management and designing pipelines that respond to data rather than the clock.
+📄 **Navigation:**
+[« Previous: Module 2](02_core_concepts_deep_dive.md) | [🏠 Back to Index](airflow_comprehensive_guide.md) | [Next: Module 4](04_production_best_practices.md) ➔
+
+---
 
 ## 1. Event-Driven Scheduling & Assets (Airflow 3.0+)
 
@@ -140,3 +143,8 @@ A major issue in older Airflow versions was modifying a DAG while it was running
 - Every execution of a DAG is tied to a specific, immutable version snapshot of the code.
 - If you push new code to production, currently running DAGs will continue using the old version until they finish.
 - The UI allows you to inspect history and see exactly which version of the code was executed on a specific date.
+
+---
+
+📄 **Navigation:**
+[« Previous: Module 2](02_core_concepts_deep_dive.md) | [🏠 Back to Index](airflow_comprehensive_guide.md) | [Next: Module 4](04_production_best_practices.md) ➔

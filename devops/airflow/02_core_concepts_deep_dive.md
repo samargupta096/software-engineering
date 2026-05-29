@@ -1,6 +1,9 @@
 # Deep Dive: Airflow Core Concepts & Dynamic Workflows
 
-Once you understand the architecture of Airflow, you must master the syntax and logical flow controls to build robust data pipelines. This section covers the modern TaskFlow API, Cross-Communication (XComs), dynamic scaling, and workflow logic.
+📄 **Navigation:**
+[« Previous: Module 1](01_architecture_and_internals.md) | [🏠 Back to Index](airflow_comprehensive_guide.md) | [Next: Module 3](03_advanced_scheduling_and_scaling.md) ➔
+
+---
 
 ## 1. The TaskFlow API & XComs Internals
 
@@ -166,3 +169,8 @@ def cleanup():
 # DAG Flow:
 # branch_task >> [path_A, path_B] >> cleanup()
 ```
+
+---
+
+📄 **Navigation:**
+[« Previous: Module 1](01_architecture_and_internals.md) | [🏠 Back to Index](airflow_comprehensive_guide.md) | [Next: Module 3](03_advanced_scheduling_and_scaling.md) ➔
