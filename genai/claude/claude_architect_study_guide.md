@@ -4,10 +4,10 @@
 
 **Quick Links:**
 - [All Posters & Gallery](./learning/all_posters.md)
-- [Blueprint Presentation (PPTX Download)](https://github.com/samargupta096/software-engineering/raw/main/claude/learning/posters/Claude_Architect_Blueprint.pptx)
+- [Blueprint Presentation (PPTX Download)](https://github.com/samargupta096/software-engineering/raw/main/genai/claude/learning/posters/Claude_Architect_Blueprint.pptx)
 
 **Watch the Architect Blueprint Video:**
-https://github.com/samargupta096/software-engineering/raw/main/claude/learning/posters/Thinking_Like_a_Claude_Architect.mp4
+https://github.com/samargupta096/software-engineering/raw/main/genai/claude/learning/posters/Thinking_Like_a_Claude_Architect.mp4
 
 ![Architecture Mind Map](./learning/posters/MindMap.png)
 ![Claude Architect Blueprint](./learning/posters/Claude_Architect_Blueprint.png)

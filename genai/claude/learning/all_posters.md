@@ -32,11 +32,11 @@ A consolidated view of all the visual study aids for the Claude Certified Archit
 ![Claude Architect Blueprint](./posters/Claude_Architect_Blueprint.png)
 
 ## Presentations & Video Content
-- **[Download Claude Architect Blueprint Presentation (PPTX)](https://github.com/samargupta096/software-engineering/raw/main/claude/learning/posters/Claude_Architect_Blueprint.pptx)**
+- **[Download Claude Architect Blueprint Presentation (PPTX)](https://github.com/samargupta096/software-engineering/raw/main/genai/claude/learning/posters/Claude_Architect_Blueprint.pptx)**
 - **[Official Certification Exam Guide (PDF)](../Claude+Certified+Architect+–+Foundations+Certification+Exam+Guide.pdf)**
 
 **Watch the Architect Blueprint Video:**
-https://github.com/samargupta096/software-engineering/raw/main/claude/learning/posters/Thinking_Like_a_Claude_Architect.mp4
+https://github.com/samargupta096/software-engineering/raw/main/genai/claude/learning/posters/Thinking_Like_a_Claude_Architect.mp4
 
 ## Architecture Mind Map
 ![MindMap](./posters/MindMap.png)

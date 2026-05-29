@@ -11,6 +11,7 @@
 | [🚀 Learning Hub](./kafka-deep-dive.md) | Beginner | 10 min | **Start here!** Overview, learning path, and navigation |
 | [📘 Kafka Fundamentals](./kafka-fundamentals.md) | Intermediate | 45 min | Core concepts, Producers, Consumers, Examples |
 | [🔧 Internals & Architecture](./kafka-internals-architecture.md) | Advanced | 60 min | Replication, Storage, Performance tuning |
+| [🧬 Avro & Schema Mastery](./avro-schema-mastery.md) | Advanced | 45 min | Serialization, Schema Evolution, Java Implementation |
 
 ---
 
@@ -58,7 +59,7 @@ graph LR
 - Kafka Connect (Source & Sink connectors)
 - Kafka Streams (Stream processing)
 - ksqlDB (SQL for streams)
-- Schema Registry
+- Schema Registry & Apache Avro
 
 ### Best Practices
 - Production deployment checklist
