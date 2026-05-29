@@ -6,26 +6,6 @@
 
 ---
 
-## 📚 Learning Path
-
-```mermaid
-flowchart LR
-    CS(CS Fundamentals) --> SD(System Design)
-    SD --> CC(Core Components)
-    CC --> CA(Cloud & AWS)
-    CA --> ID(Infrastructure & DevOps)
-    ID --> JL(Java Landscape)
-    JL --> RW(Real-World Designs)
-    RW --> IP(Interview Prep)
-    IP --> HP(Hands-On Projects)
-    HP --> GA(GenAI & LLM)
-    GA --> FM(Frontend Mastery)
-    FM --> BK(Books & Learning)
-
-    style CS fill:#f96,stroke:#333,stroke-width:2px
-    style SD fill:#69f,stroke:#333,stroke-width:2px
-    style RW fill:#f69,stroke:#333,stroke-width:4px
-```
 
 
 
@@ -47,7 +27,7 @@ flowchart LR
 </tr>
 <tr>
 <td valign="top"><div align="center"><img src="./assets/animations/cloud-aws.gif" width="200" alt="Cloud"></div><br><b>Master cloud services:</b><br><ul><li>☁️ <a href="./aws/aws-services-guide.md">AWS Services</a> ⭐</li><li>📝 <a href="./aws/developer-associate-exam-guide.md">Dev Associate Exam</a> ⭐🆕</li><li>📅 <a href="./aws/aws-developer-study-plan.md">10-Day Study Plan</a> ⭐🆕</li><li>🛠️ <a href="./aws/aws-cdk-guide.md">AWS CDK</a></li></ul></td>
-<td valign="top"><div align="center"><img src="./assets/animations/infrastructure-devops.gif" width="200" alt="DevOps"></div><br><b>Container & Deployment:</b><br><ul><li>🐳 <a href="./devops/docker-guide.md">Docker</a> ⭐</li><li>☸️ <a href="./devops/kubernetes-guide.md">Kubernetes</a> ⭐</li><li>🌍 <a href="./devops/terraform/README.md">Terraform</a> ⭐</li><li>🏭 <a href="./devops/terraform/terraform-real-world-project.md">Prod Architecture</a></li></ul></td>
+<td valign="top"><div align="center"><img src="./assets/animations/infrastructure-devops.gif" width="200" alt="DevOps"></div><br><b>Container & Deployment:</b><br><ul><li>🐳 <a href="./devops/docker-guide.md">Docker</a> ⭐</li><li>☸️ <a href="./devops/kubernetes-guide.md">Kubernetes</a> ⭐</li><li>🌍 <a href="./devops/terraform/README.md">Terraform</a> ⭐</li><li>🏭 <a href="./devops/terraform/terraform-real-world-project.md">Prod Architecture</a></li><li>🍎 <a href="./devops/macos-developer-guide.md">macOS Developer Guide</a> ⭐🆕</li></ul></td>
 <td valign="top"><div align="center"><img src="./assets/animations/java-landscape.gif" width="200" alt="Java"></div><br><b>Modern Java Dev:</b><br><ul><li>☕ <a href="./java-spring/modern-features-guide.md">Java 8-21 Features</a></li><li>🍃 <a href="./java-spring/spring/spring-boot-guide.md">Spring Boot</a> ⭐</li><li>🎤 <a href="./java-spring/interview-questions.md">Interview Qs</a></li></ul></td>
 </tr>
 <tr>
@@ -67,7 +47,7 @@ flowchart LR
 </tr>
 <tr>
 <td valign="top"><div align="center"><img src="./assets/animations/projects.png" width="200" alt="Projects"></div><br><b>Practical Learning:</b><br><ul><li>📨 <a href="./projects/kafka-learning-project/README.md">Kafka Learning Project</a> ⭐</li><li>🤖 <a href="./projects/llm-finetuning-project/README.md">LLM Fine-Tuning</a></li><li>🔌 <a href="./projects/mcp-server-project/README.md">MCP Server Project</a></li><li>📚 <a href="./projects/rag-api-project/README.md">RAG API Project</a> ⭐</li></ul></td>
-<td valign="top"><div align="center"><img src="./assets/animations/genai.png" width="200" alt="GenAI"></div><br><b>AI/ML Engineering:</b><br><ul><li>🧠 <a href="./genai/ml-fundamentals.md">ML & DL Fundamentals</a> ⭐</li><li>🧠 <a href="./genai/genai-fundamentals.md">GenAI Fundamentals</a></li><li>📚 <a href="./genai/RAG-FineTuning-LLM-Mastery.md">RAG & Fine-Tuning Mastery</a> ⭐🆕</li><li>📐 <a href="./genai/VectorDatabases-Math-DeepDive.md">Vector DBs & Math Deep Dive</a> ⭐🆕</li><li>🤖 <a href="./genai/agentic-ai-guide.md">Agentic AI Guide</a> ⭐</li><li>🔌 <a href="./genai/Model-Context-Protocol-MCP-Practical-Guide.md">MCP Practical Guide</a> ⭐🆕</li><li>⚡ <a href="./genai/fastapi-guide.md">FastAPI for GenAI</a></li></ul></td>
+<td valign="top"><div align="center"><img src="./assets/animations/genai.png" width="200" alt="GenAI"></div><br><b>AI/ML Engineering:</b><br><ul><li>🧠 <a href="./genai/ml-fundamentals.md">ML & DL Fundamentals</a> ⭐</li><li>🧠 <a href="./genai/genai-fundamentals.md">GenAI Fundamentals</a></li><li>📚 <a href="./genai/RAG-FineTuning-LLM-Mastery.md">RAG & Fine-Tuning Mastery</a> ⭐🆕</li><li>📐 <a href="./genai/VectorDatabases-Math-DeepDive.md">Vector DBs & Math Deep Dive</a> ⭐🆕</li><li>🤖 <a href="./genai/agentic-ai-guide.md">Agentic AI Guide</a> ⭐</li><li>🔌 <a href="./genai/Model-Context-Protocol-MCP-Practical-Guide.md">MCP Practical Guide</a> ⭐🆕</li><li>🏗️ <a href="./genai/ai-harness-engineering.md">AI Harness Engineering</a> ⭐🆕</li><li>⚡ <a href="./genai/fastapi-guide.md">FastAPI for GenAI</a></li></ul></td>
 <td valign="top"><div align="center"><img src="./assets/animations/frontend-mastery.png" width="200" alt="Frontend"></div><br><b>Frontend Mastery:</b><br><ul><li>📜 <a href="./frontend/javascript-es6-guide.md">JS ES6+ Complete</a> ⭐</li><li>📘 <a href="./frontend/typescript-guide.md">TypeScript Mastery</a> ⭐</li><li>⚛️ <a href="./frontend/react-guide.md">React.js Guide</a> ⭐</li><li>🅰️ <a href="./frontend/angular-guide.md">Angular Guide</a></li></ul></td>
 </tr>
 <tr>
@@ -139,14 +119,14 @@ flowchart LR
 | 1️⃣ | [**System Design Basics**](./interview-prep/system-design/fundamentals/01-system-design-basics.md) | Core concepts, CAP, Scalability |
 | 2️⃣ | [**Core Components**](./interview-prep/system-design/components/overview.md) | Load balancers, Caching, Queues |
 | 3️⃣ | [**Cloud & AWS**](./aws/aws-services-guide.md) | S3, Lambda, ECS, VPC |
-| 4️⃣ | [**DevOps**](./devops/) | Docker, Kubernetes, Terraform |
+| 4️⃣ | [**DevOps**](./devops/) | Docker, Kubernetes, Terraform, macOS Dev Guide |
 | 5️⃣ | [**Java Landscape**](./java-spring/modern-features-guide.md) | Modern features, Spring Boot |
 | 6️⃣ | [**DSA Resources**](./interview-prep/dsa/00-cheatsheet.md) | Patterns, LeetCode problems |
 | 7️⃣ | [**Low-Level Design (LLD)**](./interview-prep/lld/00-lld-interview-roadmap.md) | OOP, SOLID, Design Patterns |
 | 8️⃣ | [**Real-World Designs**](./interview-prep/system-design/real-systems/00-interview-roadmap.md) | Real-world case studies |
 | 9️⃣ | [**Interview Prep Hub**](./interview-prep/) | Company-specific preparation |
 | 🔟 | [**Hands-On Projects**](./projects/) | Kafka, RAG API, LLM Fine-tuning |
-| 1️⃣1️⃣ | [**GenAI & LLM**](./genai/genai-fundamentals.md) | RAG, Fine-Tuning, Vector DBs, MCP, Agentic AI |
+| 1️⃣1️⃣ | [**GenAI & LLM**](./genai/genai-fundamentals.md) | RAG, Fine-Tuning, Vector DBs, MCP, Agentic AI, Harness Engineering |
 | 1️⃣2️⃣ | [**Frontend Mastery**](./frontend/javascript-es6-guide.md) | JS ES6+, TypeScript, React, Angular |
 | 1️⃣3️⃣ | [**Claude Certified Architect**](./claude/learning/README.md) | Agentic Architecture, MCP, Prompt Engineering, Exam Prep 🆕 |
 | 1️⃣4️⃣ | [**Books & Learning**](./books/README.md) | AI Engineering, EDA, Clean Code, DDD, DDIA & more |
