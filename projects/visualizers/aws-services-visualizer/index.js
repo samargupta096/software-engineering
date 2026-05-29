@@ -585,8 +585,410 @@
   if (btnLambdaRun) btnLambdaRun.addEventListener('click', () => runRequestFlow(false));
   if (btnLambdaCold) btnLambdaCold.addEventListener('click', () => runRequestFlow(true));
 
+
   /* ──────────────────────────────────────────────────────
-     12. COMBINED ARCHITECTURE PATTERNS
+     11. DYNAMODB
+     ────────────────────────────────────────────────────── */
+  // Schema Toggle
+  const ddbSchemaToggle = document.getElementById('ddb-schema-toggle');
+  const ddbTable = document.getElementById('ddb-table');
+  const SCHEMAS = {
+    simple: `
+      <div class="ddb-row header">
+        <div class="ddb-cell pk">PK (Partition Key)</div>
+        <div class="ddb-cell attr">Attributes</div>
+      </div>
+      <div class="ddb-row">
+        <div class="ddb-cell pk">USER#123</div>
+        <div class="ddb-cell attr">{"name": "Alice", "email": "a@b.com"}</div>
+      </div>
+      <div class="ddb-row">
+        <div class="ddb-cell pk">USER#456</div>
+        <div class="ddb-cell attr">{"name": "Bob", "email": "b@c.com"}</div>
+      </div>
+    `,
+    composite: `
+      <div class="ddb-row header">
+        <div class="ddb-cell pk">PK (Partition Key)</div>
+        <div class="ddb-cell sk">SK (Sort Key)</div>
+        <div class="ddb-cell attr">Attributes</div>
+      </div>
+      <div class="ddb-row">
+        <div class="ddb-cell pk">USER#123</div>
+        <div class="ddb-cell sk">ORDER#1001</div>
+        <div class="ddb-cell attr">{"total": 50, "status": "shipped"}</div>
+      </div>
+      <div class="ddb-row">
+        <div class="ddb-cell pk">USER#123</div>
+        <div class="ddb-cell sk">ORDER#1002</div>
+        <div class="ddb-cell attr">{"total": 120, "status": "pending"}</div>
+      </div>
+    `,
+    'single-table': `
+      <div class="ddb-row header">
+        <div class="ddb-cell pk">PK (Partition Key)</div>
+        <div class="ddb-cell sk">SK (Sort Key)</div>
+        <div class="ddb-cell attr">Attributes</div>
+      </div>
+      <div class="ddb-row">
+        <div class="ddb-cell pk">USER#123</div>
+        <div class="ddb-cell sk">PROFILE</div>
+        <div class="ddb-cell attr">{"name": "Alice"}</div>
+      </div>
+      <div class="ddb-row">
+        <div class="ddb-cell pk">USER#123</div>
+        <div class="ddb-cell sk">ORDER#1001</div>
+        <div class="ddb-cell attr">{"total": 50}</div>
+      </div>
+      <div class="ddb-row">
+        <div class="ddb-cell pk">PRODUCT#99</div>
+        <div class="ddb-cell sk">INVENTORY</div>
+        <div class="ddb-cell attr">{"stock": 42}</div>
+      </div>
+    `
+  };
+  if (ddbSchemaToggle && ddbTable) {
+    const renderSchema = (s) => ddbTable.innerHTML = SCHEMAS[s] || '';
+    renderSchema('simple');
+    ddbSchemaToggle.querySelectorAll('.strategy-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        ddbSchemaToggle.querySelectorAll('.strategy-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderSchema(btn.dataset.schema);
+      });
+    });
+  }
+
+  // Capacity Toggle
+  const ddbCapToggle = document.getElementById('ddb-capacity-toggle');
+  if (ddbCapToggle) {
+    ddbCapToggle.querySelectorAll('.strategy-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        ddbCapToggle.querySelectorAll('.strategy-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const mode = btn.dataset.mode;
+        document.getElementById('ddb-cap-left').style.opacity = mode === 'ondemand' ? '1' : '0.4';
+        document.getElementById('ddb-cap-right').style.opacity = mode === 'provisioned' ? '1' : '0.4';
+      });
+    });
+    document.getElementById('ddb-cap-right').style.opacity = '0.4'; // Default
+  }
+
+  // Index Demo
+  const ddbIndexToggle = document.getElementById('ddb-index-toggle');
+  const ddbIndexDemo = document.getElementById('ddb-index-demo');
+  const INDEX_VIEWS = {
+    none: `
+      <div class="ddb-index-view">
+        <div class="ddb-index-title">Base Table</div>
+        <div class="ddb-table">
+          <div class="ddb-row header"><div class="ddb-cell pk">PK (UserId)</div><div class="ddb-cell sk">SK (OrderId)</div><div class="ddb-cell attr">Amount</div><div class="ddb-cell attr">Date</div></div>
+          <div class="ddb-row"><div class="ddb-cell pk">U1</div><div class="ddb-cell sk">O1</div><div class="ddb-cell attr">$50</div><div class="ddb-cell attr">2026-01-01</div></div>
+          <div class="ddb-row"><div class="ddb-cell pk">U1</div><div class="ddb-cell sk">O2</div><div class="ddb-cell attr">$20</div><div class="ddb-cell attr">2026-02-15</div></div>
+        </div>
+        <p style="margin-top:1rem;font-size:0.8rem;color:var(--text-muted)">Can easily query: "Get all orders for User U1". Cannot efficiently query by Date or Amount.</p>
+      </div>
+    `,
+    gsi: `
+      <div class="ddb-index-view">
+        <div class="ddb-index-title">GSI (Partition by Date)</div>
+        <div class="ddb-table">
+          <div class="ddb-row header"><div class="ddb-cell pk">GSI PK (Date)</div><div class="ddb-cell sk">GSI SK (Amount)</div><div class="ddb-cell attr">UserId</div><div class="ddb-cell attr">OrderId</div></div>
+          <div class="ddb-row"><div class="ddb-cell pk">2026-01-01</div><div class="ddb-cell sk">$50</div><div class="ddb-cell attr">U1</div><div class="ddb-cell attr">O1</div></div>
+          <div class="ddb-row"><div class="ddb-cell pk">2026-02-15</div><div class="ddb-cell sk">$20</div><div class="ddb-cell attr">U1</div><div class="ddb-cell attr">O2</div></div>
+        </div>
+        <p style="margin-top:1rem;font-size:0.8rem;color:var(--text-muted)">Unlocks query: "Get all orders placed on 2026-01-01, sorted by Amount".</p>
+      </div>
+    `,
+    lsi: `
+      <div class="ddb-index-view">
+        <div class="ddb-index-title">LSI (Same PK, New SK)</div>
+        <div class="ddb-table">
+          <div class="ddb-row header"><div class="ddb-cell pk">PK (UserId)</div><div class="ddb-cell sk">LSI SK (Date)</div><div class="ddb-cell attr">OrderId</div><div class="ddb-cell attr">Amount</div></div>
+          <div class="ddb-row"><div class="ddb-cell pk">U1</div><div class="ddb-cell sk">2026-01-01</div><div class="ddb-cell attr">O1</div><div class="ddb-cell attr">$50</div></div>
+          <div class="ddb-row"><div class="ddb-cell pk">U1</div><div class="ddb-cell sk">2026-02-15</div><div class="ddb-cell attr">O2</div><div class="ddb-cell attr">$20</div></div>
+        </div>
+        <p style="margin-top:1rem;font-size:0.8rem;color:var(--text-muted)">Unlocks query: "Get all orders for User U1, sorted by Date instead of OrderId".</p>
+      </div>
+    `
+  };
+  if (ddbIndexToggle && ddbIndexDemo) {
+    const renderIdx = (i) => ddbIndexDemo.innerHTML = INDEX_VIEWS[i] || '';
+    renderIdx('none');
+    ddbIndexToggle.querySelectorAll('.strategy-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        ddbIndexToggle.querySelectorAll('.strategy-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderIdx(btn.dataset.idx);
+      });
+    });
+  }
+
+  // DynamoDB Streams
+  const btnDdbStream = document.getElementById('btn-ddb-stream');
+  const btnDdbStreamReset = document.getElementById('btn-ddb-stream-reset');
+  if (btnDdbStream) {
+    btnDdbStream.addEventListener('click', () => {
+      const nodes = ['ddb-sf-table', 'ddb-sf-a1', 'ddb-sf-stream', 'ddb-sf-a2', 'ddb-sf-lambda', 'ddb-sf-a3', 'ddb-sf-es'];
+      nodes.forEach((id, i) => {
+        setTimeout(() => {
+          const el = document.getElementById(id);
+          if (el) {
+            el.style.opacity = '1';
+            el.style.color = id.includes('-a') ? 'var(--accent-teal)' : 'var(--bg-primary)';
+            if (!id.includes('-a')) {
+              el.style.backgroundColor = 'var(--accent-teal)';
+              el.style.transform = 'scale(1.05)';
+            }
+          }
+        }, i * 400);
+      });
+    });
+  }
+  if (btnDdbStreamReset) {
+    btnDdbStreamReset.addEventListener('click', () => {
+      const nodes = ['ddb-sf-table', 'ddb-sf-a1', 'ddb-sf-stream', 'ddb-sf-a2', 'ddb-sf-lambda', 'ddb-sf-a3', 'ddb-sf-es'];
+      nodes.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.style.opacity = '0.5';
+          el.style.color = '';
+          el.style.backgroundColor = '';
+          el.style.transform = 'scale(1)';
+        }
+      });
+    });
+  }
+
+  /* ──────────────────────────────────────────────────────
+     12. VPC ADVANCED
+     ────────────────────────────────────────────────────── */
+  // Transit Gateway
+  const tgwSpokes = document.querySelectorAll('.tgw-spoke');
+  if (tgwSpokes.length > 0) {
+    tgwSpokes.forEach(spoke => {
+      spoke.addEventListener('click', () => {
+        spoke.classList.toggle('active');
+      });
+    });
+  }
+
+  // VPC Endpoints
+  const vpcEpToggle = document.getElementById('vpc-ep-toggle');
+  const vpcEpFlow = document.getElementById('vpc-ep-flow');
+  const vpcEpCallout = document.getElementById('vpc-ep-callout');
+  if (vpcEpToggle && vpcEpFlow) {
+    vpcEpToggle.querySelectorAll('.strategy-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        vpcEpToggle.querySelectorAll('.strategy-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const ep = btn.dataset.ep;
+        document.getElementById('ep-endpoint').innerText = ep === 'gateway' ? '🔗 Gateway EP' : '🔗 Interface EP (ENI)';
+        document.getElementById('ep-service').innerText = ep === 'gateway' ? '📦 S3 / DynamoDB' : '📦 Kinesis, SNS, etc.';
+        vpcEpCallout.innerHTML = ep === 'gateway'
+          ? '<strong>Gateway Endpoints:</strong> Free. Route table entry. Supports S3 and DynamoDB only. Traffic stays on AWS backbone.'
+          : '<strong>Interface Endpoints:</strong> Costs ~$0.01/hr + data. Elastic Network Interface (ENI) with private IP. Powered by PrivateLink. Supports 80+ services.';
+      });
+    });
+  }
+
+  // Flow Logs
+  const btnFlowlogGen = document.getElementById('btn-flowlog-gen');
+  const flowlogTable = document.getElementById('flowlog-table');
+  if (btnFlowlogGen && flowlogTable) {
+    btnFlowlogGen.addEventListener('click', () => {
+      flowlogTable.innerHTML = `
+        <div class="ddb-row header">
+          <div class="ddb-cell" style="width:50px">Version</div><div class="ddb-cell pk">Account</div><div class="ddb-cell sk">ENI</div>
+          <div class="ddb-cell attr">Src IP</div><div class="ddb-cell attr">Dest IP</div><div class="ddb-cell" style="width:80px">Action</div>
+        </div>
+        <div class="ddb-row" style="animation:slideIn 0.3s ease">
+          <div class="ddb-cell" style="width:50px">2</div><div class="ddb-cell pk">123456789012</div><div class="ddb-cell sk">eni-1235b8ca</div>
+          <div class="ddb-cell attr">10.0.1.14</div><div class="ddb-cell attr">192.168.1.5</div><div class="ddb-cell" style="width:80px;color:var(--accent-teal)">ACCEPT</div>
+        </div>
+        <div class="ddb-row" style="animation:slideIn 0.6s ease">
+          <div class="ddb-cell" style="width:50px">2</div><div class="ddb-cell pk">123456789012</div><div class="ddb-cell sk">eni-1235b8ca</div>
+          <div class="ddb-cell attr">103.45.67.89</div><div class="ddb-cell attr">10.0.1.14</div><div class="ddb-cell" style="width:80px;color:var(--accent-red)">REJECT</div>
+        </div>
+      `;
+    });
+  }
+
+  /* ──────────────────────────────────────────────────────
+     13. STEP FUNCTIONS ADVANCED
+     ────────────────────────────────────────────────────── */
+  const btnSagaRun = document.getElementById('btn-saga-run');
+  const btnSagaFail = document.getElementById('btn-saga-fail');
+  const btnSagaReset = document.getElementById('btn-saga-reset');
+  const sagaCompensate = document.getElementById('saga-compensate');
+  let sagaTimer = null;
+
+  const resetSaga = () => {
+    clearTimeout(sagaTimer);
+    document.querySelectorAll('.saga-step').forEach(el => {
+      el.classList.remove('active', 'success', 'failed');
+    });
+    document.querySelectorAll('.state-connector').forEach(el => el.classList.remove('active'));
+    if (sagaCompensate) sagaCompensate.style.display = 'none';
+  };
+
+  if (btnSagaRun) {
+    btnSagaRun.addEventListener('click', () => {
+      resetSaga();
+      const steps = ['saga-reserve', 'saga-c1', 'saga-payment', 'saga-c2', 'saga-ship', 'saga-c3', 'saga-notify'];
+      steps.forEach((id, i) => {
+        setTimeout(() => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          if (id.includes('-c')) el.classList.add('active');
+          else el.classList.add('success');
+        }, i * 600);
+      });
+    });
+  }
+
+  if (btnSagaFail) {
+    btnSagaFail.addEventListener('click', () => {
+      resetSaga();
+      const runSteps = ['saga-reserve', 'saga-c1', 'saga-payment'];
+      runSteps.forEach((id, i) => {
+        setTimeout(() => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          if (id.includes('-c')) el.classList.add('active');
+          else if (id === 'saga-payment') el.classList.add('failed');
+          else el.classList.add('success');
+        }, i * 600);
+      });
+      sagaTimer = setTimeout(() => {
+        if (sagaCompensate) sagaCompensate.style.display = 'flex';
+        setTimeout(() => document.getElementById('saga-comp-refund')?.classList.add('success'), 400);
+        setTimeout(() => document.getElementById('saga-cc1')?.classList.add('active'), 1000);
+        setTimeout(() => document.getElementById('saga-comp-reserve')?.classList.add('success'), 1600);
+      }, runSteps.length * 600 + 400);
+    });
+  }
+  if (btnSagaReset) btnSagaReset.addEventListener('click', resetSaga);
+
+  /* ──────────────────────────────────────────────────────
+     14. API GATEWAY ADVANCED
+     ────────────────────────────────────────────────────── */
+  const btnApigwRun = document.getElementById('btn-apigw-run');
+  const btnApigwFail = document.getElementById('btn-apigw-fail');
+  const btnApigwCache = document.getElementById('btn-apigw-cache');
+
+  const runApigwFlow = (outcome) => {
+    const nodes = ['agw-client', 'agw-c1', 'agw-auth', 'agw-c2', 'agw-throttle', 'agw-c3', 'agw-cache', 'agw-c4', 'agw-integration'];
+    // Reset
+    nodes.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) { el.style.opacity = '0.5'; el.style.backgroundColor = ''; el.style.color = ''; el.style.transform = 'scale(1)'; }
+    });
+
+    nodes.forEach((id, i) => {
+      setTimeout(() => {
+        // Stop logic
+        if (outcome === 'fail' && i > 4) return; // Stop after throttle
+        if (outcome === 'cache' && i > 6) return; // Stop after cache
+
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.style.opacity = '1';
+        
+        if (!id.includes('-c')) {
+          el.style.transform = 'scale(1.05)';
+          el.style.color = 'var(--bg-primary)';
+          
+          if (id === 'agw-throttle' && outcome === 'fail') {
+            el.style.backgroundColor = 'var(--accent-red)';
+            el.innerHTML = '🚦 Throttled (429)';
+          } else if (id === 'agw-cache' && outcome === 'cache') {
+            el.style.backgroundColor = 'var(--accent-teal)';
+            el.innerHTML = '📦 Cache HIT';
+          } else {
+            // Restore text if needed
+            if (id === 'agw-throttle') el.innerHTML = '🚦 Throttling';
+            if (id === 'agw-cache') el.innerHTML = '📦 Cache';
+            // Set success color based on type
+            if (id === 'agw-auth') el.style.backgroundColor = 'var(--accent-purple)';
+            else if (id === 'agw-integration') el.style.backgroundColor = 'var(--accent-orange)';
+            else el.style.backgroundColor = 'var(--accent-teal)';
+          }
+        }
+      }, i * 400);
+    });
+  };
+
+  if (btnApigwRun) btnApigwRun.addEventListener('click', () => runApigwFlow('success'));
+  if (btnApigwFail) btnApigwFail.addEventListener('click', () => runApigwFlow('fail'));
+  if (btnApigwCache) btnApigwCache.addEventListener('click', () => runApigwFlow('cache'));
+
+  /* ──────────────────────────────────────────────────────
+     15. SECURITY & IAM ADVANCED
+     ────────────────────────────────────────────────────── */
+  // GuardDuty
+  const btnGdScan = document.getElementById('btn-gd-scan');
+  const btnGdThreat = document.getElementById('btn-gd-threat');
+  const gdFindings = document.getElementById('gd-findings');
+  if (btnGdScan && gdFindings) {
+    btnGdScan.addEventListener('click', () => {
+      gdFindings.innerHTML = `
+        <div class="gd-finding">
+          <div class="gd-severity low">LOW</div>
+          <div class="gd-desc">Unusual IAM user login from new IP.</div>
+          <div class="gd-time">Just now</div>
+        </div>
+      `;
+    });
+  }
+  if (btnGdThreat && gdFindings) {
+    btnGdThreat.addEventListener('click', () => {
+      gdFindings.innerHTML = `
+        <div class="gd-finding">
+          <div class="gd-severity high">HIGH</div>
+          <div class="gd-desc">EC2 instance querying Bitcoin mining domains.</div>
+          <div class="gd-time">Just now</div>
+        </div>
+        <div class="gd-finding">
+          <div class="gd-severity medium">MEDIUM</div>
+          <div class="gd-desc">S3 bucket made public unexpectedly.</div>
+          <div class="gd-time">2 mins ago</div>
+        </div>
+      ` + gdFindings.innerHTML;
+    });
+  }
+
+  // KMS Flow
+  const btnKmsEncrypt = document.getElementById('btn-kms-encrypt');
+  if (btnKmsEncrypt) {
+    btnKmsEncrypt.addEventListener('click', () => {
+      const nodes = ['kms-cmk', 'kms-a1', 'kms-dek', 'kms-a2', 'kms-data', 'kms-a3', 'kms-cipher'];
+      nodes.forEach((id, i) => {
+        const el = document.getElementById(id);
+        if(el) { el.style.opacity = '0.5'; el.style.backgroundColor = ''; el.style.color = ''; el.style.transform = 'scale(1)'; }
+      });
+      nodes.forEach((id, i) => {
+        setTimeout(() => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          el.style.opacity = '1';
+          if (!id.includes('-a')) {
+            el.style.transform = 'scale(1.05)';
+            if (id === 'kms-dek' || id === 'kms-cmk') {
+              el.style.backgroundColor = 'var(--accent-teal)';
+              el.style.color = 'var(--bg-primary)';
+            }
+            if (id === 'kms-cipher') {
+              el.style.backgroundColor = 'var(--accent-purple)';
+              el.style.color = 'var(--bg-primary)';
+            }
+          }
+        }, i * 500);
+      });
+    });
+  }
+  /* ──────────────────────────────────────────────────────
+     16. COMBINED ARCHITECTURE PATTERNS
      ────────────────────────────────────────────────────── */
   const archTabs = document.getElementById('arch-tabs');
   const archDiagram = document.getElementById('arch-diagram');
@@ -671,7 +1073,7 @@
   }
 
   /* ──────────────────────────────────────────────────────
-     13. CHEAT SHEET — Searchable Reference
+     17. CHEAT SHEET — Searchable Reference
      ────────────────────────────────────────────────────── */
   const cheatSearch = document.getElementById('cheat-search');
   const cheatGrid = document.getElementById('cheat-grid');
@@ -693,6 +1095,9 @@
     { service: '📧 SES', desc: 'Scalable email sending and receiving service.', limits: '50K emails/day (production)', tags: ['messaging'], keywords: 'ses email sending notification' },
     { service: '🔑 KMS', desc: 'Managed encryption keys for data-at-rest and envelope encryption.', limits: '10K requests/sec per key', tags: ['security'], keywords: 'kms encryption key cmk envelope' },
     { service: '🤫 Secrets Manager', desc: 'Store and rotate secrets (DB creds, API keys) securely.', limits: '65KB max secret, auto-rotation', tags: ['security'], keywords: 'secrets manager password rotation credentials' },
+    { service: '🔀 Transit Gateway', desc: 'Central hub connecting VPCs and on-premises networks.', limits: '5000 VPCs, 50 Gbps per VPC attach', tags: ['security'], keywords: 'transit gateway tgw network hub spoke peering' },
+    { service: '🛡️ WAF', desc: 'Web Application Firewall protecting against common exploits.', limits: '1500 WCUs per web ACL', tags: ['security'], keywords: 'waf firewall sql xss rules bot' },
+    { service: '🕵️ GuardDuty', desc: 'Intelligent threat detection using ML and log analysis.', limits: 'Continuous monitoring, no limits', tags: ['security'], keywords: 'guardduty threat detection ml anomaly security' },
   ];
 
   function renderCheatSheet(filter) {

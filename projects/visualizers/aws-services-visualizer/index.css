@@ -308,3 +308,65 @@ code{font-family:var(--font-mono);background:rgba(255,153,0,0.12);color:var(--ac
 @media (max-width: 768px) {
   .toc__link{font-size:.65rem;padding:4px 6px}
 }
+
+/* ── 11 DynamoDB ─────────────────────────────── */
+.ddb-table{display:flex;flex-direction:column;gap:4px;background:var(--bg-glass);border:1px solid var(--border-card);border-radius:var(--radius-md);padding:1rem}
+.ddb-row{display:flex;align-items:stretch;border-radius:var(--radius-sm);overflow:hidden;border:1px solid var(--border-card);font-family:var(--font-mono);font-size:.8rem}
+.ddb-row.header{font-weight:700;color:var(--text-secondary);background:rgba(255,255,255,0.05);border-color:transparent}
+.ddb-cell{padding:8px 12px;display:flex;align-items:center}
+.ddb-cell.pk{background:rgba(255,153,0,0.1);color:var(--accent-orange);border-right:1px solid rgba(255,153,0,0.2);min-width:140px;font-weight:700}
+.ddb-cell.sk{background:rgba(76,201,240,0.1);color:var(--accent-blue);border-right:1px solid rgba(76,201,240,0.2);min-width:140px;font-weight:700}
+.ddb-cell.attr{flex:1;color:var(--text-primary);background:rgba(255,255,255,0.02)}
+.ddb-index-demo{display:flex;gap:1.5rem;flex-wrap:wrap;padding:1rem 0}
+.ddb-index-view{flex:1;min-width:300px}
+.ddb-index-title{font-size:.85rem;font-weight:700;margin-bottom:.8rem;color:var(--accent-orange)}
+
+/* ── 12 VPC Advanced ─────────────────────────── */
+.tgw-topology{display:flex;justify-content:center;align-items:center;position:relative;height:350px;padding:2rem}
+.tgw-hub{width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,rgba(155,93,229,0.2),rgba(155,93,229,0.05));border:2px solid var(--accent-purple);display:flex;align-items:center;justify-content:center;text-align:center;font-weight:800;font-size:.9rem;color:var(--accent-purple);box-shadow:var(--shadow-glow-purple);z-index:10;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}
+.tgw-spoke{position:absolute;padding:12px 20px;background:var(--bg-glass);border:1px solid var(--border-card);border-radius:var(--radius-sm);font-size:.85rem;font-weight:700;text-align:center;cursor:pointer;transition:var(--transition-smooth);z-index:20;box-shadow:var(--shadow-card)}
+.tgw-spoke:hover{border-color:var(--accent-teal);transform:scale(1.05)}
+.tgw-spoke.active{border-color:var(--accent-teal);background:rgba(6,214,160,0.08);color:var(--accent-teal)}
+.tgw-spoke::after{content:'';position:absolute;width:100px;height:2px;background:var(--border-card);z-index:-1;transition:var(--transition-smooth)}
+.tgw-spoke.active::after{background:var(--accent-teal)}
+/* Positioning of spokes */
+.tgw-spoke[data-spoke="0"]{top:10%;left:20%;transform:translate(-50%,-50%)}
+.tgw-spoke[data-spoke="0"]::after{top:50%;left:100%;width:150px;transform:rotate(30deg);transform-origin:left center}
+.tgw-spoke[data-spoke="1"]{top:10%;right:20%;transform:translate(50%,-50%)}
+.tgw-spoke[data-spoke="1"]::after{top:50%;right:100%;width:150px;transform:rotate(-30deg);transform-origin:right center}
+.tgw-spoke[data-spoke="2"]{bottom:10%;left:20%;transform:translate(-50%,50%)}
+.tgw-spoke[data-spoke="2"]::after{bottom:50%;left:100%;width:150px;transform:rotate(-30deg);transform-origin:left center}
+.tgw-spoke[data-spoke="3"]{bottom:10%;right:20%;transform:translate(50%,50%)}
+.tgw-spoke[data-spoke="3"]::after{bottom:50%;right:100%;width:150px;transform:rotate(30deg);transform-origin:right center}
+
+/* ── 13 Step Functions Advanced ──────────────── */
+.saga-flow{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:.5rem;padding:1rem 0}
+.saga-step{padding:12px 20px;border-radius:var(--radius-sm);font-size:.85rem;font-weight:700;border:2px solid var(--border-card);background:var(--bg-glass);transition:var(--transition-smooth);min-width:160px;text-align:center}
+.saga-step.active{border-color:var(--accent-orange);box-shadow:var(--shadow-glow-orange)}
+.saga-step.success{border-color:var(--accent-teal);background:rgba(6,214,160,0.08);color:var(--accent-teal)}
+.saga-step.failed{border-color:var(--accent-red);background:rgba(239,71,111,0.08);color:var(--accent-red)}
+.saga-compensate{display:flex;align-items:center;justify-content:center;gap:.5rem;margin-top:2rem;padding-top:2rem;border-top:1px dashed var(--border-card);position:relative}
+.saga-comp-label{position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--bg-primary);padding:0 15px;color:var(--text-muted);font-size:.8rem;font-weight:700}
+.saga-step.comp{border-style:dashed}
+
+/* ── 15 Security Advanced ────────────────────── */
+.org-tree{display:flex;flex-direction:column;align-items:center;gap:1.5rem;padding:2rem 0;position:relative}
+.org-root{padding:12px 24px;background:rgba(239,71,111,0.1);border:2px solid var(--accent-red);border-radius:50px;font-weight:800;color:var(--accent-red);box-shadow:var(--shadow-glow-red);z-index:2}
+.org-branches{display:flex;gap:3rem;position:relative}
+.org-branches::before{content:'';position:absolute;top:-1.5rem;left:20%;right:20%;height:2px;background:var(--border-card)}
+.org-ou{display:flex;flex-direction:column;align-items:center;gap:1rem;position:relative}
+.org-ou::before{content:'';position:absolute;top:-1.5rem;left:50%;width:2px;height:1.5rem;background:var(--border-card)}
+.ou-name{padding:10px 20px;background:var(--bg-glass);border:1px dashed var(--border-subtle);border-radius:var(--radius-sm);font-size:.85rem;font-weight:700;text-align:center}
+.org-acc{padding:8px 16px;background:rgba(255,255,255,0.03);border:1px solid var(--border-card);border-radius:var(--radius-sm);font-size:.8rem;font-weight:600;text-align:center;width:100%;transition:var(--transition-fast)}
+.org-acc:hover{border-color:var(--accent-orange)}
+.gd-dashboard{background:var(--bg-glass);border:1px solid var(--border-card);border-radius:var(--radius-md);overflow:hidden;margin-top:1rem}
+.gd-header{padding:12px 20px;background:rgba(255,255,255,0.05);font-weight:800;font-size:.9rem;border-bottom:1px solid var(--border-card)}
+.gd-findings{display:flex;flex-direction:column}
+.gd-finding{display:flex;align-items:center;padding:12px 20px;border-bottom:1px solid var(--border-subtle);gap:1rem;font-size:.85rem;animation:slideIn .4s ease}
+.gd-finding:last-child{border-bottom:none}
+.gd-severity{padding:4px 10px;border-radius:4px;font-family:var(--font-mono);font-size:.75rem;font-weight:700;min-width:60px;text-align:center}
+.gd-severity.high{background:rgba(239,71,111,0.15);color:var(--accent-red)}
+.gd-severity.medium{background:rgba(255,153,0,0.15);color:var(--accent-orange)}
+.gd-severity.low{background:rgba(76,201,240,0.15);color:var(--accent-blue)}
+.gd-desc{flex:1;color:var(--text-primary)}
+.gd-time{font-family:var(--font-mono);font-size:.75rem;color:var(--text-muted)}

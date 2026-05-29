@@ -2871,3 +2871,166 @@ code {
 @media (max-width: 768px) {
   .toc__link{font-size:.65rem;padding:4px 6px}
 }
+
+/* ═══════════════════════════════════════════════════════
+   27. DESIGN PATTERNS
+   ═══════════════════════════════════════════════════════ */
+
+/* Outbox Pattern */
+.outbox-demo {
+  padding: 1rem 0;
+}
+.outbox-pipeline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.outbox-node {
+  padding: 12px 18px;
+  background: var(--bg-glass);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-align: center;
+  transition: all 0.3s ease;
+  min-width: 110px;
+}
+.outbox-arrow {
+  color: var(--text-muted);
+  font-size: 1.2rem;
+  transition: color 0.3s ease;
+}
+.outbox-node.active {
+  border-color: rgba(6, 214, 160, 0.4);
+  background: rgba(6, 214, 160, 0.08);
+  color: var(--accent-teal);
+  box-shadow: 0 0 15px rgba(6, 214, 160, 0.1);
+  transform: translateY(-2px);
+}
+.outbox-node.error {
+  border-color: rgba(239, 71, 111, 0.4);
+  background: rgba(239, 71, 111, 0.08);
+  color: var(--accent-red);
+}
+.outbox-arrow.active { color: var(--accent-teal); }
+.outbox-arrow.error { color: var(--accent-red); }
+
+.outbox-result {
+  margin-top: 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  min-height: 20px;
+  text-align: center;
+}
+
+/* Claim Check Pattern */
+.claim-demo {
+  padding: 1rem 0;
+}
+.claim-pipeline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.claim-node {
+  padding: 12px 16px;
+  background: var(--bg-glass);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-align: center;
+  transition: all 0.3s ease;
+}
+.claim-arrow { color: var(--text-muted); font-size: 1.2rem; }
+.claim-node.active {
+  border-color: rgba(76, 201, 240, 0.4);
+  background: rgba(76, 201, 240, 0.08);
+  color: var(--accent-blue);
+  box-shadow: 0 0 15px rgba(76, 201, 240, 0.1);
+}
+
+/* ═══════════════════════════════════════════════════════
+   28. IMPLEMENTATION & CODE VIEWER
+   ═══════════════════════════════════════════════════════ */
+.code-viewer {
+  background: #1e1e1e;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-card);
+  overflow: hidden;
+  margin-bottom: 1rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.code-tabs {
+  display: flex;
+  background: #2d2d2d;
+  border-bottom: 1px solid #111;
+  padding: 0 10px;
+}
+
+.code-tab {
+  background: transparent;
+  border: none;
+  padding: 12px 20px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: #888;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-top: 2px solid transparent;
+}
+
+.code-tab:hover {
+  color: #ccc;
+  background: rgba(255,255,255,0.05);
+}
+
+.code-tab.active {
+  color: var(--accent-teal);
+  background: #1e1e1e;
+  border-top: 2px solid var(--accent-teal);
+}
+
+.code-content {
+  display: none;
+  padding: 1.5rem;
+  overflow-x: auto;
+}
+
+.code-content.active {
+  display: block;
+  animation: fadeIn 0.3s ease;
+}
+
+.code-content pre {
+  margin: 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: #d4d4d4;
+}
+
+.code-content code {
+  font-family: inherit;
+}
+
+/* Simple Syntax Highlighting for the Viewer */
+.code-content .kd { color: #c678dd; } /* keyword (purple) */
+.code-content .nc { color: #e5c07b; } /* class/type (yellow) */
+.code-content .nf { color: #61afef; } /* function (blue) */
+.code-content .s { color: #98c379; }  /* string (green) */
+.code-content .c1 { color: #5c6370; font-style: italic; } /* comment (gray) */
+.code-content .kt { color: #c678dd; } /* keyword type */
+.code-content .nt { color: #e06c75; } /* YAML key (red) */
+.code-content .kc { color: #d19a66; } /* boolean (orange) */

@@ -70,6 +70,8 @@
         <a href="#comparison" class="toc__link" data-section="comparison">24 Kafka vs Traditional Message Queues</a>
         <a href="#production-issues" class="toc__link" data-section="production-issues">25 Production Issues, Learnings &amp; Solutions</a>
         <a href="#confluent" class="toc__link" data-section="confluent">26 Confluent Platform Dashboard</a>
+        <a href="#design-patterns" class="toc__link" data-section="design-patterns">27 Design Patterns</a>
+        <a href="#implementation" class="toc__link" data-section="implementation">28 Implementation &amp; Code</a>
       </div>
     </nav>
     <main>
@@ -1708,6 +1710,162 @@
               <tr><td style="padding: 12px; color: var(--text-secondary);">Cost Model</td><td style="padding: 12px;">Pay per CKU + ingress/egress</td><td style="padding: 12px;">EC2/VM costs + storage + team time</td></tr>
             </tbody>
           </table>
+        </div>
+      </section>
+      <!-- ═══════════════ 27. DESIGN PATTERNS ═══════════════ -->
+      <section class="section reveal" id="design-patterns">
+        <div class="section__header">
+          <span class="section__number">27</span>
+          <h2 class="section__title">Kafka Design Patterns</h2>
+        </div>
+        <p class="section__desc">
+          Architectural patterns to solve common distributed system problems like <strong>dual-writes</strong> and <strong>large message handling</strong>.
+        </p>
+
+        <!-- Outbox Pattern -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📬 Transactional Outbox Pattern</h3>
+          <p class="tp-viz-desc">
+            Solves the "Dual Write" problem. Instead of writing to the DB and publishing to Kafka in a non-atomic way, write the event to an <strong>Outbox table</strong> in the same DB transaction. A separate process (like Debezium) reads the Outbox and publishes to Kafka.
+          </p>
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-outbox-dual">❌ Dual Write (Flawed)</button>
+            <button class="send-btn" id="btn-outbox-pattern" style="background:linear-gradient(135deg, var(--accent-teal), #05b388);">
+              ✅ Outbox Pattern
+            </button>
+          </div>
+          <div class="viz-canvas">
+            <div class="outbox-demo" id="outbox-demo"><!-- Rendered by JS --></div>
+          </div>
+          <div class="outbox-result" id="outbox-result"></div>
+        </div>
+
+        <!-- Claim Check Pattern -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🏷️ Claim Check Pattern</h3>
+          <p class="tp-viz-desc">
+            Kafka is optimized for small messages (usually &lt; 1MB). If you need to send large payloads (like images or large JSON documents), store the payload in a Blob Store (S3) and send a lightweight reference (Claim Check) through Kafka.
+          </p>
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-claim-send">▶ Run Claim Check Flow</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="claim-demo" id="claim-demo"><!-- Rendered by JS --></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 28. IMPLEMENTATION & CODE ═══════════════ -->
+      <section class="section reveal" id="implementation">
+        <div class="section__header">
+          <span class="section__number">28</span>
+          <h2 class="section__title">Implementation &amp; Code Examples</h2>
+        </div>
+        <p class="section__desc">
+          How Kafka looks in a real-world enterprise application using <strong>Java &amp; Spring Boot</strong>.
+        </p>
+
+        <div class="viz-card">
+          <div class="code-viewer">
+            <div class="code-tabs" id="code-tabs">
+              <button class="code-tab active" data-target="code-producer">Producer.java</button>
+              <button class="code-tab" data-target="code-consumer">Consumer.java</button>
+              <button class="code-tab" data-target="code-config">application.yml</button>
+            </div>
+            
+            <div class="code-content active" id="code-producer">
+<pre><code><span class="kd">@Service</span>
+<span class="kd">public class</span> <span class="nc">OrderEventProducer</span> {
+
+    <span class="kd">private final</span> <span class="nc">KafkaTemplate</span>&lt;<span class="nc">String</span>, <span class="nc">OrderEvent</span>&gt; kafkaTemplate;
+    <span class="kd">private static final</span> <span class="nc">String</span> TOPIC = <span class="s">"order-events"</span>;
+
+    <span class="kd">public void</span> <span class="nf">sendOrderEvent</span>(<span class="nc">OrderEvent</span> event) {
+        <span class="c1">// 1. Send asynchronously (returns CompletableFuture in Spring Boot 3+)</span>
+        <span class="nc">CompletableFuture</span>&lt;<span class="nc">SendResult</span>&lt;<span class="nc">String</span>, <span class="nc">OrderEvent</span>&gt;&gt; future = 
+            kafkaTemplate.send(TOPIC, event.getUserId(), event);
+
+        <span class="c1">// 2. Add callback to handle success/failure</span>
+        future.whenComplete((result, ex) -&gt; {
+            <span class="kd">if</span> (ex == <span class="kd">null</span>) {
+                log.info(<span class="s">"Sent event=[{}] with offset=[{}] to partition=[{}]"</span>, 
+                    event.getOrderId(), 
+                    result.getRecordMetadata().offset(),
+                    result.getRecordMetadata().partition());
+            } <span class="kd">else</span> {
+                log.error(<span class="s">"Unable to send event=[{}] due to: {}"</span>, 
+                    event.getOrderId(), ex.getMessage());
+                <span class="c1">// Implement retry or DLQ logic here</span>
+            }
+        });
+    }
+}</code></pre>
+            </div>
+
+            <div class="code-content" id="code-consumer">
+<pre><code><span class="kd">@Service</span>
+<span class="kd">public class</span> <span class="nc">OrderEventConsumer</span> {
+
+    <span class="c1">// 1. Listener binds to topic and consumer group</span>
+    <span class="kd">@KafkaListener</span>(
+        topics = <span class="s">"order-events"</span>, 
+        groupId = <span class="s">"order-processing-group"</span>,
+        concurrency = <span class="s">"3"</span> <span class="c1">// Spawns 3 consumer threads</span>
+    )
+    <span class="kd">public void</span> <span class="nf">listen</span>(
+            <span class="kd">@Payload</span> <span class="nc">OrderEvent</span> event, 
+            <span class="kd">@Header</span>(<span class="nc">KafkaHeaders</span>.RECEIVED_PARTITION) <span class="kt">int</span> partition,
+            <span class="nc">Acknowledgment</span> acknowledgment) { <span class="c1">// Manual ACK</span>
+        
+        <span class="kd">try</span> {
+            log.info(<span class="s">"Received Order: {} from partition: {}"</span>, event.getOrderId(), partition);
+            
+            <span class="c1">// 2. Process business logic</span>
+            processOrder(event);
+            
+            <span class="c1">// 3. Acknowledge message processing successfully</span>
+            acknowledgment.acknowledge();
+            
+        } <span class="kd">catch</span> (<span class="nc">Exception</span> e) {
+            log.error(<span class="s">"Failed to process order: {}"</span>, event.getOrderId());
+            <span class="c1">// Do not acknowledge! </span>
+            <span class="c1">// Rely on Spring's DefaultErrorHandler to retry or send to DLQ</span>
+            <span class="kd">throw</span> e;
+        }
+    }
+}</code></pre>
+            </div>
+
+            <div class="code-content" id="code-config">
+<pre><code><span class="nt">spring:</span>
+  <span class="nt">kafka:</span>
+    <span class="nt">bootstrap-servers:</span> <span class="s">localhost:9092</span>
+    
+    <span class="nt">producer:</span>
+      <span class="nt">key-serializer:</span> <span class="s">org.apache.kafka.common.serialization.StringSerializer</span>
+      <span class="nt">value-serializer:</span> <span class="s">org.springframework.kafka.support.serializer.JsonSerializer</span>
+      <span class="nt">acks:</span> <span class="s">all</span>
+      <span class="nt">retries:</span> <span class="s">2147483647</span> <span class="c1"># MAX_INT</span>
+      <span class="nt">properties:</span>
+        <span class="nt">enable.idempotence:</span> <span class="kc">true</span>
+        <span class="nt">linger.ms:</span> <span class="s">5</span>
+        <span class="nt">compression.type:</span> <span class="s">lz4</span>
+        
+    <span class="nt">consumer:</span>
+      <span class="nt">group-id:</span> <span class="s">my-service-group</span>
+      <span class="nt">auto-offset-reset:</span> <span class="s">earliest</span>
+      <span class="nt">enable-auto-commit:</span> <span class="kc">false</span> <span class="c1"># We handle ACKs manually</span>
+      <span class="nt">key-deserializer:</span> <span class="s">org.apache.kafka.common.serialization.StringDeserializer</span>
+      <span class="nt">value-deserializer:</span> <span class="s">org.springframework.kafka.support.serializer.JsonDeserializer</span>
+      <span class="nt">properties:</span>
+        <span class="nt">spring.json.trusted.packages:</span> <span class="s">"*"</span>
+        <span class="nt">isolation.level:</span> <span class="s">read_committed</span>
+        
+    <span class="nt">listener:</span>
+      <span class="nt">ack-mode:</span> <span class="s">MANUAL_IMMEDIATE</span> <span class="c1"># Required for manual acknowledgment</span></code></pre>
+            </div>
+          </div>
+          <p class="viz-hint">Switch tabs to explore Producer, Consumer, and Application Configuration.</p>
         </div>
       </section>
     </main>

@@ -2549,4 +2549,189 @@
     renderCfDashboard('overview');
   }
 
+  /* ═══════════════════════════════════════════════════════
+     27. DESIGN PATTERNS
+     ═══════════════════════════════════════════════════════ */
+  
+  // Outbox Pattern
+  const btnOutboxDual = document.getElementById('btn-outbox-dual');
+  const btnOutboxPattern = document.getElementById('btn-outbox-pattern');
+  const outboxDemo = document.getElementById('outbox-demo');
+  const outboxResult = document.getElementById('outbox-result');
+  let outboxTimeout;
+
+  function renderOutboxBase() {
+    outboxDemo.innerHTML = `
+      <div class="outbox-pipeline">
+        <div class="outbox-node" id="ob-svc">Microservice</div>
+        <div class="outbox-arrow" id="ob-arr1">→</div>
+        <div class="outbox-node" id="ob-db">Database<br><small>(Outbox Table)</small></div>
+        <div class="outbox-arrow" id="ob-arr2">→</div>
+        <div class="outbox-node" id="ob-cdc">Debezium<br><small>(CDC Relay)</small></div>
+        <div class="outbox-arrow" id="ob-arr3">→</div>
+        <div class="outbox-node" id="ob-kafka">Kafka</div>
+      </div>
+    `;
+    outboxResult.innerHTML = '';
+  }
+
+  if (btnOutboxDual && outboxDemo) {
+    renderOutboxBase();
+    
+    btnOutboxDual.addEventListener('click', () => {
+      clearTimeout(outboxTimeout);
+      renderOutboxBase();
+      const svc = document.getElementById('ob-svc');
+      const db = document.getElementById('ob-db');
+      const kafka = document.getElementById('ob-kafka');
+      const arr1 = document.getElementById('ob-arr1');
+      const arr3 = document.getElementById('ob-arr3');
+      const cdc = document.getElementById('ob-cdc');
+      const arr2 = document.getElementById('ob-arr2');
+      
+      cdc.style.opacity = '0.3';
+      arr2.style.opacity = '0.3';
+      
+      svc.classList.add('active');
+      outboxResult.innerHTML = 'Attempting Dual Write: DB + Kafka...';
+      outboxResult.style.color = 'var(--text-secondary)';
+      
+      outboxTimeout = setTimeout(() => {
+        arr1.classList.add('active');
+        db.classList.add('active');
+        
+        setTimeout(() => {
+          arr3.classList.add('error');
+          kafka.classList.add('error');
+          outboxResult.innerHTML = '❌ Dual Write Failed! Wrote to DB, but crashed before Kafka. Inconsistent State!';
+          outboxResult.style.color = 'var(--accent-red)';
+        }, 800);
+      }, 800);
+    });
+
+    btnOutboxPattern.addEventListener('click', () => {
+      clearTimeout(outboxTimeout);
+      renderOutboxBase();
+      const svc = document.getElementById('ob-svc');
+      const db = document.getElementById('ob-db');
+      const cdc = document.getElementById('ob-cdc');
+      const kafka = document.getElementById('ob-kafka');
+      const arr1 = document.getElementById('ob-arr1');
+      const arr2 = document.getElementById('ob-arr2');
+      const arr3 = document.getElementById('ob-arr3');
+      
+      svc.classList.add('active');
+      outboxResult.innerHTML = '1. Service writes business entity + Outbox event in ONE local DB transaction.';
+      outboxResult.style.color = 'var(--text-secondary)';
+      
+      outboxTimeout = setTimeout(() => {
+        arr1.classList.add('active');
+        db.classList.add('active');
+        outboxResult.innerHTML = '2. Transaction committed securely to DB. Service job is done.';
+        
+        setTimeout(() => {
+          svc.classList.remove('active');
+          arr1.classList.remove('active');
+          cdc.classList.add('active');
+          arr2.classList.add('active');
+          outboxResult.innerHTML = '3. Background CDC process (Debezium) tails DB transaction log asynchronously.';
+          
+          setTimeout(() => {
+            arr3.classList.add('active');
+            kafka.classList.add('active');
+            outboxResult.innerHTML = '✅ Guaranteed Delivery! CDC published event to Kafka. Consistent State!';
+            outboxResult.style.color = 'var(--accent-teal)';
+          }, 1200);
+        }, 1200);
+      }, 1200);
+    });
+  }
+
+  // Claim Check Pattern
+  const btnClaimSend = document.getElementById('btn-claim-send');
+  const claimDemo = document.getElementById('claim-demo');
+  let claimTimeout;
+
+  function renderClaimBase() {
+    claimDemo.innerHTML = `
+      <div class="claim-pipeline">
+        <div class="claim-node" id="cc-prod">Producer<br><small>(Has 50MB Image)</small></div>
+        <div class="claim-arrow" id="cc-arr1">↗</div>
+        <div class="claim-node" id="cc-s3">S3 Bucket<br><small>(Blob Store)</small></div>
+        <div class="claim-arrow" id="cc-arr2">↘</div>
+        <div class="claim-node" id="cc-kafka">Kafka<br><small>(Event: image_id=123)</small></div>
+        <div class="claim-arrow" id="cc-arr3">→</div>
+        <div class="claim-node" id="cc-cons">Consumer<br><small>(Reads event)</small></div>
+        <div class="claim-arrow" id="cc-arr4">↙</div>
+      </div>
+    `;
+  }
+
+  if (btnClaimSend && claimDemo) {
+    renderClaimBase();
+    btnClaimSend.addEventListener('click', () => {
+      clearTimeout(claimTimeout);
+      renderClaimBase();
+      const prod = document.getElementById('cc-prod');
+      const s3 = document.getElementById('cc-s3');
+      const kafka = document.getElementById('cc-kafka');
+      const cons = document.getElementById('cc-cons');
+      const arr1 = document.getElementById('cc-arr1');
+      const arr2 = document.getElementById('cc-arr2');
+      const arr3 = document.getElementById('cc-arr3');
+      const arr4 = document.getElementById('cc-arr4');
+      
+      prod.classList.add('active');
+      prod.innerHTML = 'Producer<br><small>Uploading 50MB...</small>';
+      
+      claimTimeout = setTimeout(() => {
+        arr1.classList.add('active');
+        s3.classList.add('active');
+        s3.innerHTML = 'S3 Bucket<br><small>Stored: image_123.jpg</small>';
+        
+        setTimeout(() => {
+          prod.innerHTML = 'Producer<br><small>Sending ref...</small>';
+          arr2.classList.add('active');
+          kafka.classList.add('active');
+          
+          setTimeout(() => {
+            prod.classList.remove('active');
+            arr1.classList.remove('active');
+            arr2.classList.remove('active');
+            
+            arr3.classList.add('active');
+            cons.classList.add('active');
+            cons.innerHTML = 'Consumer<br><small>Got ref: image_123</small>';
+            
+            setTimeout(() => {
+              arr4.classList.add('active');
+              s3.classList.add('active'); // highlight S3 again for download
+              cons.innerHTML = 'Consumer<br><small>Downloading 50MB...</small>';
+              
+              setTimeout(() => {
+                cons.innerHTML = 'Consumer<br><small>✅ Done!</small>';
+              }, 1000);
+            }, 1000);
+          }, 1000);
+        }, 1000);
+      }, 1000);
+    });
+  }
+
+  /* ═══════════════════════════════════════════════════════
+     28. IMPLEMENTATION & CODE VIEWER
+     ═══════════════════════════════════════════════════════ */
+  const codeTabs = document.querySelectorAll('.code-tab');
+  const codeContents = document.querySelectorAll('.code-content');
+
+  codeTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      codeTabs.forEach(t => t.classList.remove('active'));
+      codeContents.forEach(c => c.classList.remove('active'));
+      
+      tab.classList.add('active');
+      document.getElementById(tab.dataset.target).classList.add('active');
+    });
+  });
+
 })();

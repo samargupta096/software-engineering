@@ -9,7 +9,7 @@ An interactive, single-page web application that teaches Apache Kafka architectu
 ## ✨ Features
 
 - 🎨 **Premium dark-mode UI** with glassmorphism and Kafka brand colors
-- ⚡ **24 interactive sections** covering core and advanced Kafka concepts
+- ⚡ **28 interactive sections** covering core and advanced Kafka concepts
 - 🎬 **Animated demos** — click buttons to see Kafka concepts come alive
 - 📱 **Responsive design** — works on desktop and tablet
 - 🧠 **Interview-ready** — covers common Kafka questions with visual explanations
@@ -103,6 +103,10 @@ An interactive, single-page web application that teaches Apache Kafka architectu
 | 22 | **Event Sourcing & CQRS** | Append-only event log + materialized view + replay |
 | 23 | **Kafka Security** | 5-layer security toggle (SSL, SASL, ACLs, Inter-Broker, At-Rest) |
 | 24 | **Kafka vs Traditional MQ** | Side-by-side comparison table |
+| 25 | **Production Issues & Solutions** | Interactive troubleshooting for Lag Spikes, Rebalance Storms, Data Loss |
+| 26 | **Confluent Platform Dashboard** | Simulated UI for metrics, connectors, ksqlDB, and schema registry |
+| 27 | **Kafka Design Patterns** | Interactive visualizations for Outbox Pattern and Claim Check Pattern |
+| 28 | **Implementation & Code** | Interactive Code Viewer for Spring Boot Producer, Consumer, Configs |
 
 ---
 
@@ -137,9 +141,9 @@ No build step. No `npm install`. Just open in a browser.
 
 ```
 kafka-visualizer/
-├── index.html      # All 24 sections with semantic HTML
-├── index.css       # 2200+ lines of dark-mode responsive styles
-├── index.js        # 2300+ lines of interactive animation logic
+├── index.html      # All 28 sections with semantic HTML
+├── index.css       # 2800+ lines of dark-mode responsive styles
+├── index.js        # 2500+ lines of interactive animation logic
 ├── screenshots/    # Screenshots and demo recordings
 └── README.md       # This file
 ```

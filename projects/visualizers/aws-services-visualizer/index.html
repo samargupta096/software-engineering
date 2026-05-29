@@ -41,17 +41,22 @@
     <nav class="toc" id="toc">
       <div class="toc__inner">
         <a href="#vpc" class="toc__link" data-section="vpc">01 VPC &amp; Networking</a>
-        <a href="#iam" class="toc__link" data-section="iam">02 IAM — Identity &amp; Access Management</a>
-        <a href="#s3" class="toc__link" data-section="s3">03 S3 — Object Storage</a>
-        <a href="#sqs" class="toc__link" data-section="sqs">04 SQS — Message Queuing</a>
-        <a href="#sns" class="toc__link" data-section="sns">05 SNS — Pub/Sub Notifications</a>
-        <a href="#fanout-pattern" class="toc__link" data-section="fanout-pattern">06 SNS + SQS — Fan-Out Pattern</a>
-        <a href="#containers" class="toc__link" data-section="containers">07 ECS &amp; EKS — Container Orchestration</a>
-        <a href="#step-functions" class="toc__link" data-section="step-functions">08 Step Functions — Workflow Orchestration</a>
-        <a href="#monitoring" class="toc__link" data-section="monitoring">09 CloudWatch &amp; EventBridge</a>
-        <a href="#lambda" class="toc__link" data-section="lambda">10 Lambda &amp; API Gateway</a>
-        <a href="#architectures" class="toc__link" data-section="architectures">11 Combined Architecture Patterns</a>
-        <a href="#cheatsheet" class="toc__link" data-section="cheatsheet">12 Cheat Sheet &amp; Quick Reference</a>
+        <a href="#iam" class="toc__link" data-section="iam">02 IAM</a>
+        <a href="#s3" class="toc__link" data-section="s3">03 S3</a>
+        <a href="#sqs" class="toc__link" data-section="sqs">04 SQS</a>
+        <a href="#sns" class="toc__link" data-section="sns">05 SNS</a>
+        <a href="#fanout-pattern" class="toc__link" data-section="fanout-pattern">06 Fan-Out</a>
+        <a href="#containers" class="toc__link" data-section="containers">07 ECS &amp; EKS</a>
+        <a href="#step-functions" class="toc__link" data-section="step-functions">08 Step Functions</a>
+        <a href="#monitoring" class="toc__link" data-section="monitoring">09 CloudWatch</a>
+        <a href="#lambda" class="toc__link" data-section="lambda">10 Lambda</a>
+        <a href="#dynamodb" class="toc__link" data-section="dynamodb">11 DynamoDB</a>
+        <a href="#vpc-advanced" class="toc__link" data-section="vpc-advanced">12 VPC Advanced</a>
+        <a href="#sf-advanced" class="toc__link" data-section="sf-advanced">13 Step Functions+</a>
+        <a href="#apigw" class="toc__link" data-section="apigw">14 API Gateway</a>
+        <a href="#security" class="toc__link" data-section="security">15 Security</a>
+        <a href="#architectures" class="toc__link" data-section="architectures">16 Architectures</a>
+        <a href="#cheatsheet" class="toc__link" data-section="cheatsheet">17 Cheat Sheet</a>
       </div>
     </nav>
     <main>
@@ -848,10 +853,579 @@
         </div>
       </section>
 
-      <!-- ═══════════════ 11. COMBINED ARCHITECTURE ═══════════════ -->
+      <!-- ═══════════════ 16. COMBINED ARCHITECTURE ═══════════════ -->
+
+      <!-- ═══════════════ 11. DYNAMODB ═══════════════ -->
+      <section class="section reveal" id="dynamodb">
+        <div class="section__header">
+          <span class="section__number">16</span>
+          <h2 class="section__title">DynamoDB &mdash; NoSQL Database</h2>
+        </div>
+        <p class="section__desc">
+          <strong>Amazon DynamoDB</strong> is a fully managed, serverless NoSQL database with
+          single-digit millisecond performance at any scale. It uses <strong>partition keys</strong>
+          and optional <strong>sort keys</strong> for data distribution and supports
+          <strong>Global Secondary Indexes (GSI)</strong> and <strong>Local Secondary Indexes (LSI)</strong>.
+        </p>
+
+        <!-- Table Designer -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🏗️ Table Designer</h3>
+          <p class="tp-viz-desc">Select a schema pattern to see how DynamoDB structures the data.</p>
+          <div class="viz-controls">
+            <label>Schema</label>
+            <div class="strategy-toggle" id="ddb-schema-toggle">
+              <button class="strategy-btn active" data-schema="simple">Simple (PK only)</button>
+              <button class="strategy-btn" data-schema="composite">Composite (PK+SK)</button>
+              <button class="strategy-btn" data-schema="single-table">Single-Table</button>
+            </div>
+          </div>
+          <div class="viz-canvas">
+            <div class="ddb-table" id="ddb-table">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+          <div class="callout teal">
+            <strong>💡 Single-Table Design:</strong> Store multiple entity types (Users, Orders, Products)
+            in one table using carefully crafted PK/SK patterns. Reduces costs and enables complex
+            queries with a single request.
+          </div>
+        </div>
+
+        <!-- Capacity Modes -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">⚡ Capacity Modes</h3>
+          <div class="viz-controls">
+            <label>Mode</label>
+            <div class="strategy-toggle" id="ddb-capacity-toggle">
+              <button class="strategy-btn active" data-mode="ondemand">On-Demand</button>
+              <button class="strategy-btn" data-mode="provisioned">Provisioned</button>
+            </div>
+          </div>
+          <div class="sg-nacl-compare" id="ddb-capacity-compare">
+            <div class="sg-nacl-card" id="ddb-cap-left">
+              <h4>🔄 On-Demand Mode</h4>
+              <ul>
+                <li><strong>Pay-per-request</strong> — no capacity planning</li>
+                <li>Auto-scales instantly to any traffic level</li>
+                <li>Best for: unpredictable workloads, new tables</li>
+                <li>Cost: ~$1.25/million write, ~$0.25/million read</li>
+                <li>No throttling risk (within account limits)</li>
+              </ul>
+            </div>
+            <div class="sg-nacl-card" id="ddb-cap-right">
+              <h4>📊 Provisioned Mode</h4>
+              <ul>
+                <li><strong>Set RCU/WCU</strong> — predictable cost</li>
+                <li>Auto Scaling available (target utilization)</li>
+                <li>Best for: steady, predictable workloads</li>
+                <li>Cost: ~$0.00065/WCU/hr, ~$0.00013/RCU/hr</li>
+                <li>Reserved Capacity = up to 77% savings</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- GSI / LSI -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🔍 GSI vs LSI — Index Visualizer</h3>
+          <p class="tp-viz-desc">See how indexes unlock different query patterns on the same data.</p>
+          <div class="viz-controls">
+            <label>Index Type</label>
+            <div class="strategy-toggle" id="ddb-index-toggle">
+              <button class="strategy-btn active" data-idx="none">No Index</button>
+              <button class="strategy-btn" data-idx="gsi">GSI</button>
+              <button class="strategy-btn" data-idx="lsi">LSI</button>
+            </div>
+          </div>
+          <div class="viz-canvas">
+            <div class="ddb-index-demo" id="ddb-index-demo">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+          <div class="callout">
+            <strong>📌 Key Difference:</strong> <strong>GSI</strong> = new partition key + optional sort key.
+            Can be added anytime. Has own RCU/WCU. <strong>LSI</strong> = same partition key, different sort key.
+            Must be created with the table. Shares RCU/WCU with base table. Max 5 LSIs per table.
+          </div>
+        </div>
+
+        <!-- DynamoDB Streams -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🌊 DynamoDB Streams</h3>
+          <p class="tp-viz-desc">Watch change data capture flow from table changes to downstream consumers.</p>
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-ddb-stream">▶ Trigger Change</button>
+            <button class="send-btn" id="btn-ddb-stream-reset" style="background:linear-gradient(135deg,var(--accent-blue),#3aa8d0);">Reset</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="request-flow" id="ddb-stream-flow">
+              <div class="flow-node" id="ddb-sf-table">🗄️ DynamoDB</div>
+              <div class="flow-arrow" id="ddb-sf-a1">→</div>
+              <div class="flow-node" id="ddb-sf-stream">🌊 Stream</div>
+              <div class="flow-arrow" id="ddb-sf-a2">→</div>
+              <div class="flow-node" id="ddb-sf-lambda">⚡ Lambda</div>
+              <div class="flow-arrow" id="ddb-sf-a3">→</div>
+              <div class="flow-node" id="ddb-sf-es">🔍 Elasticsearch</div>
+            </div>
+          </div>
+          <div class="callout teal">
+            <strong>Use Cases:</strong> Cross-region replication, real-time analytics, search indexing,
+            event-driven triggers, audit logging. Stream records contain: KEYS_ONLY, NEW_IMAGE,
+            OLD_IMAGE, or NEW_AND_OLD_IMAGES.
+          </div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📋 DynamoDB Key Terms</h3>
+          <dl class="key-insight">
+            <dt>Partition Key</dt>
+            <dd>Hash key that determines which partition stores the item. Must be unique (alone) or unique with sort key.</dd>
+            <dt>Sort Key</dt>
+            <dd>Range key enabling range queries within a partition. Enables begins_with, between, >, < queries.</dd>
+            <dt>RCU / WCU</dt>
+            <dd>Read/Write Capacity Units. 1 RCU = 1 strongly consistent read/sec (4KB). 1 WCU = 1 write/sec (1KB).</dd>
+            <dt>DAX</dt>
+            <dd>DynamoDB Accelerator — in-memory cache. Microsecond reads. Drop-in compatible (same API).</dd>
+            <dt>TTL</dt>
+            <dd>Time-to-Live — auto-delete expired items at no cost. Set a timestamp attribute, DynamoDB handles deletion.</dd>
+            <dt>Transactions</dt>
+            <dd>ACID transactions across up to 100 items/25 tables. TransactWriteItems / TransactGetItems. 2x RCU/WCU cost.</dd>
+            <dt>PartiQL</dt>
+            <dd>SQL-compatible query language for DynamoDB. SELECT, INSERT, UPDATE, DELETE syntax.</dd>
+            <dt>Global Tables</dt>
+            <dd>Multi-region, multi-active replication. Sub-second replication. Requires Streams enabled.</dd>
+          </dl>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 12. VPC ADVANCED ═══════════════ -->
+      <section class="section reveal" id="vpc-advanced">
+        <div class="section__header">
+          <span class="section__number">12</span>
+          <h2 class="section__title">VPC Advanced &mdash; Deep Dive</h2>
+        </div>
+        <p class="section__desc">
+          Beyond basic subnets and security groups, AWS networking includes <strong>Transit Gateway</strong>
+          for multi-VPC connectivity, <strong>PrivateLink</strong> for private service access,
+          <strong>VPN/Direct Connect</strong> for hybrid cloud, and <strong>Flow Logs</strong> for traffic analysis.
+        </p>
+
+        <!-- Transit Gateway -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🔀 Transit Gateway — Hub &amp; Spoke</h3>
+          <p class="tp-viz-desc">Click VPCs to toggle connectivity through the central Transit Gateway hub.</p>
+          <div class="viz-canvas">
+            <div class="tgw-topology" id="tgw-topology">
+              <div class="tgw-spoke" data-spoke="0" id="tgw-vpc1">🏢 VPC: Production<br><small>10.1.0.0/16</small></div>
+              <div class="tgw-spoke" data-spoke="1" id="tgw-vpc2">🧪 VPC: Staging<br><small>10.2.0.0/16</small></div>
+              <div class="tgw-hub" id="tgw-hub">🔀 Transit Gateway</div>
+              <div class="tgw-spoke" data-spoke="2" id="tgw-vpc3">🛡️ VPC: Security<br><small>10.3.0.0/16</small></div>
+              <div class="tgw-spoke" data-spoke="3" id="tgw-vpc4">🏠 On-Premises<br><small>172.16.0.0/12</small></div>
+            </div>
+          </div>
+          <div class="callout teal">
+            <strong>Transit Gateway vs VPC Peering:</strong> Peering is 1:1 (non-transitive).
+            Transit Gateway is a central hub — connect 5000+ VPCs, VPNs, and Direct Connect gateways.
+            Supports route tables for network segmentation.
+          </div>
+        </div>
+
+        <!-- Hybrid Connectivity -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🌐 Hybrid Connectivity</h3>
+          <div class="sg-nacl-compare">
+            <div class="sg-nacl-card">
+              <h4>🔒 Site-to-Site VPN</h4>
+              <ul>
+                <li>Encrypted IPsec tunnel over internet</li>
+                <li>Setup in minutes, ~$0.05/hr</li>
+                <li>Bandwidth: up to 1.25 Gbps per tunnel</li>
+                <li>Latency: variable (internet-dependent)</li>
+                <li>Best for: quick setup, backup connectivity</li>
+              </ul>
+            </div>
+            <div class="sg-nacl-card">
+              <h4>⚡ Direct Connect</h4>
+              <ul>
+                <li>Dedicated physical fiber connection</li>
+                <li>Setup: weeks/months, port fees + data transfer</li>
+                <li>Bandwidth: 1/10/100 Gbps dedicated</li>
+                <li>Latency: consistent, low (private network)</li>
+                <li>Best for: high throughput, compliance, DR</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Endpoints -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🔗 VPC Endpoints — Private Access</h3>
+          <div class="viz-controls">
+            <label>Endpoint Type</label>
+            <div class="strategy-toggle" id="vpc-ep-toggle">
+              <button class="strategy-btn active" data-ep="gateway">Gateway Endpoint</button>
+              <button class="strategy-btn" data-ep="interface">Interface Endpoint</button>
+            </div>
+          </div>
+          <div class="viz-canvas">
+            <div class="request-flow" id="vpc-ep-flow">
+              <div class="flow-node" id="ep-ec2">🖥️ EC2</div>
+              <div class="flow-arrow" id="ep-a1">→</div>
+              <div class="flow-node" id="ep-endpoint">🔗 Gateway EP</div>
+              <div class="flow-arrow" id="ep-a2">→</div>
+              <div class="flow-node" id="ep-service">📦 S3</div>
+            </div>
+          </div>
+          <div class="callout" id="vpc-ep-callout">
+            <strong>Gateway Endpoints:</strong> Free. Route table entry. Supports S3 and DynamoDB only.
+            Traffic stays on AWS backbone — never touches the internet.
+          </div>
+        </div>
+
+        <!-- Flow Logs -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📊 VPC Flow Logs</h3>
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-flowlog-gen">Generate Logs</button>
+          </div>
+          <div class="ddb-table" id="flowlog-table">
+            <!-- Rendered by JS -->
+          </div>
+          <div class="callout">
+            <strong>📌 Flow Logs:</strong> Capture IP traffic metadata (not content). Published to CloudWatch Logs,
+            S3, or Kinesis Firehose. Use for: troubleshooting connectivity, security analysis, compliance auditing.
+          </div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📋 VPC Advanced Key Terms</h3>
+          <dl class="key-insight">
+            <dt>Transit Gateway</dt>
+            <dd>Regional hub connecting up to 5000 VPCs + on-prem. Supports route tables, multicast, peering across regions.</dd>
+            <dt>PrivateLink</dt>
+            <dd>Expose services privately via ENI. Consumer VPC accesses provider service without internet, peering, or NAT.</dd>
+            <dt>Gateway Endpoint</dt>
+            <dd>Free, route-table based. Only S3 and DynamoDB. Prefix list in route table points traffic to AWS backbone.</dd>
+            <dt>Interface Endpoint</dt>
+            <dd>ENI with private IP (powered by PrivateLink). Supports 80+ AWS services. Costs ~$0.01/hr + data.</dd>
+            <dt>Direct Connect</dt>
+            <dd>Dedicated private connection from on-prem to AWS. 1/10/100 Gbps. Consistent latency, no internet traversal.</dd>
+            <dt>AWS Network Firewall</dt>
+            <dd>Managed stateful firewall for VPC. Supports Suricata rules, IDS/IPS, domain filtering, protocol inspection.</dd>
+          </dl>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 13. STEP FUNCTIONS ADVANCED ═══════════════ -->
+      <section class="section reveal" id="sf-advanced">
+        <div class="section__header">
+          <span class="section__number">13</span>
+          <h2 class="section__title">Step Functions &mdash; Advanced Patterns</h2>
+        </div>
+        <p class="section__desc">
+          Beyond basic workflows, Step Functions enable <strong>Saga patterns</strong> for distributed
+          transactions, <strong>parallel execution</strong>, <strong>Map state</strong> for batch processing,
+          and <strong>callback patterns</strong> for human-in-the-loop workflows.
+        </p>
+
+        <!-- Saga Pattern -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🔄 Saga Pattern — Distributed Transactions</h3>
+          <p class="tp-viz-desc">
+            Run the saga to see a multi-step transaction. "Fail Payment" triggers compensating actions (rollback).
+          </p>
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-saga-run">▶ Run Saga</button>
+            <button class="send-btn" id="btn-saga-fail" style="background:linear-gradient(135deg,var(--accent-red),#d63b5e);">
+              💥 Fail Payment
+            </button>
+            <button class="send-btn" id="btn-saga-reset" style="background:linear-gradient(135deg,var(--accent-blue),#3aa8d0);">
+              Reset
+            </button>
+          </div>
+          <div class="viz-canvas">
+            <div class="saga-flow" id="saga-flow">
+              <div class="saga-step" id="saga-reserve" data-step="reserve">📦 Reserve Inventory</div>
+              <div class="state-connector" id="saga-c1"></div>
+              <div class="saga-step" id="saga-payment" data-step="payment">💳 Process Payment</div>
+              <div class="state-connector" id="saga-c2"></div>
+              <div class="saga-step" id="saga-ship" data-step="ship">🚚 Schedule Shipping</div>
+              <div class="state-connector" id="saga-c3"></div>
+              <div class="saga-step" id="saga-notify" data-step="notify">📧 Send Confirmation</div>
+            </div>
+            <div class="saga-compensate" id="saga-compensate" style="display:none;">
+              <div class="saga-comp-label">↩️ Compensating Actions</div>
+              <div class="saga-step comp" id="saga-comp-reserve">📦 Release Inventory</div>
+              <div class="state-connector" id="saga-cc1"></div>
+              <div class="saga-step comp" id="saga-comp-refund">💸 Refund Payment</div>
+            </div>
+          </div>
+          <div class="callout red">
+            <strong>Saga Pattern:</strong> Unlike 2-phase commit, each step has a <em>compensating action</em>.
+            On failure, Step Functions runs compensations in reverse order to undo completed steps.
+            This ensures <strong>eventual consistency</strong> in distributed systems.
+          </div>
+        </div>
+
+        <!-- Standard vs Express -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">⚖️ Standard vs Express Workflows</h3>
+          <div class="sg-nacl-compare">
+            <div class="sg-nacl-card">
+              <h4>📋 Standard Workflow</h4>
+              <ul>
+                <li>Duration: up to <strong>1 year</strong></li>
+                <li>Exactly-once execution</li>
+                <li>Full execution history in console</li>
+                <li>Pricing: per state transition ($0.025/1000)</li>
+                <li>Use: order processing, ETL, long-running</li>
+              </ul>
+            </div>
+            <div class="sg-nacl-card">
+              <h4>⚡ Express Workflow</h4>
+              <ul>
+                <li>Duration: up to <strong>5 minutes</strong></li>
+                <li>At-least-once (async) / at-most-once (sync)</li>
+                <li>Logs sent to CloudWatch</li>
+                <li>Pricing: per execution + duration ($1/million)</li>
+                <li>Use: IoT ingestion, streaming, high-volume</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📋 Advanced Step Functions Key Terms</h3>
+          <dl class="key-insight">
+            <dt>Saga Pattern</dt>
+            <dd>Distributed transaction with compensating actions. Each step's "undo" is triggered on failure.</dd>
+            <dt>Map State</dt>
+            <dd>Iterate over an array, running a sub-workflow per element. Inline (40 concurrency) or Distributed (10K+).</dd>
+            <dt>Callback Pattern</dt>
+            <dd>Task sends token to external system (e.g., human approval). Workflow pauses until SendTaskSuccess/Failure.</dd>
+            <dt>Activity Tasks</dt>
+            <dd>Worker-based polling model. External workers poll for tasks, process, and report results.</dd>
+            <dt>Idempotency</dt>
+            <dd>Critical for retries. Use idempotency keys to prevent duplicate side effects on re-execution.</dd>
+            <dt>Error Handling</dt>
+            <dd>Retry: exponential backoff with IntervalSeconds, MaxAttempts, BackoffRate. Catch: route to fallback state.</dd>
+          </dl>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 14. API GATEWAY ADVANCED ═══════════════ -->
+      <section class="section reveal" id="apigw">
+        <div class="section__header">
+          <span class="section__number">14</span>
+          <h2 class="section__title">API Gateway &mdash; Deep Dive</h2>
+        </div>
+        <p class="section__desc">
+          <strong>Amazon API Gateway</strong> does more than just routing. It handles <strong>authentication</strong>,
+          <strong>rate limiting (throttling)</strong>, <strong>caching</strong>, and <strong>request transformation</strong>.
+          It supports REST, HTTP, and WebSocket APIs.
+        </p>
+
+        <!-- API Request Lifecycle -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🔄 API Request Lifecycle</h3>
+          <p class="tp-viz-desc">Watch an HTTP request flow through API Gateway's security and optimization layers.</p>
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-apigw-run">▶ Send Request</button>
+            <button class="send-btn" id="btn-apigw-fail" style="background:linear-gradient(135deg,var(--accent-red),#d63b5e);">
+              💥 Exceed Quota (429)
+            </button>
+            <button class="send-btn" id="btn-apigw-cache" style="background:linear-gradient(135deg,var(--accent-teal),#05b388);">
+              📦 Cache Hit
+            </button>
+          </div>
+          <div class="viz-canvas">
+            <div class="pipeline-demo" id="apigw-lifecycle">
+              <div class="pipeline-stage">
+                <div class="pipeline-node" id="agw-client">👤 Client</div>
+              </div>
+              <div class="pipeline-stage"><div class="pipeline-connector vert" id="agw-c1"></div></div>
+              <div class="pipeline-stage">
+                <div class="pipeline-node" id="agw-auth" style="border-color:var(--accent-purple)">🔐 Authorizer</div>
+              </div>
+              <div class="pipeline-stage"><div class="pipeline-connector vert" id="agw-c2"></div></div>
+              <div class="pipeline-stage">
+                <div class="pipeline-node" id="agw-throttle" style="border-color:var(--accent-red)">🚦 Throttling</div>
+              </div>
+              <div class="pipeline-stage"><div class="pipeline-connector vert" id="agw-c3"></div></div>
+              <div class="pipeline-stage">
+                <div class="pipeline-node" id="agw-cache" style="border-color:var(--accent-teal)">📦 Cache</div>
+              </div>
+              <div class="pipeline-stage"><div class="pipeline-connector vert" id="agw-c4"></div></div>
+              <div class="pipeline-stage">
+                <div class="pipeline-node" id="agw-integration" style="border-color:var(--accent-orange)">⚡ Integration (Lambda)</div>
+              </div>
+            </div>
+          </div>
+          <div class="callout blue">
+            <strong>Lifecycle:</strong> 1) Auth (Cognito/Lambda), 2) Validate Request, 3) Throttling/Usage Plans,
+            4) Check Cache, 5) Transform Request (Mapping Templates), 6) Integration Call, 7) Transform Response.
+          </div>
+        </div>
+
+        <!-- REST vs HTTP API -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">⚖️ REST API vs HTTP API</h3>
+          <div class="sg-nacl-compare">
+            <div class="sg-nacl-card">
+              <h4>🌐 REST API</h4>
+              <ul>
+                <li>Full feature set</li>
+                <li>API Keys &amp; Usage Plans</li>
+                <li>Response Caching</li>
+                <li>WAF Integration</li>
+                <li>Mapping Templates (VTL)</li>
+                <li>Edge-optimized endpoints</li>
+              </ul>
+            </div>
+            <div class="sg-nacl-card">
+              <h4>⚡ HTTP API</h4>
+              <ul>
+                <li><strong>71% cheaper</strong>, up to 60% faster</li>
+                <li>OIDC/OAuth 2.0 native auth</li>
+                <li>CORS support built-in</li>
+                <li>No usage plans / caching</li>
+                <li>No WAF support</li>
+                <li>Best for: simple serverless proxies</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📋 API Gateway Key Terms</h3>
+          <dl class="key-insight">
+            <dt>Lambda Authorizer</dt>
+            <dd>Custom Lambda function that controls access using bearer tokens or headers. Returns IAM policy.</dd>
+            <dt>Cognito Authorizer</dt>
+            <dd>Built-in auth using Amazon Cognito User Pools. Validates JWT automatically without writing code.</dd>
+            <dt>Usage Plan</dt>
+            <dd>Groups API keys. Sets rate limits (requests/sec) and quotas (requests/month). Monetize APIs.</dd>
+            <dt>Throttling (429)</dt>
+            <dd>Default 10,000 rps per region. Prevent overload. Burst limits handle traffic spikes.</dd>
+            <dt>Mapping Template</dt>
+            <dd>Uses VTL (Velocity Template Language) to transform JSON payload before/after integration.</dd>
+            <dt>Stage Variables</dt>
+            <dd>Env vars for API deployment stages (dev/prod). Often used to route to specific Lambda aliases.</dd>
+            <dt>WebSocket API</dt>
+            <dd>Stateful, bidirectional communication. Requires routes ($connect, $disconnect, $default, custom).</dd>
+          </dl>
+        </div>
+      </section>
+
+      <!-- ═══════════════ 15. SECURITY & IAM ADVANCED ═══════════════ -->
+      <section class="section reveal" id="security">
+        <div class="section__header">
+          <span class="section__number">15</span>
+          <h2 class="section__title">AWS Security &mdash; Advanced</h2>
+        </div>
+        <p class="section__desc">
+          Enterprise AWS security involves managing multiple accounts with <strong>Organizations</strong>,
+          protecting perimeters with <strong>WAF</strong>, detecting threats with <strong>GuardDuty</strong>,
+          and securing data with <strong>KMS</strong> and <strong>Secrets Manager</strong>.
+        </p>
+
+        <!-- Organizations & SCPs -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🏢 Organizations &amp; SCPs</h3>
+          <p class="tp-viz-desc">SCPs (Service Control Policies) set the maximum permissions for entire accounts.</p>
+          <div class="viz-canvas">
+            <div class="org-tree" id="org-tree">
+              <div class="org-root">👑 Root (Master Account)</div>
+              <div class="org-branches">
+                <div class="org-ou">
+                  <div class="ou-name">📁 OU: Workloads <br><small style="color:var(--accent-red)">SCP: Deny non-us-east-1</small></div>
+                  <div class="org-acc">💳 Acc: Prod<br><small>AdminRole</small></div>
+                  <div class="org-acc">💳 Acc: Dev<br><small>DevRole</small></div>
+                </div>
+                <div class="org-ou">
+                  <div class="ou-name">📁 OU: Security <br><small style="color:var(--accent-teal)">SCP: Protect CloudTrail</small></div>
+                  <div class="org-acc">💳 Acc: Audit<br><small>AuditRole</small></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="callout red">
+            <strong>⚠️ Effective Permissions:</strong> Even if a DevRole has <code>AdministratorAccess</code>,
+            an SCP denying regions outside <code>us-east-1</code> will block the action. SCPs overrule
+            everything except the management account root user.
+          </div>
+        </div>
+
+        <!-- GuardDuty Simulator -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🛡️ GuardDuty — Threat Detection</h3>
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-gd-scan">🔍 Scan Logs</button>
+            <button class="send-btn" id="btn-gd-threat" style="background:linear-gradient(135deg,var(--accent-red),#d63b5e);">
+              🚨 Simulate Attack
+            </button>
+          </div>
+          <div class="gd-dashboard" id="gd-dashboard">
+            <div class="gd-header">GuardDuty Findings</div>
+            <div class="gd-findings" id="gd-findings">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+          <div class="callout">
+            <strong>How it works:</strong> GuardDuty uses ML to analyze CloudTrail Events, VPC Flow Logs,
+            and DNS Logs continuously. No agents to install. One-click enablement.
+          </div>
+        </div>
+
+        <!-- KMS Envelope Encryption -->
+        <div class="viz-card">
+          <h3 class="tp-viz-title">🔑 KMS Envelope Encryption</h3>
+          <p class="tp-viz-desc">Watch how AWS encrypts large files securely.</p>
+          <div class="viz-controls">
+            <button class="send-btn" id="btn-kms-encrypt">▶ Encrypt Data</button>
+          </div>
+          <div class="viz-canvas">
+            <div class="request-flow" id="kms-flow">
+              <div class="flow-node" id="kms-cmk">🔑 Master Key (CMK)</div>
+              <div class="flow-arrow" id="kms-a1">↓<br><small>Generates</small></div>
+              <div class="flow-node" id="kms-dek" style="border-color:var(--accent-teal)">📝 Data Key (Plaintext)</div>
+              <div class="flow-arrow" id="kms-a2">encrypts →</div>
+              <div class="flow-node" id="kms-data">📄 User Data</div>
+              <div class="flow-arrow" id="kms-a3">results in ↓</div>
+              <div class="flow-node" id="kms-cipher" style="border-color:var(--accent-purple)">🔒 Ciphertext</div>
+            </div>
+          </div>
+          <div class="callout teal">
+            <strong>Envelope Encryption:</strong> KMS CMKs never leave AWS and can only encrypt 4KB.
+            For large data, KMS generates a Data Key (DEK). You encrypt data with the plaintext DEK,
+            then throw the plaintext away and store the <em>encrypted DEK</em> alongside your ciphertext.
+          </div>
+        </div>
+
+        <div class="viz-card">
+          <h3 class="tp-viz-title">📋 Security Key Terms</h3>
+          <dl class="key-insight">
+            <dt>WAF</dt>
+            <dd>Web Application Firewall. Protects API GW, ALB, CloudFront against SQLi, XSS, rate limits, bad bots.</dd>
+            <dt>Shield</dt>
+            <dd>DDoS protection. Standard is free/automatic. Advanced ($3k/mo) adds 24/7 response team and cost protection.</dd>
+            <dt>Secrets Manager</dt>
+            <dd>Stores DB credentials, API keys. Built-in auto-rotation via Lambda. Cost: $0.40/secret/mo.</dd>
+            <dt>Parameter Store</dt>
+            <dd>Systems Manager (SSM) feature. Secure string storage. Free for standard params. Often preferred over Secrets Manager if rotation isn't needed.</dd>
+            <dt>Macie</dt>
+            <dd>Data security. Uses ML to discover and protect sensitive data (PII, PHI) in S3 buckets.</dd>
+            <dt>Security Hub</dt>
+            <dd>Central dashboard. Aggregates findings from GuardDuty, Inspector, Macie. Checks CIS/PCI compliance.</dd>
+            <dt>CloudTrail</dt>
+            <dd>API auditing. Records "who did what, when, from where". Essential for compliance and forensics.</dd>
+          </dl>
+        </div>
+      </section>
       <section class="section reveal" id="architectures">
         <div class="section__header">
-          <span class="section__number">11</span>
+          <span class="section__number">16</span>
           <h2 class="section__title">Combined Architecture Patterns</h2>
         </div>
         <p class="section__desc">
@@ -888,10 +1462,10 @@
         </div>
       </section>
 
-      <!-- ═══════════════ 12. CHEAT SHEET ═══════════════ -->
+      <!-- ═══════════════ 17. CHEAT SHEET ═══════════════ -->
       <section class="section reveal" id="cheatsheet">
         <div class="section__header">
-          <span class="section__number">12</span>
+          <span class="section__number">17</span>
           <h2 class="section__title">Cheat Sheet &amp; Quick Reference</h2>
         </div>
         <p class="section__desc">
