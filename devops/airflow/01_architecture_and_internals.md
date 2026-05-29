@@ -18,18 +18,18 @@ graph TD
         T[Triggerer]
     end
 
-    subgraph Database Layer
-        DB[("Metadata Database \n PostgreSQL / MySQL")]
+    subgraph Database_Layer ["Database Layer"]
+        DB[("Metadata Database \n PostgreSQL or MySQL")]
     end
 
-    subgraph Execution Layer
-        E[Executor]
-        W1[Worker Node 1]
-        W2[Worker Node 2]
+    subgraph Execution_Layer ["Execution Layer"]
+        E["Executor"]
+        W1["Worker Node 1"]
+        W2["Worker Node 2"]
     end
     
-    subgraph Storage Layer
-        VCS[DAG Files / Git Repo]
+    subgraph Storage_Layer ["Storage Layer"]
+        VCS["DAG Files or Git Repo"]
     end
 
     %% Connections
@@ -118,12 +118,12 @@ Used for high-throughput, predictable workloads. It relies on a Message Broker (
 
 ```mermaid
 graph LR
-    S[Scheduler] -->|Enqueues Task ID| B[("Message Broker \n Redis/RabbitMQ")]
-    B -->|Pulls Task ID| W1[Celery Worker 1]
-    B -->|Pulls Task ID| W2[Celery Worker 2]
+    S["Scheduler"] -->|Enqueues Task ID| B[("Message Broker \n Redis or RabbitMQ")]
+    B -->|Pulls Task ID| W1["Celery Worker 1"]
+    B -->|Pulls Task ID| W2["Celery Worker 2"]
     
-    W1 -.->|Runs `airflow tasks run`| DB[(Metadata DB)]
-    W2 -.->|Runs `airflow tasks run`| DB
+    W1 -.->|"Runs airflow tasks run"| DB[("Metadata DB")]
+    W2 -.->|"Runs airflow tasks run"| DB
 ```
 *   **Pros:** Instant task startup (workers are always running). High throughput.
 *   **Cons:** "Noisy neighbor" problem. If Worker 1 runs out of memory because of Task A, Task B running on the same worker might fail.
@@ -133,11 +133,11 @@ Used for dynamic scaling, resource isolation, and cloud-native environments.
 
 ```mermaid
 graph TD
-    S[Scheduler] -->|API Call: Create Pod| K8s[Kubernetes API Server]
-    K8s --> P1["Pod: Task A \n (1 CPU, 2GB RAM)"]
-    K8s --> P2["Pod: Task B \n (4 CPU, 16GB RAM)"]
+    S["Scheduler"] -->|API Call: Create Pod| K8s["Kubernetes API Server"]
+    K8s --> P1["Pod: Task A \n 1 CPU, 2GB RAM"]
+    K8s --> P2["Pod: Task B \n 4 CPU, 16GB RAM"]
     
-    P1 -.->|Updates State| DB[(Metadata DB)]
+    P1 -.->|Updates State| DB[("Metadata DB")]
     P2 -.->|Updates State| DB
     
     P1 -->|Terminates on Completion| K8s

@@ -29,13 +29,13 @@ With the release of **Airflow 3.0 (April 2025)**, Airflow moved to a highly modu
 
 ```mermaid
 graph TD
-    A[Webserver (React UI)] --> B(Metadata Database)
-    C[Scheduler] --> B
-    D[DAG Processor] --> B
-    E[Triggerer] --> B
-    C -.->|Queues Tasks| F[Executor / Message Broker]
-    F --> G[Worker Node 1]
-    F --> H[Worker Node 2]
+    A["Webserver (React UI)"] --> B["Metadata Database"]
+    C["Scheduler"] --> B
+    D["DAG Processor"] --> B
+    E["Triggerer"] --> B
+    C -.->|"Queues Tasks"| F["Executor / Message Broker"]
+    F --> G["Worker Node 1"]
+    F --> H["Worker Node 2"]
     G --> B
     H --> B
 ```

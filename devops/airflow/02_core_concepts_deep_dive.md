@@ -61,7 +61,7 @@ Often, you don't know how many tasks you need to run until the pipeline actually
 graph TD
     A["Task: Get Files list \n Returns: file1, file2, file3"] 
     
-    subgraph Dynamic Expansion
+    subgraph Dynamic_Expansion ["Dynamic Expansion"]
         B1["Task: Process file1"]
         B2["Task: Process file2"]
         B3["Task: Process file3"]
@@ -118,8 +118,8 @@ Use the `@task.branch` decorator. The function must return the `task_id` (or lis
 graph TD
     A["Check Data Quality"]
     
-    A -->|"If Quality > 90% \n Returns 'load_to_prod'"| B("Load to PROD")
-    A -->|"If Quality < 90% \n Returns 'send_slack_alert'"| C("Send Slack Alert")
+    A -->|"If Quality > 90% \n Returns 'load_to_prod'"| B["Load to PROD"]
+    A -->|"If Quality < 90% \n Returns 'send_slack_alert'"| C["Send Slack Alert"]
     
     B --> D["Clean up Temp Files"]
     C -.->|Skipped by Trigger Rule| D

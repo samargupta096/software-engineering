@@ -35,14 +35,14 @@ Let's look at how Airflow fits into a modern, distributed data stack. Airflow sh
 
 ```mermaid
 graph TD
-    subgraph Airflow Environment
+    subgraph Airflow_Env ["Airflow Environment"]
         S["Sensor"] -->|Waits for| API["3rd Party API"]
         E["Extract Operator"] -->|Dumps to| D["Data Lake / GCS / S3"]
         T["Transform Operator"] -.->|Triggers| dbt["dbt Cloud / Core"]
         L["Load Operator"] -.->|Triggers| Snowflake[("Snowflake / BigQuery")]
     end
     
-    subgraph Execution/Compute
+    subgraph Exec_Compute ["Execution / Compute"]
         dbt -->|Transforms Data in| Snowflake
         D -->|Loaded into| Snowflake
     end

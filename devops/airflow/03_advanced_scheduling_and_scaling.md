@@ -16,12 +16,12 @@ Instead of scheduling `DAG B` to run at 2:00 AM (hoping `DAG A` finished at 1:59
 
 ```mermaid
 graph LR
-    subgraph Upstream Pipelines
+    subgraph Upstream_Pipelines ["Upstream Pipelines"]
         DAG_A["DAG A \n (Extract API)"] --> |Updates| Asset_1[("Asset: raw_data.csv")]
         DAG_B["DAG B \n (Extract DB)"] --> |Updates| Asset_2[("Asset: db_dump.sql")]
     end
 
-    subgraph Downstream Pipeline
+    subgraph Downstream_Pipeline ["Downstream Pipeline"]
         Asset_1 -.-> |Triggers| DAG_C["DAG C \n (Transform & Join)"]
         Asset_2 -.-> |Triggers| DAG_C
     end
@@ -79,13 +79,13 @@ When tasks are waiting in a Pool (or when global Worker slots are full), Airflow
 
 ```mermaid
 graph TD
-    subgraph Queued Tasks (Pool Full)
+    subgraph Queued_Tasks ["Queued Tasks (Pool Full)"]
         T1["Task A \n Weight: 1"]
         T2["Task B \n Weight: 10"]
         T3["Task C \n Weight: 5"]
     end
     
-    subgraph Execution Order (Next slot opens)
+    subgraph Execution_Order ["Execution Order (Next slot opens)"]
         T2 -->|Runs 1st| Exec
         T3 -->|Runs 2nd| Exec
         T1 -->|Runs 3rd| Exec
