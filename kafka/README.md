@@ -12,6 +12,7 @@
 | [📘 Kafka Fundamentals](./kafka-fundamentals.md) | Intermediate | 45 min | Core concepts, Producers, Consumers, Examples |
 | [🔧 Internals & Architecture](./kafka-internals-architecture.md) | Advanced | 60 min | Replication, Storage, Performance tuning |
 | [🧬 Avro & Schema Mastery](./avro-schema-mastery.md) | Advanced | 45 min | Serialization, Schema Evolution, Java Implementation |
+| [🔌 Connectors & CDC](./kafka-connectors-guide.md) | Advanced | 60 min | Kafka Connect, Debezium, SMTs, DLQ |
 
 ---
 
