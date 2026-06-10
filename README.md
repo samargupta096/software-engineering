@@ -27,7 +27,7 @@
 </tr>
 <tr>
 <td valign="top"><div align="center"><img src="./assets/animations/cloud-aws.gif" width="200" alt="Cloud"></div><br><b>Master cloud services:</b><br><ul><li>☁️ <a href="./aws/aws-services-guide.md">AWS Services</a> ⭐</li><li>📝 <a href="./aws/developer-associate-exam-guide.md">Dev Associate Exam</a> ⭐🆕</li><li>📅 <a href="./aws/aws-developer-study-plan.md">10-Day Study Plan</a> ⭐🆕</li><li>🛠️ <a href="./aws/aws-cdk-guide.md">AWS CDK</a></li></ul></td>
-<td valign="top"><div align="center"><img src="./assets/animations/infrastructure-devops.gif" width="200" alt="DevOps"></div><br><b>Container & Deployment:</b><br><ul><li>🐳 <a href="./devops/docker-guide.md">Docker</a> ⭐</li><li>☸️ <a href="./devops/kubernetes-guide.md">Kubernetes</a> ⭐</li><li>🌍 <a href="./devops/terraform/README.md">Terraform</a> ⭐</li><li>🏭 <a href="./devops/terraform/terraform-real-world-project.md">Prod Architecture</a></li><li>🌪️ <a href="./devops/airflow/airflow_comprehensive_guide.md">Apache Airflow Suite</a> ⭐🆕</li><li>🍎 <a href="./devops/macos-developer-guide.md">macOS Developer Guide</a> ⭐🆕</li><li>⚡ <a href="./big-data/spark-flink-guide.md">Apache Spark & Flink Suite</a> ⭐🆕<br>&nbsp;&nbsp;└ <a href="./big-data/01_spark_architecture_internals.md">Spark Internals</a> | <a href="./big-data/06_flink_architecture_internals.md">Flink Internals</a> | <a href="./big-data/10_spark_vs_flink_battle.md">Comparison</a></li></ul></td>
+<td valign="top"><div align="center"><img src="./assets/animations/infrastructure-devops.gif" width="200" alt="DevOps"></div><br><b>Container & Deployment:</b><br><ul><li>🐳 <a href="./devops/docker-guide.md">Docker</a> ⭐</li><li>☸️ <a href="./devops/kubernetes-guide.md">Kubernetes</a> ⭐</li><li>🌍 <a href="./devops/terraform/README.md">Terraform</a> ⭐</li><li>🏭 <a href="./devops/terraform/terraform-real-world-project.md">Prod Architecture</a></li><li>🌪️ <a href="./learning-airflow-spark/README.md">Airflow & Spark Suite</a> ⭐🆕<br>&nbsp;&nbsp;└ <a href="./learning-airflow-spark/airflow/01-why-airflow-exists.md">Airflow Hub</a> | <a href="./learning-airflow-spark/spark/01-why-spark-exists.md">Spark Hub</a> | <a href="./learning-airflow-spark/learning-roadmap.md">Roadmap</a></li><li>🍎 <a href="./devops/macos-developer-guide.md">macOS Developer Guide</a> ⭐🆕</li><li>⚡ <a href="./big-data/spark-flink-guide.md">Apache Spark & Flink Suite</a> ⭐<br>&nbsp;&nbsp;└ <a href="./big-data/06_flink_architecture_internals.md">Flink Internals</a> | <a href="./big-data/10_spark_vs_flink_battle.md">Comparison</a></li></ul></td>
 <td valign="top"><div align="center"><img src="./assets/animations/java-landscape.gif" width="200" alt="Java"></div><br><b>Modern Java Dev:</b><br><ul><li>☕ <a href="./java-spring/modern-features-guide.md">Java 8-21 Features</a></li><li>🍃 <a href="./java-spring/spring/spring-boot-guide.md">Spring Boot</a> ⭐</li><li>🎤 <a href="./java-spring/interview-questions.md">Interview Qs</a></li></ul></td>
 </tr>
 <tr>
@@ -120,17 +120,18 @@
 | 2️⃣ | [**Core Components**](./interview-prep/system-design/components/overview.md) | Load balancers, Caching, Queues |
 | 3️⃣ | [**Cloud & AWS**](./aws/aws-services-guide.md) | S3, Lambda, ECS, VPC |
 | 4️⃣ | [**DevOps**](./devops/) | Docker, Kubernetes, Terraform, macOS Dev Guide |
-| 5️⃣ | [**Big Data**](./big-data/spark-flink-guide.md) | Apache Spark, Apache Flink, Data Lakehouse 🆕 |
-| 6️⃣ | [**Java Landscape**](./java-spring/modern-features-guide.md) | Modern features, Spring Boot |
-| 7️⃣ | [**DSA Resources**](./interview-prep/dsa/00-cheatsheet.md) | Patterns, LeetCode problems |
-| 8️⃣ | [**Low-Level Design (LLD)**](./interview-prep/lld/00-lld-interview-roadmap.md) | OOP, SOLID, Design Patterns |
-| 9️⃣ | [**Real-World Designs**](./interview-prep/system-design/real-systems/00-interview-roadmap.md) | Real-world case studies |
-| 🔟 | [**Interview Prep Hub**](./interview-prep/) | Company-specific preparation |
-| 1️⃣1️⃣ | [**Hands-On Projects**](./projects/) | Kafka, RAG API, LLM Fine-tuning |
-| 1️⃣2️⃣ | [**GenAI & LLM**](./genai/genai-fundamentals.md) | RAG, Fine-Tuning, Vector DBs, MCP, Agentic AI, Prompt Engineering, Memory, Claude SDK, Ingestion |
-| 1️⃣3️⃣ | [**Frontend Mastery**](./frontend/javascript-es6-guide.md) | JS ES6+, TypeScript, React, Angular |
-| 1️⃣4️⃣ | [**Claude Certified Architect**](./genai/claude/learning/README.md) | Agentic Architecture, MCP, Prompt Engineering, Exam Prep 🆕 |
-| 1️⃣5️⃣ | [**Books & Learning**](./books/README.md) | AI Engineering, EDA, Clean Code, DDD, DDIA & more |
+| 5️⃣ | [**Airflow & Spark Suite**](./learning-airflow-spark/) | Distributed systems, Apache Airflow, Apache Spark, 12-week roadmap 🆕 |
+| 6️⃣ | [**Big Data**](./big-data/spark-flink-guide.md) | Apache Spark & Flink, Data Lakehouse |
+| 7️⃣ | [**Java Landscape**](./java-spring/modern-features-guide.md) | Modern features, Spring Boot |
+| 8️⃣ | [**DSA Resources**](./interview-prep/dsa/00-cheatsheet.md) | Patterns, LeetCode problems |
+| 9️⃣ | [**Low-Level Design (LLD)**](./interview-prep/lld/00-lld-interview-roadmap.md) | OOP, SOLID, Design Patterns |
+| 🔟 | [**Real-World Designs**](./interview-prep/system-design/real-systems/00-interview-roadmap.md) | Real-world case studies |
+| 1️⃣1️⃣ | [**Interview Prep Hub**](./interview-prep/) | Company-specific preparation |
+| 1️⃣2️⃣ | [**Hands-On Projects**](./projects/) | Kafka, RAG API, LLM Fine-tuning |
+| 1️⃣3️⃣ | [**GenAI & LLM**](./genai/genai-fundamentals.md) | RAG, Fine-Tuning, Vector DBs, MCP, Agentic AI, Prompt Engineering, Memory, Claude SDK, Ingestion |
+| 1️⃣4️⃣ | [**Frontend Mastery**](./frontend/javascript-es6-guide.md) | JS ES6+, TypeScript, React, Angular |
+| 1️⃣5️⃣ | [**Claude Certified Architect**](./genai/claude/learning/README.md) | Agentic Architecture, MCP, Prompt Engineering, Exam Prep 🆕 |
+| 1️⃣6️⃣ | [**Books & Learning**](./books/README.md) | AI Engineering, EDA, Clean Code, DDD, DDIA & more |
 
 <p align="center">
   <img src="https://komarev.com/ghpvc/?username=samargupta096&repo=software-engineering&label=Visitors&color=0e75b6&style=flat" alt="Visitors" />
